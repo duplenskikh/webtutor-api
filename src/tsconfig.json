@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "target": "es5",
+    "module": "es6",
+    "allowJs": true,
+    "outDir": "../build",
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "strict": false,
+    "baseUrl": "src",
+    "typeRoots": [
+      "../node_modules/@umbrik/webtutor-types/lib",
+      "../node_modules/@umbrik/webtutor-types/lib/xml"
+    ],
+    "esModuleInterop": true,
+    "noLib": true
+  }
+}

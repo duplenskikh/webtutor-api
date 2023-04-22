@@ -1,0 +1,31 @@
+{
+  "name": "webtutor-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "gulp dev",
+    "build": "gulp build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/gulp": "^4.0.10",
+    "@types/gulp-change": "^1.0.0",
+    "@types/gulp-rename": "^2.0.1",
+    "@types/urllib": "^2.33.0",
+    "@umbrik/webtutor-types": "^7.47.1",
+    "del": "^6.1.1",
+    "dotenv": "^16.0.3",
+    "gulp": "^4.0.2",
+    "gulp-change": "^1.0.2",
+    "gulp-header": "^2.0.9",
+    "gulp-rename": "^2.0.0",
+    "gulp-strip-import-export": "^1.0.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "ts-node": "^10.9.1",
+    "typescript": "~4.4.4",
+    "urllib": "^3.13.1"
+  }
+}

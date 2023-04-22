@@ -1,0 +1,8 @@
+{
+  "env": "development",
+  "version": "9.9.9",
+  "api": {
+    "pattern": "/api/v1"
+  },
+  "stderr": true
+}

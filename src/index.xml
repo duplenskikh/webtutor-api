@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-INLINE-FORM>
+<OnInit PROPERTY="1" EXPR="
+    try {
+      alert('🚀 Registering dapi');
+      RegisterCodeLibrary('./index.bs');
+      dapi.init();
+      alert('🚀 dapi successfully registered');
+    } catch (error) {
+      alert('💩 dapi registration fail. ' + error);
+    }
+"/>
+</SPXML-INLINE-FORM>
