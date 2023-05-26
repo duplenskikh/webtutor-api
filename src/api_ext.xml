@@ -5,7 +5,7 @@
 			<name>dapi</name>
 			<libs>
 				<lib>
-					<path>x-local://wt/web/web_api/index.xml</path>
+					<path>x-local://wt/web/dapi/index.xml</path>
 				</lib>
 			</libs>
 		</api>
