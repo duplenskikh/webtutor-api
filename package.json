@@ -14,6 +14,7 @@
     "@types/gulp": "^4.0.10",
     "@types/gulp-change": "^1.0.0",
     "@types/gulp-rename": "^2.0.1",
+    "@types/node": "^20.2.4",
     "@types/urllib": "^2.33.0",
     "@umbrik/webtutor-types": "^7.47.1",
     "del": "^6.1.1",
