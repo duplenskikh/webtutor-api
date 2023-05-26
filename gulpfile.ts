@@ -110,8 +110,8 @@ task("build", async (done) => {
     .pipe(header("\ufeff"))
     .pipe(dest(BUILD_PATH));
 
-  src(join(SRC_PATH, "config.json"))
-    .pipe(dest(BUILD_PATH))
+  src(join(SRC_PATH, "config.json"), { base: SRC_PATH })
+    .pipe(dest(BUILD_PATH));
 
   done();
 });
