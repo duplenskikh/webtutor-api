@@ -11,7 +11,6 @@ type Utils = {
   validator: typeof import("./utils/validator");
 }
 
-
 type HandlerParam = {
   type: "string" | "number" | "date" | "array" | "boolean";
   defaultValue?: string | number | boolean | null;

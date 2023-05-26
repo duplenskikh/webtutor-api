@@ -11,5 +11,5 @@ export function init() {
   
   dapi.config = tools.read_object(LoadUrlData(configUrl));
   
-  alert(`🚀 Config loaded:\n${tools.object_to_text(dapi.config, "json")}`);
+  alert(`${"🚀"} Config loaded:\n${tools.object_to_text(dapi.config, "json")}`);
 }
