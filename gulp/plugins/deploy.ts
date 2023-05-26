@@ -16,13 +16,13 @@ import {
   sep,
   parse
 } from "path";
+import { readFileSync } from "fs";
 
 const {
   DEPLOYER_LOGIN,
   DEPLOYER_PASSWORD,
   DEPLOYER_URL,
-  DEPLOYER_APP_ID,
-  API_WEBTUTOR_BASE_PATH
+  DEPLOYER_APP_ID
 } = process.env;
 
 const authorizationHeader = `Basic ${Buffer.from(`${DEPLOYER_LOGIN}:${DEPLOYER_PASSWORD}`).toString("base64")}`;
@@ -32,6 +32,8 @@ export const deploy = (file: string, outerCallback?: CallableFunction) => {
     if (!chunk.isBuffer()) {
       throw new pluginError(PLUGIN_NAME, "Only buffer accepted");
     }
+
+    const API_WEBTUTOR_BASE_PATH = JSON.parse(readFileSync("src/config.json", "utf-8")).api.cwd;
 
     console.log(file, join(API_WEBTUTOR_BASE_PATH, dirname(file.split(sep).join(posix.sep)).replace(SRC_PATH, "")));
 
