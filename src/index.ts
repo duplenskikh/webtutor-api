@@ -83,7 +83,7 @@ function loadUtils() {
   let fileName;
 
   for (let i = 0; i < files.length; i++) {
-    fileName = FileName(files[i]).split(".")[0]
+    fileName = FileName(UrlToFilePath(files[i])).split(".")[0]
     alert(`${"⚙️"} Utility "${fileName}" is loading with hash "${Md5Hex(LoadUrlData(files[i]))}"`);
     
     utils.SetProperty(
