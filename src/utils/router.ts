@@ -12,7 +12,32 @@ export function getRoute(pattern: string, r: Response) {
   }
 }
 
+function ensureWebRule() {
+  const webRuleCode = `dapi_${dapi.config.api.pattern}`;
+  const query = ArrayOptFirstElem(tools.xquery(`for $e in web_rules where $e/code = ${SqlLiteral(webRuleCode)} return $e`));
+
+  let webRuleDocument;
+  
+  if (query === undefined) {
+    webRuleDocument = tools.new_doc_by_name<WebRuleDocument>("web_rule");
+    webRuleDocument.BindToDb();
+  } else {
+    webRuleDocument = tools.open_doc<WebRuleDocument>(query.id.Value);
+  }
+
+  webRuleDocument.TopElem.code.Value = webRuleCode;
+  webRuleDocument.TopElem.name.Value = `Правило для api`;
+  webRuleDocument.TopElem.url.Value = `${dapi.config.api.pattern}/*`;
+  webRuleDocument.TopElem.is_enabled.Value = true;
+  webRuleDocument.TopElem.redirect_type.Value = 0;
+  webRuleDocument.TopElem.redirect_url.Value = `${dapi.config.api.cwd}/api.html`;
+  webRuleDocument.Save();
+    
+  alert(`${"🚀"} Web rule successfully ${webRuleDocument.NeverSaved ? "created" : "updated"} ${webRuleDocument.DocID}`);
+}
+
 export function init() {
+  ensureWebRule();
   DropFormsCache("./../api/*");
   const apis = ReadDirectory("./../api");
   let i = 0;

@@ -2,7 +2,8 @@
   "env": "development",
   "version": "9.9.9",
   "api": {
-    "pattern": "/api/v1"
+    "pattern": "/api/v1",
+    "cwd": "/dapi/"
   },
   "stderr": true
 }

@@ -43,7 +43,8 @@ export type Config = {
   env: "production" | "development";
   version: string;
   api: {
-    pattern: "string";
+    pattern: string;
+    cwd: string;
   },
   stderr: boolean;
 }
@@ -90,7 +91,7 @@ function loadUtils() {
       OpenCodeLib(files[i])
     );
 
-    alert(`${"🚀 "}Utility "${fileName}" was successfully loaded. Hash "${Md5Hex(LoadUrlData(files[i]))}"`);
+    alert(`${"🚀"} Utility "${fileName}" was successfully loaded. Hash "${Md5Hex(LoadUrlData(files[i]))}"`);
   }
 }
 
