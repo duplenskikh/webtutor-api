@@ -26,7 +26,7 @@ export function isUndef(value: unknown): value is null | undefined {
   return value === undefined || value === null;
 }
 
-export type Primitive = number | boolean | string;
+export type Primitive = number | boolean | string | undefined | null;
 
 export function isPrimitive(value: unknown): value is Primitive {
   const type = DataType(value);
