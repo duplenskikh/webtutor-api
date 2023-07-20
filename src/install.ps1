@@ -1,4 +1,4 @@
-$basePath = "./../.."
+$basePath = "$pwd/../../../source"
 $sourceFilePath = "$basePath/api_ext.xml"
 $sourceSampleFilePath = "$basePath/api_ext(sample).xml"
 
@@ -13,7 +13,7 @@ if (-not(Test-Path -Path $sourceFilePath)) {
 }
 
 try {
-  [xml]$sourceXmlDocument = Get-Content -Path $sourceFilePath | out-null
+  [xml]$sourceXmlDocument = Get-Content -Path $sourceFilePath
 
   if ($null -eq $sourceXmlDocument) {
     throw
@@ -53,5 +53,5 @@ if ($checkResult -eq $true) {
 "@
 
 $dapiNode = $sourceXmlDocument.ImportNode(($dapiElement).DocumentElement, $true)
-$sourceXmlDocument.api_ext.apis.AppendChild($dapiNode)
+$sourceXmlDocument.api_ext.apis.AppendChild($dapiNode) | Out-Null
 $sourceXmlDocument.Save($sourceFilePath)
