@@ -11,6 +11,10 @@ type Utils = {
   validator: typeof import("./utils/validator");
 }
 
+type Services = {
+  events: typeof import("./services/events");
+}
+
 type HandlerParam = {
   type: "string" | "number" | "date" | "array" | "boolean";
   defaultValue?: string | number | boolean | null;
@@ -78,25 +82,31 @@ export const utils: Utils = {
   validator: undefined
 };
 
-function loadUtils() {
-  const files = ReadDirectory("./utils");
+export const services: Services = {
+  events: undefined
+};
+
+function loadInternals(container: Utils | Services, url: string) {
+  const type = FileName(url);
+  const files = ReadDirectory(url);
   let fileName;
 
   for (let i = 0; i < files.length; i++) {
     fileName = FileName(UrlToFilePath(files[i])).split(".")[0]
-    alert(`${"⚙️"} Utility "${fileName}" is loading with hash "${Md5Hex(LoadUrlData(files[i]))}"`);
+    alert(`${"⚙️"} ${type} "${fileName}" is loading with hash "${Md5Hex(LoadUrlData(files[i]))}"`);
     
-    utils.SetProperty(
+    container.SetProperty(
       fileName,
       OpenCodeLib(files[i])
     );
 
-    alert(`${"🚀"} Utility "${fileName}" was successfully loaded. Hash "${Md5Hex(LoadUrlData(files[i]))}"`);
+    alert(`${"🚀"} ${type} "${fileName}" was successfully loaded. Hash "${Md5Hex(LoadUrlData(files[i]))}"`);
   }
 }
 
 export function init() {
-  loadUtils();
+  loadInternals(utils, "./utils");
+  loadInternals(services, "./services");
   utils.config.init();
   utils.router.init();
 }
