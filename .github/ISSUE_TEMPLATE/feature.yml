@@ -6,14 +6,6 @@ body:
   - type: markdown
     attributes:
       value: Спасибо, что делаете вклад в наш проект
-  - type: input
-    id: contact
-    attributes:
-      label: Контактная информация
-      description: Оставьте контактную информацию, чтобы мы могли связаться, если нам потребуется что-то уточнить
-      placeholder: ex. email@example.com
-    validations:
-      required: false
   - type: textarea
     id: description
     attributes:
