@@ -1,14 +1,19 @@
-$basePath = "./../../"
+$basePath = "./../.."
 $sourceFilePath = "$basePath/api_ext.xml"
+$sourceSampleFilePath = "$basePath/api_ext(sample).xml"
 
 if (-not(Test-Path -Path $sourceFilePath)) {
-  Write-Host "Файла не существует $sourceFilePath. Создаем."
-  $sampleContent = [xml](get-content "$basePath/api_ext(sample).xml")
+  if (-not(Test-Path -Path $sourceSampleFilePath)) {
+    Write-Error "Файла с примером $sourceSampleFilePath не существует"
+    exit 1
+  }
+
+  $sampleContent = [xml](get-content $sourceSampleFilePath)
   $sampleContent.save($sourceFilePath)
 }
 
 try {
-  [xml]$sourceXmlDocument = Get-Content -Path $sourceFilePath
+  [xml]$sourceXmlDocument = Get-Content -Path $sourceFilePath | out-null
 
   if ($null -eq $sourceXmlDocument) {
     throw
