@@ -4,6 +4,7 @@ type Utils = {
   log: typeof import("./utils/log");
   object: typeof import("./utils/object");
   passport: typeof import("./utils/passport");
+  query: typeof import("./utils/query");
   request: typeof import("./utils/request");
   response: typeof import("./utils/response");
   router: typeof import("./utils/router");
@@ -75,6 +76,7 @@ export const utils: Utils = {
   log: undefined,
   object: undefined,
   passport: undefined,
+  query: undefined,
   request: undefined,
   response: undefined,
   router: undefined,

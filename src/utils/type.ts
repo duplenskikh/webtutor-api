@@ -26,6 +26,10 @@ export function isUndef(value: unknown): value is null | undefined {
   return value === undefined || value === null;
 }
 
+export function isDate(value: unknown): value is Date {
+  return DataType(value) == "date" || OptDate(value) !== undefined;
+}
+
 export type Primitive = number | boolean | string | undefined | null;
 
 export function isPrimitive(value: unknown): value is Primitive {
