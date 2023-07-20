@@ -112,7 +112,7 @@ task("build", async (done) => {
   baseSrc(consts.CONFIG_JSON)
     .pipe(dest(consts.BUILD_PATH));
 
-  baseSrc(consts.INSTALL_SCRIPT)
+  baseSrc([consts.INSTALL_SH, consts.INSTALL_PS1])
     .pipe(dest(consts.BUILD_PATH));
 
   done();
