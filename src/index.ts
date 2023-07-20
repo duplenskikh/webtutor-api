@@ -3,6 +3,7 @@ type Utils = {
   config: typeof import("./utils/config");
   log: typeof import("./utils/log");
   object: typeof import("./utils/object");
+  paginator: typeof import("./utils/paginator");
   passport: typeof import("./utils/passport");
   query: typeof import("./utils/query");
   request: typeof import("./utils/request");
@@ -75,6 +76,7 @@ export const utils: Utils = {
   config: undefined,
   log: undefined,
   object: undefined,
+  paginator: undefined,
   passport: undefined,
   query: undefined,
   request: undefined,

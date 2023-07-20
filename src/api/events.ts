@@ -19,6 +19,6 @@ export function getEvent(params: HandlerParams, Request: Request) {
   return dapi.utils.response.ok(`curUserID is ${Request.Session.Env.curUserID}`);
 }
 
-export function getEvents(params: HandlerParams, Request: Request) {
-  return dapi.utils.response.ok(dapi.services.events.getEvents());
+export function getEvents(params: HandlerParams, req: Request) {
+  return dapi.utils.response.ok(dapi.utils.paginator.gather(dapi.services.events.getEvents(), req.Query));
 }
