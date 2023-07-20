@@ -113,5 +113,8 @@ task("build", async (done) => {
   src(join(SRC_PATH, "config.json"), { base: SRC_PATH })
     .pipe(dest(BUILD_PATH));
 
+  src(join(SRC_PATH, "install.ps1"), { base: SRC_PATH })
+    .pipe(dest(BUILD_PATH));
+
   done();
 });

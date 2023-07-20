@@ -1,8 +1,9 @@
+import { Route } from "..";
 import { dapi } from "../dapi";
 
 type Authentication = {
   id: number;
-  type: "user" | "application";
+  type: Route["access"];
 };
 
 export function authenticateUser(req: Request): Authentication | null {
