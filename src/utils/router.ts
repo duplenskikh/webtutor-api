@@ -32,14 +32,14 @@ function ensureWebRule() {
   webRuleDocument.TopElem.redirect_type.Value = 0;
   webRuleDocument.TopElem.redirect_url.Value = `${dapi.config.api.cwd}/api.html`;
   webRuleDocument.Save();
-    
+
   alert(`${"🚀"} Web rule successfully ${webRuleDocument.NeverSaved ? "created" : "updated"} ${webRuleDocument.DocID}`);
 }
 
 export function init() {
   ensureWebRule();
-  DropFormsCache("./../api/*");
-  const apis = ReadDirectory("./../api");
+  DropFormsCache("./../controllers/*");
+  const apis = ReadDirectory("./../controllers");
   let i = 0;
   let j = 0;
   let apiFunctions;
