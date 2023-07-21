@@ -10,7 +10,7 @@ export function authenticateUser(req: Request): Authentication | null {
   const userInit = tools_web.user_init(req, req.Query);
 
   if (!userInit.access) {
-    dapi.utils.log.info(`Client ${dapi.utils.request.getHeader(req.Header, "Authorization")} is unauthorized due to ${userInit.error_text}`, "passport");
+    dapi.utils.log.info(`Session ${dapi.utils.request.getHeader(req.Header, "SessionID")} is unauthorized due to ${userInit.error_text}`, "passport");
     return null;
   }
 
