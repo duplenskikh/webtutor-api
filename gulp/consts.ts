@@ -12,7 +12,7 @@ export const CONFIG_JSON = join(SRC_PATH, "config.json");
 export const BUILD_PATH = "build";
 
 export const WATCHED_TS_TYPES = [
-  join(SRC_PATH, "api", "*.ts"),
+  join(SRC_PATH, "controllers", "*.ts"),
   join(SRC_PATH, "services", "*.ts"),
   join(SRC_PATH, "utils", "*.ts"),
 ];

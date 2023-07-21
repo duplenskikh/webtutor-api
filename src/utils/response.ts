@@ -3,10 +3,10 @@ import { dapi } from "../dapi";
 
 export function json(response: string | APIResponse<unknown>, res: Response) {
   if (dapi.utils.type.isPrimitive(response)) {
-    return EncodeJson({
+    return tools.object_to_text({
       data: response
-    });
-  }
+    }, "json");
+}
 
   const statusCode = response.GetOptProperty("statusCode", 200);
 
@@ -14,10 +14,10 @@ export function json(response: string | APIResponse<unknown>, res: Response) {
     res.SetRespStatus(statusCode, response.GetOptProperty("message"));
   }
 
-  return EncodeJson({
+  return tools.object_to_text({
     data: response.data,
     message: response.message
-  });
+  }, "json");
 }
 
 export function ok<T>(data: T, statusCode = 200): APIResponse<T> {
