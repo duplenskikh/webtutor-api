@@ -6,7 +6,7 @@ export function functions(): Route[] {
     method: "GET",
     pattern: "/deploy",
     callback: "deploy",
-    access: "anonymous",
+    access: "application",
     params: {
       file: {
         type: "string"
