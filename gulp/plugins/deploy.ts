@@ -3,20 +3,11 @@ const PLUGIN_NAME = "gulp-deploy";
 import { request } from "urllib";
 import { obj } from "through2";
 import pluginError from "plugin-error";
-import { join } from "path";
 
 import { config } from "dotenv";
-import { SRC_PATH } from "../consts";
 config();
 
-import {
-  dirname,
-  basename,
-  posix,
-  sep,
-  parse
-} from "path";
-import { readFileSync } from "fs";
+import { basename } from "path";
 
 const {
   DEPLOYER_LOGIN,
