@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "gulp dev",
-    "build": "gulp build"
+    "build": "gulp build",
+    "zip": "gulp build && gulp zip",
+    "deliver": "gulp zip && gulp deliver"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +29,7 @@
     "gulp-typescript": "^6.0.0-alpha.1",
     "ts-node": "^10.9.1",
     "typescript": "~4.4.4",
-    "urllib": "^3.13.1"
+    "urllib": "^3.13.1",
+    "gulp-zip": "^5.1.0"
   }
 }

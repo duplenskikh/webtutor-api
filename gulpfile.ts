@@ -1,13 +1,20 @@
 import { dest, src, task, watch } from "gulp";
+
 import { createProject } from "gulp-typescript";
-import del from "del";
 import rename from "gulp-rename";
-const stripImportExport = require("gulp-strip-import-export");
 import change from "gulp-change";
 import header from "gulp-header";
+import zip from "gulp-zip";
+const stripImportExport = require("gulp-strip-import-export");
+
+import del from "del";
+
 import * as consts from "./gulp/consts";
 import { deploy } from "./gulp/plugins";
+import { readdirSync, statSync } from "fs";
+import { join } from "path";
 
+const baseSrc = (path) => src(path, { base: consts.SRC_PATH });
 const removeImportsExports = (content: string) => content.replace(consts.IMPORT_REGEXP, "// $1").replace(consts.EXPORT_REGEXP, "// $1");
 
 const transformTS = (path: string) => {
@@ -114,8 +121,29 @@ task("build", async (done) => {
 
   baseSrc([consts.INSTALL_SH, consts.INSTALL_PS1])
     .pipe(dest(consts.BUILD_PATH));
+  
+  done();
+});
+
+task("zip", async (done) => {
+  src(consts.BUILD_PATH)
+    .pipe(zip(`build_${new Date().toLocaleDateString("ru-RU")}_${new Date().toLocaleTimeString("ru-RU")}.zip`))
+    .pipe(dest(consts.PACKAGES_PATH));
 
   done();
 });
 
-const baseSrc = (path) => src(path, { base: consts.SRC_PATH });
+task("deliver", async (done) => {
+  const files = readdirSync(consts.PACKAGES_PATH);
+
+  if (files.length === 0) {
+    done();
+    return;
+  }
+
+  files.sort((f, s) => statSync(join(consts.PACKAGES_PATH, f)).ctime > statSync(join(consts.PACKAGES_PATH, s)).ctime ? -1 : 1);
+
+  console.log(files[0]);
+
+  done();
+});
