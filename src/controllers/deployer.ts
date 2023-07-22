@@ -6,9 +6,9 @@ export function functions(): Route[] {
     method: "GET",
     pattern: "/deploy",
     callback: "deploy",
-    access: "application",
+    access: "anonymous",
     params: {
-      filepath: {
+      file: {
         type: "string"
       }
     }
@@ -16,44 +16,35 @@ export function functions(): Route[] {
 }
 
 export function deploy(params: HandlerParams,req: Request) {
-  const fileUrl = UrlAppendPath("x-local://wt/web", params.filepath);
-
-  let oldContent;
-  let oldHash;
-
-  if (FilePathExists(UrlToFilePath(fileUrl)) && !IsDirectory(fileUrl)) {
-    oldContent = LoadUrlData(fileUrl);
-    oldHash = Md5Hex(oldContent);
-  }
+  const url = UrlAppendPath(dapi.config.api.basepath, params.file);
 
   const newContent = req.Body;
 
   if (StrLen(newContent) === 0) {
-    dapi.utils.log.warning(`Невозможно обновить. Файл ${fileUrl} не содержит контента`, "deployer");
+    dapi.utils.log.warning(`Невозможно обновить. Файл ${url} не содержит контента`, "deployer");
     return dapi.utils.response.abort("Empty file content", 400);
   }
   
-  const newHash = Md5Hex(newContent);
-
-  if (oldHash == newHash) {
-    dapi.utils.log.warning(`Невозможно обновить. Хэши предыдущей и текущей версии файла ${fileUrl} сопадают`, "deployer");
+  if (FilePathExists(UrlToFilePath(url)) && !IsDirectory(url) && Md5Hex(LoadUrlData(url)) == Md5Hex(newContent)) {
+    dapi.utils.log.warning(`Хэши старой и новой версии файла ${url} сопадают`, "deployer");
     return dapi.utils.response.ok(null, 304);
-  };
+  }
 
-  ObtainDirectory(ParentDirectory(UrlToFilePath(fileUrl)), true);
-  PutFileData(UrlToFilePath(fileUrl), newContent);
-  DropFormsCache(fileUrl);
-  dapi.utils.log.info(`Файл ${fileUrl} обновлен и сброшен кэш`, "deployer");
+
+  ObtainDirectory(ParentDirectory(UrlToFilePath(url)), true);
+  PutFileData(UrlToFilePath(url), newContent);
+  DropFormsCache(url);
+  dapi.utils.log.info(`Файл ${url} обновлен и сброшен кэш`, "deployer");
   dapi.init();
 
-  return dapi.utils.response.ok(fileUrl);
+  return dapi.utils.response.ok(url);
 }
 
 export function deployBuild(req: Request) {
   req.RespContentType = "application/json";
   const fileData = req.Query.GetOptProperty("file");
   const fileName = UrlFileName(fileData.FileName);
-  const baseUrl = "x-local://wt/web/" + dapi.config.api.cwd;
+  const baseUrl = "x-local://wt/web/" + dapi.config.api.basepath;
   const filePath = UrlAppendPath(baseUrl, fileName);
   const zipUnpackPath = UrlAppendPath(baseUrl, fileName.split(".")[0]);
 
@@ -66,7 +57,7 @@ export function deployBuild(req: Request) {
   let i = 0;
 
   for (i = 0; i < files.length; i++) {
-    previousFilePath = UrlToFilePath(files[i].replace(filePath, "x-local://wt/web/" + dapi.config.api.cwd));
+    previousFilePath = UrlToFilePath(files[i].replace(filePath, "x-local://wt/web/" + dapi.config.api.basepath));
 
     if (FilePathExists(previousFilePath)) {
       DeleteFile(previousFilePath);
@@ -74,7 +65,7 @@ export function deployBuild(req: Request) {
 
     MoveFile(
       UrlToFilePath(files[i]),
-      UrlToFilePath(files[i].replace(filePath, "x-local://wt/web/" + dapi.config.api.cwd))
+      UrlToFilePath(files[i].replace(filePath, "x-local://wt/web/" + dapi.config.api.basepath))
     );
   }
 

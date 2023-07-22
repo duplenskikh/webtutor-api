@@ -51,7 +51,7 @@ export type Config = {
   version: string;
   api: {
     pattern: string;
-    cwd: string;
+    basepath: string;
   },
   stderr: boolean;
 }

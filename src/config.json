@@ -3,7 +3,7 @@
   "version": "9.9.9",
   "api": {
     "pattern": "/api/v1",
-    "cwd": "/dapi/"
+    "basepath": "x-local://wt/web/dapi"
   },
   "stderr": true
 }

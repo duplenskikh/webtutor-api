@@ -30,7 +30,7 @@ function ensureWebRule() {
   webRuleDocument.TopElem.url.Value = `${dapi.config.api.pattern}/*`;
   webRuleDocument.TopElem.is_enabled.Value = true;
   webRuleDocument.TopElem.redirect_type.Value = 0;
-  webRuleDocument.TopElem.redirect_url.Value = `${dapi.config.api.cwd}/api.html`;
+  webRuleDocument.TopElem.redirect_url.Value = UrlAppendPath(dapi.config.api.basepath, "api.html")
   webRuleDocument.Save();
 
   alert(`${"🚀"} Web rule successfully ${webRuleDocument.NeverSaved ? "created" : "updated"} ${webRuleDocument.DocID}`);

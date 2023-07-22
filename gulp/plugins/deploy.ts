@@ -33,16 +33,9 @@ export const deploy = (file: string, outerCallback?: CallableFunction) => {
       throw new pluginError(PLUGIN_NAME, "Only buffer accepted");
     }
 
-    const API_WEBTUTOR_BASE_PATH = JSON.parse(readFileSync("src/config.json", "utf-8")).api.cwd;
-
-    console.log(file, join(API_WEBTUTOR_BASE_PATH, dirname(file.split(sep).join(posix.sep)).replace(SRC_PATH, "")));
-
-    request(`${DEPLOYER_URL}?filepath=${posix.join(
-      join(API_WEBTUTOR_BASE_PATH, dirname(file.split(sep).join(posix.sep)).replace(SRC_PATH, "")),
-      parse(chunk.relative).base
-    )}`, {
+    request(`${DEPLOYER_URL}?file=${chunk.relative}`, {
       method: "POST",
-      data: chunk.contents,
+      content: chunk.contents,
       headers: {
         "x-app-id": DEPLOYER_APP_ID,
         Authorization: authorizationHeader,
