@@ -15,7 +15,7 @@ export function functions(): Route[] {
   }];
 }
 
-export function deploy(params: HandlerParams,req: Request) {
+export function deploy(params: Object, req: Request) {
   const url = UrlAppendPath(dapi.config.api.basepath, params.file);
 
   const newContent = req.Body;

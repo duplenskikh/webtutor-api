@@ -1,4 +1,4 @@
-import { HandlerParams, Route } from "..";
+import { Route } from "..";
 import { dapi } from "../dapi";
 
 export function functions(): Route[] {
@@ -16,7 +16,7 @@ export function functions(): Route[] {
   }];
 }
 
-export function getPosition(params: HandlerParams, Request: Request) {
+export function getPosition(params: Object) {
   const positionDocument = tools.open_doc<PositionDocument>(params.id);
 
   if (positionDocument === undefined) {

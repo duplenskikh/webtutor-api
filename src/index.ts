@@ -18,7 +18,7 @@ type Services = {
   events: typeof import("./services/events");
 }
 
-type HandlerParam = {
+type RouteParameters = {
   type: "string" | "number" | "date" | "array" | "boolean";
   defaultValue?: string | number | boolean | null;
   optional?: boolean;
@@ -33,10 +33,7 @@ type HandlerParam = {
   real?: boolean;
 }
 
-export type HandlerParams = {
-  __strict?: boolean;
-  [key: string]: HandlerParam | string | any;
-}
+export type HandlerParams = { __strict?: boolean } & { [key: string]: RouteParameters | string };
 
 export type Route = {
   method: "GET" | "POST";

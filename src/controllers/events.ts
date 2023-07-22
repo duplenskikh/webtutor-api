@@ -15,10 +15,10 @@ export function functions(): Route[] {
   }];
 }
 
-export function getEvent(params: HandlerParams, Request: Request) {
+export function getEvent() {
   return dapi.utils.response.ok(`curUserID is ${Request.Session.Env.curUserID}`);
 }
 
-export function getEvents(params: HandlerParams, req: Request) {
+export function getEvents(_params: Object, req: Request) {
   return dapi.utils.response.ok(dapi.utils.paginator.gather(dapi.services.events.getEvents(), req.Query));
 }

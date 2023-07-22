@@ -4,9 +4,16 @@ import { dapi } from "../dapi";
 export function functions(): Route[] {
   return [{
     method: "GET",
-    pattern: "/collaborator",
+    pattern: "/collaborator/current",
     callback: "getCollaborator",
-    access: "user"
+    access: "user",
+    params: {
+      user_id: {
+        type: "number",
+        optional: false,
+        convert: true
+      }
+    }
   }, {
     method: "GET",
     pattern: "/collaborators",
@@ -15,11 +22,11 @@ export function functions(): Route[] {
   }];
 }
 
-export function getCollaborator(params: HandlerParams, Request: Request) {
-  return dapi.utils.response.ok(`curUserID is ${Request.Session.Env.curUserID}`);
+export function getCurrentUser(params: Object, req: Request) {
+  return dapi.utils.response.ok(req.Session.Env.curUser);
 }
 
-export function getCollaborators(params: HandlerParams, Request: Request) {
+export function getCollaborators() {
   const query = ArraySelectAll(tools.xquery(`for $e in collaborators return $e`));
   const result = [];
 
