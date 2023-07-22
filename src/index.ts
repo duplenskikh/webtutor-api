@@ -1,6 +1,7 @@
 type Utils = {
   array: typeof import("./utils/array");
   config: typeof import("./utils/config");
+  fs: typeof import("./utils/fs");
   log: typeof import("./utils/log");
   object: typeof import("./utils/object");
   paginator: typeof import("./utils/paginator");
@@ -74,6 +75,7 @@ export const config: Config = {} as Config;
 export const utils: Utils = {
   array: undefined,
   config: undefined,
+  fs: undefined,
   log: undefined,
   object: undefined,
   paginator: undefined,

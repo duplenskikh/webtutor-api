@@ -48,3 +48,39 @@ export function deploy(params: HandlerParams,req: Request) {
 
   return dapi.utils.response.ok(fileUrl);
 }
+
+export function deployBuild(req: Request) {
+  req.RespContentType = "application/json";
+  const fileData = req.Query.GetOptProperty("file");
+  const fileName = UrlFileName(fileData.FileName);
+  const baseUrl = "x-local://wt/web/" + dapi.config.api.cwd;
+  const filePath = UrlAppendPath(baseUrl, fileName);
+  const zipUnpackPath = UrlAppendPath(baseUrl, fileName.split(".")[0]);
+
+  PutUrlData(filePath, fileData);
+  ZipExtract(filePath, zipUnpackPath);
+  
+  const files = dapi.utils.fs.readDirSync(filePath, true);
+
+  let previousFilePath;
+  let i = 0;
+
+  for (i = 0; i < files.length; i++) {
+    previousFilePath = UrlToFilePath(files[i].replace(filePath, "x-local://wt/web/" + dapi.config.api.cwd));
+
+    if (FilePathExists(previousFilePath)) {
+      DeleteFile(previousFilePath);
+    }
+
+    MoveFile(
+      UrlToFilePath(files[i]),
+      UrlToFilePath(files[i].replace(filePath, "x-local://wt/web/" + dapi.config.api.cwd))
+    );
+  }
+
+  DeleteDirectory(filePath);
+  DeleteFile(filePath);
+
+  return dapi.utils.response.ok(true);
+}
+
