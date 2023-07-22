@@ -18,7 +18,7 @@ export function handle(req: Request, res: Response) {
     return dapi.utils.response.abort("Необходима авторизация", 401);
   }
 
-  if (auth.type != route.access || route.access == "both") {
+  if (!isAnonymous && auth.type != route.access && route.access != "both") {
     return dapi.utils.response.abort("Доступ запрещён", 403);
   }
 
