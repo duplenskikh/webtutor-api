@@ -65,6 +65,7 @@ export const Headers = {
 
 export const routes: Route[] = [];
 export const config: Config = {} as Config;
+export const basepath: string | null = null;
 
 export const utils: Utils = {
   array: undefined,
