@@ -32,7 +32,7 @@ export function abort<T>(message: string, statusCode: number = 500, data: T = nu
   return {
     statusCode,
     data,
-    message
+    message: RValue(message)
   };
 }
 
