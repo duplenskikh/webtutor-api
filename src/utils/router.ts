@@ -56,7 +56,6 @@ export function init() {
         pattern: obj.pattern,
         callback: obj.callback,
         access: obj.access,
-        url: apis[i],
         params: obj.HasProperty("params") ? obj.params : {}
       });
     }
