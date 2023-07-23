@@ -4,7 +4,7 @@ $sourceSampleFilePath = "$basePath/api_ext(sample).xml"
 
 if (-not(Test-Path -Path $sourceFilePath)) {
   if (-not(Test-Path -Path $sourceSampleFilePath)) {
-    Write-Error "Файла с примером $sourceSampleFilePath не существует"
+    Write-Error "Example file $sourceSampleFilePath does not exist"
     exit 1
   }
 
@@ -20,7 +20,7 @@ try {
   }
 }
 catch {
-  Write-Error "Невозможно прочитать контент файла $sourceFilePath"
+  Write-Error "Can not read file $sourceFilePath"
   exit 1
 }
 
@@ -37,7 +37,7 @@ function check($apis) {
 $checkResult = check($sourceXmlDocument.api_ext.apis.api)
 
 if ($checkResult -eq $true) {
-  Write-Host "DAPI уже добавлен в $sourceFilePath"
+  Write-Host "DAPI node already appended to file $sourceFilePath"
   exit 0
 }
 
@@ -55,3 +55,5 @@ if ($checkResult -eq $true) {
 $dapiNode = $sourceXmlDocument.ImportNode(($dapiElement).DocumentElement, $true)
 $sourceXmlDocument.api_ext.apis.AppendChild($dapiNode) | Out-Null
 $sourceXmlDocument.Save($sourceFilePath)
+
+Write-Host "DAPI node successfully added to $sourceFilePath file"
