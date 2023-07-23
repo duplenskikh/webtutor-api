@@ -1,5 +1,6 @@
-import { dest, src, task, watch } from "gulp";
+import { dest, src, task } from "gulp";
 import chalk from "chalk";
+import watch from "gulp-watch";
 
 import format from "date-format";
 
