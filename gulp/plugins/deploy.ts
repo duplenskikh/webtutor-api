@@ -1,6 +1,7 @@
 const PLUGIN_NAME = "gulp-deploy";
 
-import { request } from "urllib";
+import https from "https";
+import axios from "axios";
 import { obj } from "through2";
 import pluginError from "plugin-error";
 
@@ -24,6 +25,10 @@ const authorizationHeader = `Basic ${Buffer.from(`${DEPLOYER_LOGIN}:${DEPLOYER_P
 
 const APIConfigJSON = JSON.parse(readFileSync(CONFIG_JSON, "utf-8"));
 
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false,
+});
+
 const normalizePath = (path: string) => sep === "\\" ? path.split(sep).join(posix.sep) : path;
 
 export const deploy = (file: string, url) => {
@@ -37,31 +42,23 @@ export const deploy = (file: string, url) => {
 
     console.log(chalk.bgYellowBright(`Отправляем файл ${chunkRelative} по адресу ${requestUrl}`));
 
-    request(`${requestUrl}?file=${chunkRelative}`, {
-      method: "POST",
-      content: chunk.contents,
+    axios.post(`${requestUrl}?file=${chunkRelative}`, chunk.contents, {
+      httpsAgent,
       headers: {
         "x-app-id": DEPLOYER_APP_ID,
         Authorization: authorizationHeader,
-      },
+      }
     })
-      .then(({ statusCode, data }) => {
-        if (statusCode === 304) {
-          console.log(chalk.bgRedBright("Файл не был изменен на удаленном сервере, так как содержит тот же контент"));
-          return;
-        }
-
-        if (statusCode !== 200) {
-          console.log(chalk.bgRed("Произошла ошибка при деплое файла"));
-          console.log(chalk.red(`Статус запроса ${statusCode}`));
-          console.log(`Сообщение об ошибке: ${data}`);
-          return;
-        }
-
-        console.log(chalk.green(`${new Date().toLocaleString("ru-RU")}. Файл ${basename(file)} был успешно сохранен по пути ${JSON.parse(data).data}`));
+      .then(({ data }) => {
+        console.log(chalk.green(`${new Date().toLocaleString("ru-RU")}. Файл ${basename(file)} был успешно сохранен по пути ${data.data}`));
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(({ response }) => {
+        console.log(chalk.bgRed("Произошла ошибка при деплое файла"));
+        console.log(chalk.red(`Статус запроса ${response.status}`));
+
+        if (response.data?.message) {
+          console.log(`Сообщение об ошибке: ${response.data.message}`);
+        }
       });
 
     cb(null, chunk);
