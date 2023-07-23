@@ -4,12 +4,12 @@ import { dapi } from "../dapi";
 export function functions(): Route[] {
   return [{
     method: "GET",
-    pattern: "/example",
-    callback: "example",
+    pattern: "/ping",
+    callback: "pong",
     access: "anonymous"
   }];
 }
 
-export function example() {
-  return dapi.utils.response.ok("check it");
+export function pong() {
+  return dapi.utils.response.ok("pong");
 }
