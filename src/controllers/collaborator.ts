@@ -19,17 +19,11 @@ export function getCurrentUser(_params: Object, req: Request) {
   return dapi.utils.response.ok(req.Session.Env.curUser);
 }
 
-export function getCollaborators() {
-  const query = ArraySelectAll(tools.xquery("for $e in collaborators return $e"));
-  const result = [];
-
-  for (let i = 0; i < query.length; i++) {
-    result.push({
-      id: query[i].id.Value,
-      fullname: query[i].fullname.Value,
-      sex: query[i].sex.Value
-    });
-  }
-
-  return dapi.utils.response.ok(result);
+export function getCollaborators(params: Object) {
+  return dapi.utils.response.ok(
+    dapi.utils.paginator.gather(
+      dapi.utils.query.extract("for $e in collaborators return $e"),
+      params
+    )
+  );
 }

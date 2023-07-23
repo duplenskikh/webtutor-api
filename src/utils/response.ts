@@ -34,6 +34,10 @@ export function abort<T>(message: string, statusCode: number = 500, data: T = nu
   };
 }
 
+export function forbidden(message: string) {
+  return abort(message, 403);
+}
+
 export function notFound(message: string) {
   return abort(message, 404);
 }
