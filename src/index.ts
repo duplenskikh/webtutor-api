@@ -39,12 +39,14 @@ export type Route = {
   method: "GET" | "POST";
   pattern: string;
   callback: string;
+  url?: string;
   access: "user" | "application" | "both" | "anonymous";
   params?: HandlerParams;
 }
 
 export type Config = {
   env: "production" | "development";
+  basepath: string;
   version: string;
   pattern: string;
   stderr: boolean;

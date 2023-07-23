@@ -30,10 +30,11 @@ function ensureWebRule() {
   webRuleDocument.TopElem.url.Value = `${dapi.config.pattern}/*`;
   webRuleDocument.TopElem.is_enabled.Value = true;
   webRuleDocument.TopElem.redirect_type.Value = 0;
-  webRuleDocument.TopElem.redirect_url.Value = dapi.basepath.replace("x-local://wt/web", "") + "/api.html";
+  webRuleDocument.TopElem.redirect_url.Value = `/${dapi.config.basepath}/api.html`;
   webRuleDocument.Save();
 
-  alert(`Web rule successfully ${webRuleDocument.NeverSaved ? "created" : "updated"} ${webRuleDocument.DocID}`);
+  alert(`Правило редиректа ${webRuleDocument.DocID} успешно ${webRuleDocument.NeverSaved ? "создано" : "обновлено"}`);
+  alert(`Все запросы ${webRuleDocument.TopElem.url.Value} будут перенаправляться на ${webRuleDocument.TopElem.redirect_url.Value}`);
 }
 
 export function init() {
@@ -56,6 +57,7 @@ export function init() {
         pattern: obj.pattern,
         callback: obj.callback,
         access: obj.access,
+        url: apis[i],
         params: obj.HasProperty("params") ? obj.params : {}
       });
     }
