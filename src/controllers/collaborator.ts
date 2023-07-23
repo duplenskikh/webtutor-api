@@ -5,7 +5,7 @@ export function functions(): Route[] {
   return [{
     method: "GET",
     pattern: "/collaborator/current",
-    callback: "getCollaborator",
+    callback: "getCurrentUser",
     access: "user"
   }, {
     method: "GET",
