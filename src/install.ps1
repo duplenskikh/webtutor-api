@@ -8,12 +8,12 @@ if (-not(Test-Path -Path $sourceFilePath)) {
     exit 1
   }
 
-  $sampleContent = [xml](get-content $sourceSampleFilePath)
+  $sampleContent = [xml](Get-Content $sourceSampleFilePath)
   $sampleContent.save($sourceFilePath)
 }
 
 try {
-  [xml]$sourceXmlDocument = Get-Content -Path $sourceFilePath
+  [xml]$sourceXmlDocument = Get-Content $sourceFilePath
 
   if ($null -eq $sourceXmlDocument) {
     throw
@@ -41,12 +41,15 @@ if ($checkResult -eq $true) {
   exit 0
 }
 
+$configJSON = Get-Content "$pwd/config.json" | ConvertFrom-Json
+$apiBasePath = $configJSON.api.basepath
+
 [xml]$dapiElement = @"
 <api>
     <name>DAPI</name>
     <libs>
       <lib>
-        <path>x-local://wt/web/dapi/index.xml</path>
+        <path>$apiBasePath/index.xml</path>
       </lib>
     </libs>
   </api>
