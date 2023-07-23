@@ -1,11 +1,11 @@
-import { HandlerParams, Route } from "..";
+import { Route } from "..";
 import { dapi } from "../dapi";
 
 export function functions(): Route[] {
   return [{
     method: "GET",
-    pattern: "/collaborator",
-    callback: "getCollaborator",
+    pattern: "/collaborator/current",
+    callback: "getCurrentUser",
     access: "user"
   }, {
     method: "GET",
@@ -15,12 +15,12 @@ export function functions(): Route[] {
   }];
 }
 
-export function getCollaborator(params: HandlerParams, Request: Request) {
-  return dapi.utils.response.ok(`curUserID is ${Request.Session.Env.curUserID}`);
+export function getCurrentUser(_params: Object, req: Request) {
+  return dapi.utils.response.ok(req.Session.Env.curUser);
 }
 
-export function getCollaborators(params: HandlerParams, Request: Request) {
-  const query = ArraySelectAll(tools.xquery(`for $e in collaborators return $e`));
+export function getCollaborators() {
+  const query = ArraySelectAll(tools.xquery("for $e in collaborators return $e"));
   const result = [];
 
   for (let i = 0; i < query.length; i++) {

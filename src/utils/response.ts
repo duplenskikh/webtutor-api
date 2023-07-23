@@ -3,10 +3,8 @@ import { dapi } from "../dapi";
 
 export function json(response: string | APIResponse<unknown>, res: Response) {
   if (dapi.utils.type.isPrimitive(response)) {
-    return tools.object_to_text({
-      data: response
-    }, "json");
-}
+    return tools.object_to_text({ data: response }, "json");
+  }
 
   const statusCode = response.GetOptProperty("statusCode", 200);
 
@@ -32,7 +30,7 @@ export function abort<T>(message: string, statusCode: number = 500, data: T = nu
   return {
     statusCode,
     data,
-    message
+    message: RValue(message)
   };
 }
 

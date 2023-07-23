@@ -8,10 +8,12 @@ export function init() {
     alert(error);
     throw new Error(error);
   }
-  
+
   dapi.config = tools.read_object(LoadUrlData(configUrl));
-  // FIXME: need change to detect root folder for api
-  dapi.config.api.cwd = FilePathToUrl(ParentDirectory(UrlToFilePath("."))).split("/wt/web")[1];
-  
-  alert(`${"🚀"} Config loaded:\n${tools.object_to_text(dapi.config, "json")}`);
+
+  if (IsEmptyValue(dapi.config.api.basepath)) {
+    dapi.config.api.basepath = UrlToFilePath("./..");
+  }
+
+  alert(`Config loaded:\n${tools.object_to_text(dapi.config, "json")}`);
 }
