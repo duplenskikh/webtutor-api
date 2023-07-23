@@ -21,7 +21,7 @@
     "@types/urllib": "^2.33.0",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
-    "@umbrik/webtutor-types": "^7.47.1",
+    "@umbrik/webtutor-types": "^7.50.0",
     "chalk": "4.1.2",
     "date-format": "^4.0.14",
     "del": "^6.1.1",
