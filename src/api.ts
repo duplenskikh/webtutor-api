@@ -32,7 +32,7 @@ export function handle(req: Request, res: Response) {
         params = dapi.utils.validator.parse(req, route.params);
       }
     } catch (error) {
-      return dapi.utils.response.abort(error.message, 422);
+      return dapi.utils.response.abort(error, 422);
     }
 
     return CallObjectMethod(handler, route.callback, [params, req, res]);
