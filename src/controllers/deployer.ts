@@ -64,23 +64,19 @@ export function deployBuild(params: Object, req: Request) {
   const files = dapi.utils.fs.readDirSync(destinationZipPath, true);
 
   let i = 0;
-  let splittedFilePath;
+  let splittedFileUrl;
   let previousFilePath;
 
   for (i = 0; i < files.length; i++) {
-    splittedFilePath = files[i].split("/");
-    splittedFilePath.splice(splittedFilePath.indexOf("packages"), 2);
-    previousFilePath = splittedFilePath.join("/");
+    splittedFileUrl = files[i].split("/");
+    splittedFileUrl.splice(splittedFileUrl.indexOf("packages"), 2);
+    previousFilePath = UrlToFilePath(splittedFileUrl.join("/"));
 
     if (FilePathExists(previousFilePath)) {
       DeleteFile(previousFilePath);
     }
 
-    try {
-      MoveFile(UrlToFilePath(files[i]), UrlToFilePath(previousFilePath));
-    } catch (error) {
-      return dapi.utils.response.ok([files[i], previousFilePath]);
-    }
+    MoveFile(UrlToFilePath(files[i]), previousFilePath);
   }
 
   DeleteDirectory(destinationZipPath);
