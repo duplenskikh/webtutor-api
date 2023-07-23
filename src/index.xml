@@ -2,12 +2,12 @@
 <SPXML-INLINE-FORM>
 <OnInit PROPERTY="1" EXPR="
     try {
-      alert('🚀 Registering dapi');
+      alert('Registering DAPI');
       RegisterCodeLibrary('./index.bs');
       dapi.init();
-      alert('🚀 dapi successfully registered');
+      alert('DAPI successfully registered');
     } catch (error) {
-      alert('💩 dapi registration fail. ' + error);
+      alert('DAPI registration fail. ' + error);
     }
 "/>
 </SPXML-INLINE-FORM>
