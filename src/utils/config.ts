@@ -15,5 +15,5 @@ export function init() {
     dapi.config.api.basepath = UrlToFilePath("./..");
   }
 
-  alert(`${"🚀"} Config loaded:\n${tools.object_to_text(dapi.config, "json")}`);
+  alert(`Config loaded:\n${tools.object_to_text(dapi.config, "json")}`);
 }

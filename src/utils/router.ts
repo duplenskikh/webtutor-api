@@ -33,7 +33,7 @@ function ensureWebRule() {
   webRuleDocument.TopElem.redirect_url.Value = dapi.config.api.basepath.replace("x-local://wt/web", "") + "/api.html";
   webRuleDocument.Save();
 
-  alert(`${"🚀"} Web rule successfully ${webRuleDocument.NeverSaved ? "created" : "updated"} ${webRuleDocument.DocID}`);
+  alert(`Web rule successfully ${webRuleDocument.NeverSaved ? "created" : "updated"} ${webRuleDocument.DocID}`);
 }
 
 export function init() {
