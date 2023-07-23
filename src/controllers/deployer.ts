@@ -79,5 +79,8 @@ export function deployBuild(params: Object, req: Request) {
 
   DeleteDirectory(destinationZipPath);
   DeleteFile(filePath);
+
+  DropFormsCache(`x-local://wt/web/${dapi.config.basepath}/*`);
+  dapi.init();
 }
 
