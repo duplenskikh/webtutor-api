@@ -1,9 +1,6 @@
 {
   "env": "development",
   "version": "9.9.9",
-  "api": {
-    "pattern": "/api/v1",
-    "basepath": "x-local://wt/web/dapi"
-  },
+  "pattern": "/api/v1",
   "stderr": true
 }

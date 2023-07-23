@@ -2,7 +2,7 @@ import { Route } from "..";
 import { dapi } from "../dapi";
 
 export function getRoute(pattern: string) {
-  pattern = StrReplaceOne(pattern, dapi.config.api.pattern, "");
+  pattern = StrReplaceOne(pattern, dapi.config.pattern, "");
   let i = 0;
 
   for (i = 0; i < dapi.routes.length; i++) {
@@ -13,7 +13,7 @@ export function getRoute(pattern: string) {
 }
 
 function ensureWebRule() {
-  const webRuleCode = `dapi_${dapi.config.api.pattern}`;
+  const webRuleCode = `dapi_${dapi.config.pattern}`;
   const query = ArrayOptFirstElem(tools.xquery(`for $e in web_rules where $e/code = ${SqlLiteral(webRuleCode)} return $e`));
 
   let webRuleDocument;
@@ -27,10 +27,10 @@ function ensureWebRule() {
 
   webRuleDocument.TopElem.code.Value = webRuleCode;
   webRuleDocument.TopElem.name.Value = "Правило для api";
-  webRuleDocument.TopElem.url.Value = `${dapi.config.api.pattern}/*`;
+  webRuleDocument.TopElem.url.Value = `${dapi.config.pattern}/*`;
   webRuleDocument.TopElem.is_enabled.Value = true;
   webRuleDocument.TopElem.redirect_type.Value = 0;
-  webRuleDocument.TopElem.redirect_url.Value = dapi.config.api.basepath.replace("x-local://wt/web", "") + "/api.html";
+  webRuleDocument.TopElem.redirect_url.Value = dapi.basepath.replace("x-local://wt/web", "") + "/api.html";
   webRuleDocument.Save();
 
   alert(`Web rule successfully ${webRuleDocument.NeverSaved ? "created" : "updated"} ${webRuleDocument.DocID}`);
@@ -56,7 +56,6 @@ export function init() {
         pattern: obj.pattern,
         callback: obj.callback,
         access: obj.access,
-        url: apis[i],
         params: obj.HasProperty("params") ? obj.params : {}
       });
     }

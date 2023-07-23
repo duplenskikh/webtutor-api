@@ -46,10 +46,7 @@ export type Route = {
 export type Config = {
   env: "production" | "development";
   version: string;
-  api: {
-    pattern: string;
-    basepath: string;
-  },
+  pattern: string;
   stderr: boolean;
 }
 
@@ -68,6 +65,7 @@ export const Headers = {
 
 export const routes: Route[] = [];
 export const config: Config = {} as Config;
+export const basepath: string | null = null;
 
 export const utils: Utils = {
   array: undefined,
@@ -111,5 +109,5 @@ export function init() {
   loadInternals(services, "./services");
   utils.config.init();
   utils.router.init();
-  alert(`API is ready: ${config.api.pattern}`);
+  alert(`API is ready: ${config.pattern}`);
 }
