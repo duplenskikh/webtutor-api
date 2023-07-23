@@ -64,9 +64,7 @@ export function parse(
 
   for (i = 0; i < sanitizedSchema.length; i++) {
     propertyKey = sanitizedSchema[i];
-    propertySchema = dapi.utils.type.isString(schema[propertyKey]) ? {
-      type: schema
-    } : schema[propertyKey];
+    propertySchema = dapi.utils.type.isString(schema[propertyKey]) ? { type: schema } : schema[propertyKey];
 
     type = propertySchema.GetOptProperty("type");
 

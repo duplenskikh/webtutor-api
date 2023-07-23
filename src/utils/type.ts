@@ -34,6 +34,7 @@ export type Primitive = number | boolean | string | undefined | null;
 
 export function isPrimitive(value: unknown): value is Primitive {
   const type = DataType(value);
+  // eslint-disable-next-line max-len
   return type == "integer" || type == "float" || type == "bool" || type == "string" || value === undefined || value === null;
 }
 

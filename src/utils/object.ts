@@ -37,7 +37,7 @@ export function excludeKeys(source: Object, keys: string[]) {
 
 export function extend(target: Object, sources: Object[] | Object): Object {
   if (dapi.utils.type.isUndef(target)) {
-    throw "Target object is undefined";
+    throw new Error("Target object is undefined");
   }
 
   sources = (IsArray(sources) ? sources : [sources]) as Object[];
@@ -53,7 +53,7 @@ export function extend(target: Object, sources: Object[] | Object): Object {
     }
 
     if (dapi.utils.type.entityType(source) != "JsObject") {
-      throw "Source element is not an object";
+      throw new Error("Source element is not an object");
     }
 
     for (prop in source) {

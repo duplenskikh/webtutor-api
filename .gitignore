@@ -133,3 +133,4 @@ build/
 .DS_Store
 
 .env
+packages/

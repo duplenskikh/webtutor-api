@@ -1,7 +1,7 @@
 import { dapi } from "./dapi";
 
 export function handle(req: Request, res: Response) {
-  const route = dapi.utils.router.getRoute(req.UrlPath, res);
+  const route = dapi.utils.router.getRoute(req.UrlPath);
 
   if (dapi.utils.type.isUndef(route)) {
     req.RespContentType = "application/json; charset=utf-8";
@@ -10,16 +10,19 @@ export function handle(req: Request, res: Response) {
 
   req.RespContentType = route.GetOptProperty("contentType", "application/json; charset=utf-8");
 
-  const auth = dapi.utils.passport.authenticate(req);
   const isAnonymous = route.access == "anonymous";
 
-  if (!isAnonymous && auth === null) {
-    req.Session.SetProperty("url_prev_auth", dapi.utils.request.getHeader(req.Header, "referer"));
-    return dapi.utils.response.abort("Необходима авторизация", 401);
-  }
+  if (!isAnonymous) {
+    const auth = dapi.utils.passport.authenticate(req);
 
-  if (auth.type != route.access || route.access == "both") {
-    return dapi.utils.response.abort("Доступ запрещён", 403);
+    if (auth === null) {
+      req.Session.SetProperty("url_prev_auth", dapi.utils.request.getHeader(req.Header, "referer"));
+      return dapi.utils.response.abort("Необходима авторизация", 401);
+    }
+
+    if (auth.type != route.access && route.access != "both") {
+      return dapi.utils.response.abort("Доступ запрещён", 403);
+    }
   }
 
   try {
@@ -35,9 +38,9 @@ export function handle(req: Request, res: Response) {
       return dapi.utils.response.abort(error, 422);
     }
 
-    return CallObjectMethod(handler, route.callback, [params, Request, Response]);
+    return CallObjectMethod(handler, route.callback, [params, req, res]);
   } catch (error) {
-    return dapi.utils.response.abort(error, 500);
+    return dapi.utils.response.abort(error);
   }
 }
 

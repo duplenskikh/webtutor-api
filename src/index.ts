@@ -1,6 +1,7 @@
 type Utils = {
   array: typeof import("./utils/array");
   config: typeof import("./utils/config");
+  fs: typeof import("./utils/fs");
   log: typeof import("./utils/log");
   object: typeof import("./utils/object");
   paginator: typeof import("./utils/paginator");
@@ -17,7 +18,7 @@ type Services = {
   events: typeof import("./services/events");
 }
 
-type HandlerParam = {
+type RouteParameters = {
   type: "string" | "number" | "date" | "array" | "boolean";
   defaultValue?: string | number | boolean | null;
   optional?: boolean;
@@ -32,10 +33,7 @@ type HandlerParam = {
   real?: boolean;
 }
 
-export type HandlerParams = {
-  __strict?: boolean;
-  [key: string]: HandlerParam | string | any;
-}
+export type HandlerParams = { __strict?: boolean } & { [key: string]: RouteParameters | string };
 
 export type Route = {
   method: "GET" | "POST";
@@ -50,7 +48,7 @@ export type Config = {
   version: string;
   api: {
     pattern: string;
-    cwd: string;
+    basepath: string;
   },
   stderr: boolean;
 }
@@ -74,6 +72,7 @@ export const config: Config = {} as Config;
 export const utils: Utils = {
   array: undefined,
   config: undefined,
+  fs: undefined,
   log: undefined,
   object: undefined,
   paginator: undefined,
@@ -96,15 +95,14 @@ function loadInternals(container: Utils | Services, url: string) {
   let fileName;
 
   for (let i = 0; i < files.length; i++) {
-    fileName = FileName(UrlToFilePath(files[i])).split(".")[0]
-    alert(`${"⚙️"} ${type} "${fileName}" is loading with hash "${Md5Hex(LoadUrlData(files[i]))}"`);
-    
+    fileName = FileName(UrlToFilePath(files[i])).split(".")[0];
+
     container.SetProperty(
       fileName,
       OpenCodeLib(files[i])
     );
 
-    alert(`${"🚀"} ${type} "${fileName}" was successfully loaded. Hash "${Md5Hex(LoadUrlData(files[i]))}"`);
+    alert(`${fileName} was successfully loaded as part of ${type}, hash is ${Md5Hex(LoadUrlData(files[i]))}`);
   }
 }
 
@@ -113,4 +111,5 @@ export function init() {
   loadInternals(services, "./services");
   utils.config.init();
   utils.router.init();
+  alert(`API is ready: ${config.api.pattern}`);
 }

@@ -3,75 +3,66 @@ const PLUGIN_NAME = "gulp-deploy";
 import { request } from "urllib";
 import { obj } from "through2";
 import pluginError from "plugin-error";
-import { join } from "path";
+
+import chalk from "chalk";
 
 import { config } from "dotenv";
-import { SRC_PATH } from "../consts";
 config();
 
-import {
-  dirname,
-  basename,
-  posix,
-  sep,
-  parse
-} from "path";
+import { basename, posix, sep } from "path";
 import { readFileSync } from "fs";
+import { CONFIG_JSON } from "../consts";
 
 const {
   DEPLOYER_LOGIN,
   DEPLOYER_PASSWORD,
-  DEPLOYER_URL,
+  DEPLOYER_HOST,
   DEPLOYER_APP_ID
 } = process.env;
 
 const authorizationHeader = `Basic ${Buffer.from(`${DEPLOYER_LOGIN}:${DEPLOYER_PASSWORD}`).toString("base64")}`;
 
-export const deploy = (file: string, outerCallback?: CallableFunction) => {
+const APIConfigJSON = JSON.parse(readFileSync(CONFIG_JSON, "utf-8"));
+
+const normalizePath = (path: string) => sep === "\\" ? path.split(sep).join(posix.sep) : path;
+
+export const deploy = (file: string, url) => {
   return obj((chunk, _, cb) => {
     if (!chunk.isBuffer()) {
       throw new pluginError(PLUGIN_NAME, "Only buffer accepted");
     }
 
-    const API_WEBTUTOR_BASE_PATH = JSON.parse(readFileSync("src/config.json", "utf-8")).api.cwd;
+    const requestUrl = `${DEPLOYER_HOST}${APIConfigJSON.api.pattern}/${url}`;
+    const chunkRelative = normalizePath(chunk.relative);
 
-    console.log(file, join(API_WEBTUTOR_BASE_PATH, dirname(file.split(sep).join(posix.sep)).replace(SRC_PATH, "")));
+    console.log(chalk.bgYellowBright(`Отправляем файл ${chunkRelative} по адресу ${requestUrl}`));
 
-    request(`${DEPLOYER_URL}?filepath=${posix.join(
-      join(API_WEBTUTOR_BASE_PATH, dirname(file.split(sep).join(posix.sep)).replace(SRC_PATH, "")),
-      parse(chunk.relative).base
-    )}`, {
+    request(`${requestUrl}?file=${chunkRelative}`, {
       method: "POST",
-      data: chunk.contents,
+      content: chunk.contents,
       headers: {
         "x-app-id": DEPLOYER_APP_ID,
         Authorization: authorizationHeader,
       },
     })
-    .then(({ statusCode, data }) => {
-      if (statusCode !== 200) {
-        console.log(`🛑 Error due to deploy ${file}`);
-
-        try {
-          console.log(`Error message ${JSON.parse(data).message}`);
-        } catch (error) {
-          console.log(`Error message ${data}`);
+      .then(({ statusCode, data }) => {
+        if (statusCode === 304) {
+          console.log(chalk.bgRedBright("Файл не был изменен на удаленном сервере, так как содержит тот же контент"));
+          return;
         }
-        console.log(`Err: ${data}`);
-        console.log(`Status code is ${statusCode}`);
-        return;
-      }
 
-      console.log(`🌐 File "${basename(file)}" was successfully deployed on server "${JSON.parse(data).data}"`);
-      console.log(`⏱️  ${new Date().toLocaleString("ru-RU")}\n`);
+        if (statusCode !== 200) {
+          console.log(chalk.bgRed("Произошла ошибка при деплое файла"));
+          console.log(chalk.red(`Статус запроса ${statusCode}`));
+          console.log(`Сообщение об ошибке: ${data}`);
+          return;
+        }
 
-      if (outerCallback instanceof Function) {
-        outerCallback(file, chunk);
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+        console.log(chalk.green(`${new Date().toLocaleString("ru-RU")}. Файл ${basename(file)} был успешно сохранен по пути ${JSON.parse(data).data}`));
+      })
+      .catch((err) => {
+        console.error(err);
+      });
 
     cb(null, chunk);
   });

@@ -1,7 +1,7 @@
 import { dapi } from "../dapi";
 
 export function exec<T>(command: string) {
-  return ArraySelectAll(tools.xquery<EventCatalogDocumentTopElem>(command));
+  return ArraySelectAll(tools.xquery<T>(command));
 }
 
 export function extract<T>(command: string) {
