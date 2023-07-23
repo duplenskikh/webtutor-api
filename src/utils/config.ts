@@ -10,10 +10,7 @@ export function init() {
   }
 
   dapi.config = tools.read_object(LoadUrlData(configUrl));
-
-  if (IsEmptyValue(dapi.config.api.basepath)) {
-    dapi.config.api.basepath = UrlToFilePath("./..");
-  }
+  dapi.config.basepath = UrlToFilePath("./..").replace("\\", "/").split("/wt/web/")[1];
 
   alert(`Config loaded:\n${tools.object_to_text(dapi.config, "json")}`);
 }

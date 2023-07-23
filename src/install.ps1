@@ -1,6 +1,32 @@
-$basePath = "$pwd/../../../source"
-$sourceFilePath = "$basePath/api_ext.xml"
-$sourceSampleFilePath = "$basePath/api_ext(sample).xml"
+function getWTWebPath($path) {
+  $parentDirectory = (Get-Item $path).Parent
+  $parentDirectoryFullname = $parentDirectory.Fullname
+
+  if ($parentDirectoryFullname -eq $null) {
+    Write-Error "parentDirectoryFullname is null $path"
+    exit 1
+  }
+
+  if (-not(Test-Path -Path $parentDirectoryFullname)) {
+    Write-Error "Error occurs when trying access to $parentDirectoryFullname"
+    exit 1
+  }
+
+  if ([string]$parentDirectory -eq "web") {
+    return $parentDirectory.Fullname
+  }
+
+  return getWTWebPath($parentDirectoryFullname)
+}
+
+$wtWebPath = getWTWebPath($pwd)
+$basePath = (Get-Item $wtWebPath).Parent.Parent.Fullname
+$sourcePath = Join-Path "$basePath"  "source"
+$sourceFilePath = Join-Path "$sourcePath" "api_ext.xml"
+$sourceSampleFilePath = Join-Path "$sourcePath" "api_ext(sample).xml"
+$indexXmlPath = Join-Path $pwd "index.xml"
+$wtXmlUrl = ([string]$indexXmlPath).replace($wtWebPath, "").replace("\", "/")
+$wtXmlUrl = "x-local://wt/web$wtXmlUrl"
 
 if (-not(Test-Path -Path $sourceFilePath)) {
   if (-not(Test-Path -Path $sourceSampleFilePath)) {
@@ -24,32 +50,18 @@ catch {
   exit 1
 }
 
-function check($apis) {
-  foreach ($api in $apis) {
-    if ($api.name -eq "DAPI") {
-      return $true
-    }
+foreach ($api in $sourceXmlDocument.api_ext.apis.api) {
+  if ($api.name -eq "DAPI") {
+    $api.ParentNode.RemoveChild($api) | Out-Null
   }
-
-  return $false
 }
-
-$checkResult = check($sourceXmlDocument.api_ext.apis.api)
-
-if ($checkResult -eq $true) {
-  Write-Host "DAPI node already appended to file $sourceFilePath"
-  exit 0
-}
-
-$configJSON = Get-Content "$pwd/config.json" | ConvertFrom-Json
-$apiBasePath = $configJSON.api.basepath
 
 [xml]$dapiElement = @"
 <api>
     <name>DAPI</name>
     <libs>
       <lib>
-        <path>$apiBasePath/index.xml</path>
+        <path>$wtXmlUrl</path>
       </lib>
     </libs>
   </api>

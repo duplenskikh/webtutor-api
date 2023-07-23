@@ -26,8 +26,7 @@ export function functions(): Route[] {
 }
 
 export function deploy(params: Object, req: Request) {
-  const url = UrlAppendPath(dapi.config.api.basepath, params.file);
-
+  const url = `x-local://wt/web/${dapi.config.basepath}/${params.file}`;
   const newContent = req.Body;
 
   if (StrLen(newContent) === 0) {
@@ -40,7 +39,6 @@ export function deploy(params: Object, req: Request) {
     return dapi.utils.response.ok(null, 304);
   }
 
-
   ObtainDirectory(ParentDirectory(UrlToFilePath(url)), true);
   PutFileData(UrlToFilePath(url), newContent);
   DropFormsCache(url);
@@ -52,7 +50,7 @@ export function deploy(params: Object, req: Request) {
 
 export function deployBuild(params: Object, req: Request) {
   req.RespContentType = "application/json";
-  const packagesPath = UrlAppendPath(dapi.config.api.basepath, "packages");
+  const packagesPath = `x-local://wt/web/${dapi.config.basepath}/packages`;
   const filePath = UrlAppendPath(packagesPath, params.file);
   const fileData = req.Body;
 
@@ -82,6 +80,7 @@ export function deployBuild(params: Object, req: Request) {
   DeleteDirectory(destinationZipPath);
   DeleteFile(filePath);
 
-  return dapi.utils.response.ok(true);
+  DropFormsCache(`x-local://wt/web/${dapi.config.basepath}/*`);
+  dapi.init();
 }
 
