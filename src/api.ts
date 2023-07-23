@@ -10,16 +10,19 @@ export function handle(req: Request, res: Response) {
 
   req.RespContentType = route.GetOptProperty("contentType", "application/json; charset=utf-8");
 
-  const auth = dapi.utils.passport.authenticate(req);
   const isAnonymous = route.access == "anonymous";
 
-  if (!isAnonymous && auth === null) {
-    req.Session.SetProperty("url_prev_auth", dapi.utils.request.getHeader(req.Header, "referer"));
-    return dapi.utils.response.abort("Необходима авторизация", 401);
-  }
+  if (!isAnonymous) {
+    const auth = dapi.utils.passport.authenticate(req);
 
-  if (!isAnonymous && auth.type != route.access && route.access != "both") {
-    return dapi.utils.response.abort("Доступ запрещён", 403);
+    if (auth === null) {
+      req.Session.SetProperty("url_prev_auth", dapi.utils.request.getHeader(req.Header, "referer"));
+      return dapi.utils.response.abort("Необходима авторизация", 401);
+    }
+
+    if (auth.type != route.access && route.access != "both") {
+      return dapi.utils.response.abort("Доступ запрещён", 403);
+    }
   }
 
   try {
