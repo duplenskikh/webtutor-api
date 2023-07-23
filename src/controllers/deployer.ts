@@ -26,7 +26,7 @@ export function functions(): Route[] {
 }
 
 export function deploy(params: Object, req: Request) {
-  const url = UrlAppendPath(dapi.config.api.basepath, params.file);
+  const url = UrlAppendPath(dapi.basepath, params.file);
 
   const newContent = req.Body;
 
@@ -52,7 +52,7 @@ export function deploy(params: Object, req: Request) {
 
 export function deployBuild(params: Object, req: Request) {
   req.RespContentType = "application/json";
-  const packagesPath = UrlAppendPath(dapi.config.api.basepath, "packages");
+  const packagesPath = UrlAppendPath(dapi.basepath, "packages");
   const filePath = UrlAppendPath(packagesPath, params.file);
   const fileData = req.Body;
 

@@ -1,6 +1,7 @@
 import { Headers, utils, services, Route, Config } from "./index";
 
 interface DAPI {
+  basepath: string;
   Headers: typeof Headers;
   routes: Route[];
   utils: typeof utils;

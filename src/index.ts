@@ -46,10 +46,7 @@ export type Route = {
 export type Config = {
   env: "production" | "development";
   version: string;
-  api: {
-    pattern: string;
-    basepath: string;
-  },
+  pattern: string;
   stderr: boolean;
 }
 
@@ -111,5 +108,5 @@ export function init() {
   loadInternals(services, "./services");
   utils.config.init();
   utils.router.init();
-  alert(`API is ready: ${config.api.pattern}`);
+  alert(`API is ready: ${config.pattern}`);
 }

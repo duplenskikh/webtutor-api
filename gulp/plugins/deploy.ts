@@ -32,7 +32,7 @@ export const deploy = (file: string, url) => {
       throw new pluginError(PLUGIN_NAME, "Only buffer accepted");
     }
 
-    const requestUrl = `${DEPLOYER_HOST}${APIConfigJSON.api.pattern}/${url}`;
+    const requestUrl = `${DEPLOYER_HOST}${APIConfigJSON.pattern}/${url}`;
     const chunkRelative = normalizePath(chunk.relative);
 
     console.log(chalk.bgYellowBright(`Отправляем файл ${chunkRelative} по адресу ${requestUrl}`));
