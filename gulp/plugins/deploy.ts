@@ -9,7 +9,7 @@ import chalk from "chalk";
 import { config } from "dotenv";
 config();
 
-import { basename } from "path";
+import { basename, posix, sep } from "path";
 import { readFileSync } from "fs";
 import { CONFIG_JSON } from "../consts";
 
@@ -24,6 +24,8 @@ const authorizationHeader = `Basic ${Buffer.from(`${DEPLOYER_LOGIN}:${DEPLOYER_P
 
 const APIConfigJSON = JSON.parse(readFileSync(CONFIG_JSON, "utf-8"));
 
+const normalizePath = (path: string) => sep === "\\" ? path.split(sep).join(posix.sep) : path;
+
 export const deploy = (file: string, url) => {
   return obj((chunk, _, cb) => {
     if (!chunk.isBuffer()) {
@@ -31,10 +33,11 @@ export const deploy = (file: string, url) => {
     }
 
     const requestUrl = `${DEPLOYER_HOST}${APIConfigJSON.api.pattern}/${url}`;
+    const chunkRelative = normalizePath(chunk.relative);
 
-    console.log(chalk.bgYellowBright(`Отправляем файл ${chunk.relative} по адресу ${requestUrl}`));
+    console.log(chalk.bgYellowBright(`Отправляем файл ${chunkRelative} по адресу ${requestUrl}`));
 
-    request(`${requestUrl}?file=${chunk.relative}`, {
+    request(`${requestUrl}?file=${chunkRelative}`, {
       method: "POST",
       content: chunk.contents,
       headers: {
@@ -42,24 +45,24 @@ export const deploy = (file: string, url) => {
         Authorization: authorizationHeader,
       },
     })
-    .then(({ statusCode, data }) => {
-      if (statusCode === 304) {
-        console.log(chalk.bgRedBright("Файл не был изменен на удаленном сервере, так как содержит тот же контент"));
-        return;
-      }
+      .then(({ statusCode, data }) => {
+        if (statusCode === 304) {
+          console.log(chalk.bgRedBright("Файл не был изменен на удаленном сервере, так как содержит тот же контент"));
+          return;
+        }
 
-      if (statusCode !== 200) {
-        console.log(chalk.bgRed("Произошла ошибка при деплое файла"));
-        console.log(chalk.red(`Статус запроса ${statusCode}`));
-        console.log(`Сообщение об ошибке: ${data}`);
-        return;
-      }
+        if (statusCode !== 200) {
+          console.log(chalk.bgRed("Произошла ошибка при деплое файла"));
+          console.log(chalk.red(`Статус запроса ${statusCode}`));
+          console.log(`Сообщение об ошибке: ${data}`);
+          return;
+        }
 
-      console.log(chalk.green(`${new Date().toLocaleString("ru-RU")}. Файл ${basename(file)} был успешно сохранен по пути ${JSON.parse(data).data}`));
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+        console.log(chalk.green(`${new Date().toLocaleString("ru-RU")}. Файл ${basename(file)} был успешно сохранен по пути ${JSON.parse(data).data}`));
+      })
+      .catch((err) => {
+        console.error(err);
+      });
 
     cb(null, chunk);
   });
