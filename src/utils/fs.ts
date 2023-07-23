@@ -1,12 +1,13 @@
-export function readDirSync(path: string, isRecursive = false, files: string[] = []): string[] {
-  const dirElements = ReadDirectory(path);
+export function readDirSync(directoryPath: string, isRecursive = false): string[] {
+  const directoryElements = ReadDirectory(directoryPath);
+  let files = [];
   let i = 0;
 
-  for (i = 0; i < dirElements.length; i++) {
-    if (IsDirectory(dirElements[i]) && isRecursive) {
-      files = ArrayUnion(files, readDirSync(dirElements[i], isRecursive, files));
+  for (i = 0; i < directoryElements.length; i++) {
+    if (IsDirectory(directoryElements[i]) && isRecursive) {
+      files = ArrayUnion(files, readDirSync(directoryElements[i], isRecursive));
     } else {
-      files.push(dirElements[i]);
+      files.push(directoryElements[i]);
     }
   }
 

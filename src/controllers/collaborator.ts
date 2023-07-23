@@ -23,7 +23,7 @@ export function functions(): Route[] {
 }
 
 export function getCurrentUser(params: Object, req: Request) {
-  return dapi.utils.response.ok(req.Session.Env.curUser);
+  return dapi.utils.response.ok([req.Session.Env.curUser, "hello from delivery2"]);
 }
 
 export function getCollaborators() {

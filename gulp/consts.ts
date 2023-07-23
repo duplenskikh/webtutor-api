@@ -11,7 +11,7 @@ export const INDEX_TS = join(SRC_PATH, "index.ts");
 export const CONFIG_JSON = join(SRC_PATH, "config.json");
 
 export const BUILD_PATH = join(PROJECT_PATH, "build");
-export const PACKAGES_PATH = join(BUILD_PATH, "packages");
+export const PACKAGES_PATH = join(PROJECT_PATH, "packages");
 
 export const WATCHED_TS_TYPES = [
   join(SRC_PATH, "controllers", "*.ts"),

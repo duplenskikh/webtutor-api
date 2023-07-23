@@ -76,7 +76,11 @@ export function deployBuild(params: Object, req: Request) {
       DeleteFile(previousFilePath);
     }
 
-    MoveFile(UrlToFilePath(files[i]), UrlToFilePath(previousFilePath));
+    try {
+      MoveFile(UrlToFilePath(files[i]), UrlToFilePath(previousFilePath));
+    } catch (error) {
+      return dapi.utils.response.ok([files[i], previousFilePath]);
+    }
   }
 
   DeleteDirectory(destinationZipPath);
