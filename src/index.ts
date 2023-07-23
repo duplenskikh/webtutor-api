@@ -96,14 +96,13 @@ function loadInternals(container: Utils | Services, url: string) {
 
   for (let i = 0; i < files.length; i++) {
     fileName = FileName(UrlToFilePath(files[i])).split(".")[0];
-    alert(`${"⚙️"} ${type} "${fileName}" is loading with hash "${Md5Hex(LoadUrlData(files[i]))}"`);
 
     container.SetProperty(
       fileName,
       OpenCodeLib(files[i])
     );
 
-    alert(`${"🚀"} ${type} "${fileName}" was successfully loaded. Hash "${Md5Hex(LoadUrlData(files[i]))}"`);
+    alert(`${fileName} was successfully loaded as part of ${type}, hash is ${Md5Hex(LoadUrlData(files[i]))}`);
   }
 }
 
@@ -112,4 +111,5 @@ export function init() {
   loadInternals(services, "./services");
   utils.config.init();
   utils.router.init();
+  alert(`API is ready: ${config.api.pattern}`);
 }
