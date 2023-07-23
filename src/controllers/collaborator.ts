@@ -1,4 +1,4 @@
-import { HandlerParams, Route } from "..";
+import { Route } from "..";
 import { dapi } from "../dapi";
 
 export function functions(): Route[] {
@@ -27,7 +27,7 @@ export function getCurrentUser(params: Object, req: Request) {
 }
 
 export function getCollaborators() {
-  const query = ArraySelectAll(tools.xquery(`for $e in collaborators return $e`));
+  const query = ArraySelectAll(tools.xquery("for $e in collaborators return $e"));
   const result = [];
 
   for (let i = 0; i < query.length; i++) {

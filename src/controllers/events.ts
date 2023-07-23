@@ -1,4 +1,4 @@
-import { HandlerParams, Route } from "..";
+import { Route } from "..";
 import { dapi } from "../dapi";
 
 export function functions(): Route[] {

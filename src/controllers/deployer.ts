@@ -1,4 +1,4 @@
-import { HandlerParams, Route } from "..";
+import { Route } from "..";
 import { dapi } from "../dapi";
 
 export function functions(): Route[] {
@@ -6,6 +6,16 @@ export function functions(): Route[] {
     method: "GET",
     pattern: "/deploy",
     callback: "deploy",
+    access: "application",
+    params: {
+      file: {
+        type: "string"
+      }
+    }
+  }, {
+    method: "GET",
+    pattern: "/deploy/build",
+    callback: "deployBuild",
     access: "application",
     params: {
       file: {
@@ -24,7 +34,7 @@ export function deploy(params: Object, req: Request) {
     dapi.utils.log.warning(`Невозможно обновить. Файл ${url} не содержит контента`, "deployer");
     return dapi.utils.response.abort("Empty file content", 400);
   }
-  
+
   if (FilePathExists(UrlToFilePath(url)) && !IsDirectory(url) && Md5Hex(LoadUrlData(url)) == Md5Hex(newContent)) {
     dapi.utils.log.warning(`Хэши старой и новой версии файла ${url} сопадают`, "deployer");
     return dapi.utils.response.ok(null, 304);
@@ -40,36 +50,36 @@ export function deploy(params: Object, req: Request) {
   return dapi.utils.response.ok(url);
 }
 
-export function deployBuild(req: Request) {
+export function deployBuild(params: Object, req: Request) {
   req.RespContentType = "application/json";
-  const fileData = req.Query.GetOptProperty("file");
-  const fileName = UrlFileName(fileData.FileName);
-  const baseUrl = "x-local://wt/web/" + dapi.config.api.basepath;
-  const filePath = UrlAppendPath(baseUrl, fileName);
-  const zipUnpackPath = UrlAppendPath(baseUrl, fileName.split(".")[0]);
+  const packagesPath = UrlAppendPath(dapi.config.api.basepath, "packages");
+  const filePath = UrlAppendPath(packagesPath, params.file);
+  const fileData = req.Body;
+
+  const destinationZipPath = StrReplaceOne(filePath, ".zip", "");
 
   PutUrlData(filePath, fileData);
-  ZipExtract(filePath, zipUnpackPath);
-  
-  const files = dapi.utils.fs.readDirSync(filePath, true);
+  ZipExtract(filePath, destinationZipPath);
 
-  let previousFilePath;
+  const files = dapi.utils.fs.readDirSync(destinationZipPath, true);
+
   let i = 0;
+  let splittedFilePath;
+  let previousFilePath;
 
   for (i = 0; i < files.length; i++) {
-    previousFilePath = UrlToFilePath(files[i].replace(filePath, "x-local://wt/web/" + dapi.config.api.basepath));
+    splittedFilePath = files[i].split("/");
+    splittedFilePath.splice(splittedFilePath.indexOf("packages"), 2);
+    previousFilePath = splittedFilePath.join("/");
 
     if (FilePathExists(previousFilePath)) {
       DeleteFile(previousFilePath);
     }
 
-    MoveFile(
-      UrlToFilePath(files[i]),
-      UrlToFilePath(files[i].replace(filePath, "x-local://wt/web/" + dapi.config.api.basepath))
-    );
+    MoveFile(UrlToFilePath(files[i]), UrlToFilePath(previousFilePath));
   }
 
-  DeleteDirectory(filePath);
+  DeleteDirectory(destinationZipPath);
   DeleteFile(filePath);
 
   return dapi.utils.response.ok(true);

@@ -1,7 +1,7 @@
 import { dapi } from "./dapi";
 
 export function handle(req: Request, res: Response) {
-  const route = dapi.utils.router.getRoute(req.UrlPath, res);
+  const route = dapi.utils.router.getRoute(req.UrlPath);
 
   if (dapi.utils.type.isUndef(route)) {
     req.RespContentType = "application/json; charset=utf-8";
@@ -35,7 +35,7 @@ export function handle(req: Request, res: Response) {
       return dapi.utils.response.abort(error.message, 422);
     }
 
-    return CallObjectMethod(handler, route.callback, [params, Request, Response]);
+    return CallObjectMethod(handler, route.callback, [params, req, res]);
   } catch (error) {
     return dapi.utils.response.abort(error);
   }

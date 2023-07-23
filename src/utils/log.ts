@@ -1,9 +1,6 @@
 import { dapi } from "../dapi";
 
-export function write(
-  message: unknown,
-  type = "INFO",
-  logCode = "common_log"
+export function write(message: unknown, type = "INFO", logCode = "common_log"
 ) {
   if (IsEmptyValue(message)) {
     write("Log message is empty", "WARNING");

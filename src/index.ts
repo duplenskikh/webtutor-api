@@ -95,9 +95,9 @@ function loadInternals(container: Utils | Services, url: string) {
   let fileName;
 
   for (let i = 0; i < files.length; i++) {
-    fileName = FileName(UrlToFilePath(files[i])).split(".")[0]
+    fileName = FileName(UrlToFilePath(files[i])).split(".")[0];
     alert(`${"⚙️"} ${type} "${fileName}" is loading with hash "${Md5Hex(LoadUrlData(files[i]))}"`);
-    
+
     container.SetProperty(
       fileName,
       OpenCodeLib(files[i])

@@ -4,27 +4,37 @@ import { request } from "urllib";
 import { obj } from "through2";
 import pluginError from "plugin-error";
 
+import chalk from "chalk";
+
 import { config } from "dotenv";
 config();
 
 import { basename } from "path";
+import { readFileSync } from "fs";
+import { CONFIG_JSON } from "../consts";
 
 const {
   DEPLOYER_LOGIN,
   DEPLOYER_PASSWORD,
-  DEPLOYER_URL,
+  DEPLOYER_HOST,
   DEPLOYER_APP_ID
 } = process.env;
 
 const authorizationHeader = `Basic ${Buffer.from(`${DEPLOYER_LOGIN}:${DEPLOYER_PASSWORD}`).toString("base64")}`;
 
-export const deploy = (file: string, outerCallback?: CallableFunction) => {
+const APIConfigJSON = JSON.parse(readFileSync(CONFIG_JSON, "utf-8"));
+
+export const deploy = (file: string, url) => {
   return obj((chunk, _, cb) => {
     if (!chunk.isBuffer()) {
       throw new pluginError(PLUGIN_NAME, "Only buffer accepted");
     }
 
-    request(`${DEPLOYER_URL}?file=${chunk.relative}`, {
+    const requestUrl = `${DEPLOYER_HOST}${APIConfigJSON.api.pattern}/${url}`;
+
+    console.log(chalk.bgYellowBright(`Отправляем файл ${chunk.relative} по адресу ${requestUrl}`));
+
+    request(`${requestUrl}?file=${chunk.relative}`, {
       method: "POST",
       content: chunk.contents,
       headers: {
@@ -33,25 +43,19 @@ export const deploy = (file: string, outerCallback?: CallableFunction) => {
       },
     })
     .then(({ statusCode, data }) => {
-      if (statusCode !== 200) {
-        console.log(`🛑 Error due to deploy ${file}`);
-
-        try {
-          console.log(`Error message ${JSON.parse(data).message}`);
-        } catch (error) {
-          console.log(`Error message ${data}`);
-        }
-        console.log(`Err: ${data}`);
-        console.log(`Status code is ${statusCode}`);
+      if (statusCode === 304) {
+        console.log(chalk.bgRedBright("Файл не был изменен на удаленном сервере, так как содержит тот же контент"));
         return;
       }
 
-      console.log(`🌐 File "${basename(file)}" was successfully deployed on server "${JSON.parse(data).data}"`);
-      console.log(`⏱️  ${new Date().toLocaleString("ru-RU")}\n`);
-
-      if (outerCallback instanceof Function) {
-        outerCallback(file, chunk);
+      if (statusCode !== 200) {
+        console.log(chalk.bgRed("Произошла ошибка при деплое файла"));
+        console.log(chalk.red(`Статус запроса ${statusCode}`));
+        console.log(`Сообщение об ошибке: ${data}`);
+        return;
       }
+
+      console.log(chalk.green(`${new Date().toLocaleString("ru-RU")}. Файл ${basename(file)} был успешно сохранен по пути ${JSON.parse(data).data}`));
     })
     .catch((err) => {
       console.error(err);

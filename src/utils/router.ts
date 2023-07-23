@@ -1,7 +1,7 @@
 import { Route } from "..";
 import { dapi } from "../dapi";
 
-export function getRoute(pattern: string, r: Response) {
+export function getRoute(pattern: string) {
   pattern = StrReplaceOne(pattern, dapi.config.api.pattern, "");
   let i = 0;
 
@@ -17,7 +17,7 @@ function ensureWebRule() {
   const query = ArrayOptFirstElem(tools.xquery(`for $e in web_rules where $e/code = ${SqlLiteral(webRuleCode)} return $e`));
 
   let webRuleDocument;
-  
+
   if (query === undefined) {
     webRuleDocument = tools.new_doc_by_name<WebRuleDocument>("web_rule");
     webRuleDocument.BindToDb();
@@ -26,11 +26,11 @@ function ensureWebRule() {
   }
 
   webRuleDocument.TopElem.code.Value = webRuleCode;
-  webRuleDocument.TopElem.name.Value = `Правило для api`;
+  webRuleDocument.TopElem.name.Value = "Правило для api";
   webRuleDocument.TopElem.url.Value = `${dapi.config.api.pattern}/*`;
   webRuleDocument.TopElem.is_enabled.Value = true;
   webRuleDocument.TopElem.redirect_type.Value = 0;
-  webRuleDocument.TopElem.redirect_url.Value = UrlAppendPath(dapi.config.api.basepath, "api.html")
+  webRuleDocument.TopElem.redirect_url.Value = UrlAppendPath(dapi.config.api.basepath, "api.html");
   webRuleDocument.Save();
 
   alert(`${"🚀"} Web rule successfully ${webRuleDocument.NeverSaved ? "created" : "updated"} ${webRuleDocument.DocID}`);

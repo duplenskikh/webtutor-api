@@ -8,12 +8,12 @@ export function init() {
     alert(error);
     throw new Error(error);
   }
-  
+
   dapi.config = tools.read_object(LoadUrlData(configUrl));
 
   if (IsEmptyValue(dapi.config.api.basepath)) {
     dapi.config.api.basepath = UrlToFilePath("./..");
   }
-  
+
   alert(`${"🚀"} Config loaded:\n${tools.object_to_text(dapi.config, "json")}`);
 }

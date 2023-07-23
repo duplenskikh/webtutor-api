@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "gulp dev",
-    "build": "gulp build",
-    "zip": "gulp build && gulp zip",
-    "deliver": "gulp zip && gulp deliver"
+    "start": "gulp dev --silent",
+    "build": "gulp build --silent",
+    "zip": "npm run build && gulp zip --silent",
+    "lint": "eslint src --ext .ts",
+    "delivery": "npm run zip && gulp delivery --silent"
   },
   "keywords": [],
   "author": "",
@@ -18,18 +19,24 @@
     "@types/gulp-rename": "^2.0.1",
     "@types/node": "^20.2.4",
     "@types/urllib": "^2.33.0",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.1.0",
     "@umbrik/webtutor-types": "^7.47.1",
+    "chalk": "4.1.2",
+    "date-format": "^4.0.14",
     "del": "^6.1.1",
     "dotenv": "^16.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-no-for-of-loops": "^1.0.1",
     "gulp": "^4.0.2",
     "gulp-change": "^1.0.2",
     "gulp-header": "^2.0.9",
     "gulp-rename": "^2.0.0",
     "gulp-strip-import-export": "^1.0.0",
     "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-zip": "^5.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "~4.4.4",
-    "urllib": "^3.13.1",
-    "gulp-zip": "^5.1.0"
+    "typescript": "4.4.4",
+    "urllib": "^3.13.1"
   }
 }
