@@ -22,7 +22,7 @@ jobs:
       uses: mikepenz/release-changelog-builder-action@v4
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "build/*.zip"
+        artifacts: "packages/*.zip"
         name: ${{github.ref_name}}
         body: ${{steps.build_changelog.outputs.changelog}}
         makeLatest: true
