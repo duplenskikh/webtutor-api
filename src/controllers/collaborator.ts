@@ -6,14 +6,7 @@ export function functions(): Route[] {
     method: "GET",
     pattern: "/collaborator/current",
     callback: "getCollaborator",
-    access: "user",
-    params: {
-      user_id: {
-        type: "number",
-        optional: false,
-        convert: true
-      }
-    }
+    access: "user"
   }, {
     method: "GET",
     pattern: "/collaborators",
@@ -22,8 +15,8 @@ export function functions(): Route[] {
   }];
 }
 
-export function getCurrentUser(params: Object, req: Request) {
-  return dapi.utils.response.ok([req.Session.Env.curUser, "hello from delivery2"]);
+export function getCurrentUser(_params: Object, req: Request) {
+  return dapi.utils.response.ok(req.Session.Env.curUser);
 }
 
 export function getCollaborators() {
