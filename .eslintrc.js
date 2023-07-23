@@ -96,7 +96,8 @@ module.exports = {
       },
       ExportDeclaration: {
         multiline: true,
-        minProperties: 1
+        minProperties: 2,
+        consistent: true
       }
     }],
     indent: ["error", 2, { SwitchCase: 1 }],
