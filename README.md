@@ -105,7 +105,7 @@ export function getEvents() {
 }
 
 // Данная функция будет доступна к вызову следующим образом
-dapi.services.getEvents();
+dapi.services.events.getEvents();
 ```
 
 #### utils
@@ -121,7 +121,7 @@ export function pop(array: unknown[]): unknown[] {
 }
 
 // Данная функция будет доступна к вызову следующим образом
-dapi.utils.pop(["foo", "bar"]);
+dapi.utils.array.pop(["foo", "bar"]);
 ```
 
 ### Сборка проекта
