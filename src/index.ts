@@ -42,6 +42,7 @@ export type Route = {
   url?: string;
   access: "user" | "application" | "both" | "anonymous";
   params?: HandlerParams;
+  summary?: string;
 }
 
 export type Config = {

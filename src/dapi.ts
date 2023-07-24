@@ -10,4 +10,4 @@ interface DAPI {
   init(): void;
 }
 
-export const dapi: DAPI;
+export let dapi: DAPI;

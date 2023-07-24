@@ -15,8 +15,7 @@ module.exports = {
     tsconfigRootDir: "."
   },
   plugins: [
-    "@typescript-eslint",
-    "no-for-of-loops"
+    "@typescript-eslint"
   ],
   rules: {
     "@typescript-eslint/no-loss-of-precision": ["off"],
@@ -48,7 +47,6 @@ module.exports = {
     "func-names": ["error", "always"],
     "no-return-assign": "error",
     "no-alert": "error",
-    "no-for-of-loops/no-for-of-loops": 2,
     "no-redeclare": "error",
     "no-trailing-spaces": "error",
     "padding-line-between-statements": [
