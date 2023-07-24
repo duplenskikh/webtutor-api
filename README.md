@@ -1,4 +1,4 @@
-<h1 align="center">DAPI - инструмент для разработчиков WebSoft HCM</h1>
+<h1 align="center">Developers API - инструмент для разработчиков WebSoft HCM</h1>
 
 ## Что это такое и зачем оно мне?
 
@@ -47,8 +47,8 @@ webtutor-api/
 
 Доступ к объявленным функциям можно получить с помощью глобальной переменной `dapi`, в ней хранятся ссылки на все функции из `services` и `utils`.
 ```typescript
-dapi.utils.isDate(someDate);  // Обращение к функции `isDate`, расположенной в каталоге `utils`
-dapi.services.getEvents();    // Обращение к функции `getEvents`, расположенной в каталоге `services`
+dapi.utils.date.isDate(someDate);  // Обращение к функции `isDate`, расположенной в каталоге `utils`
+dapi.services.events.getEvents();    // Обращение к функции `getEvents`, расположенной в каталоге `services`
 ```
 
 Вы можете обращаться к переменной `dapi` из любого объекта системы на сервере, если же вам нужно реализовать поддержку в толстом клиенте администратора, необходимо будет точечно устанавливать данную библиотеку для каждого пользователя, что очень сильно не рекомендуется из-за сопутствующей сложности данного процесса.
@@ -105,7 +105,7 @@ export function getEvents() {
 }
 
 // Данная функция будет доступна к вызову следующим образом
-dapi.services.getEvents();
+dapi.services.events.getEvents();
 ```
 
 #### utils
@@ -121,7 +121,7 @@ export function pop(array: unknown[]): unknown[] {
 }
 
 // Данная функция будет доступна к вызову следующим образом
-dapi.utils.pop(["foo", "bar"]);
+dapi.utils.array.pop(["foo", "bar"]);
 ```
 
 ### Сборка проекта
