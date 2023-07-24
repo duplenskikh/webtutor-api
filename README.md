@@ -181,7 +181,7 @@ dapi successfully registered
 External API Lib: x-local://wt/web/dapi/index.xml. Loaded.
 ```
 
-Если все библиотеки зарегистрировались успешно, вы можете проверить доступ к API по адресу `https://<server_address>/api/v1/check`.
+Если все библиотеки зарегистрировались успешно, вы можете проверить доступ к API по адресу `https://<server_address>/api/v1/ping`.
 
 ## Ограничения и условности
 
