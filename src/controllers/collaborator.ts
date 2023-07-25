@@ -6,7 +6,8 @@ export function functions(): Route[] {
     method: "GET",
     pattern: "/collaborator/current",
     callback: "getCurrentUser",
-    access: "user"
+    access: "user",
+    summary: "Получение данных по авторизованному пользователю"
   }, {
     method: "GET",
     pattern: "/collaborators",

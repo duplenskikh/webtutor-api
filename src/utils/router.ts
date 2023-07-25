@@ -12,7 +12,7 @@ export function getRoute(pattern: string) {
   }
 }
 
-function ensureWebRule() {
+function createRouterRule() {
   const webRuleCode = `dapi_${dapi.config.pattern}`;
   const query = ArrayOptFirstElem(tools.xquery(`for $e in web_rules where $e/code = ${SqlLiteral(webRuleCode)} return $e`));
 
@@ -38,7 +38,7 @@ function ensureWebRule() {
 }
 
 export function init() {
-  ensureWebRule();
+  createRouterRule();
   DropFormsCache("./../controllers/*");
   const apis = ReadDirectory("./../controllers");
   let i = 0;
@@ -46,12 +46,18 @@ export function init() {
   let apiFunctions;
   const routes: Route[] = [];
   let obj;
+  let isDevelopmentEnv = dapi.config.env == "development";
 
   for (i = 0; i < apis.length; i++) {
     apiFunctions = OpenCodeLib(apis[i]).functions() as Route[];
 
     for (j = 0; j < apiFunctions.length; j++) {
       obj = apiFunctions[j];
+
+      if (obj.access == "dev" && !isDevelopmentEnv) {
+        continue;
+      }
+
       routes.push({
         method: obj.method,
         pattern: obj.pattern,

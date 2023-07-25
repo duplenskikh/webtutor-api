@@ -40,7 +40,7 @@ export type Route = {
   pattern: string;
   callback: string;
   url?: string;
-  access: "user" | "application" | "both" | "anonymous";
+  access: "user" | "application" | "both" | "anonymous" | "dev";
   params?: HandlerParams;
   summary?: string;
 }

@@ -2,23 +2,25 @@ import { readFileSync, readdirSync, writeFileSync } from "fs";
 import { join, parse } from "path";
 import chalk from "chalk";
 
-import { Route } from "../src";
+import { Route } from "../../src";
 
 import { config } from "dotenv";
 config();
 
-const oapiTemplate = JSON.parse(readFileSync(join(__dirname, "/oapi.template.json"), "utf-8"));
-const apiConfig = JSON.parse(readFileSync(join(__dirname, "..", "src", "config.json"), "utf-8"));
-const packageJSON = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
-const controllersPath = join(__dirname, "..", "src", "controllers");
-const controllersFiles = readdirSync(controllersPath);
+const PROJECT_PATH = join(__dirname, "..", "..");
+const TEMPLATE_OBJECT = JSON.parse(readFileSync(join(__dirname, "/openapi.template.json"), "utf-8"));
+const CONFIG_OBJECT = JSON.parse(readFileSync(join(PROJECT_PATH, "src", "config.json"), "utf-8"));
+const PACKAGE_OBJECT = JSON.parse(readFileSync(join(PROJECT_PATH, "package.json"), "utf-8"));
+const CONTROLLERS_PATH = join(PROJECT_PATH, "src", "controllers");
+const BUILD_OPENAPI_PATH = join(PROJECT_PATH, "build", "openapi");
+const CONTROLLERS_FILES = readdirSync(CONTROLLERS_PATH);
 
 async function findControllers() {
   const functions = [];
 
-  for (const controllersFile of controllersFiles) {
+  for (const controllersFile of CONTROLLERS_FILES) {
     const parsedPath = parse(controllersFile);
-    const controllerPath = join(controllersPath, parsedPath.name);
+    const controllerPath = join(CONTROLLERS_PATH, parsedPath.name);
     const controller = await import(controllerPath);
 
     if (typeof controller.functions === "function") {
@@ -31,8 +33,8 @@ async function findControllers() {
 
 function fillPaths(controllers: Route[]) {
   for (const controller of controllers) {
-    oapiTemplate.paths[controller.pattern] = oapiTemplate.paths[controller.pattern] || {};
-    const pattern = oapiTemplate.paths[controller.pattern];
+    TEMPLATE_OBJECT.paths[controller.pattern] = TEMPLATE_OBJECT.paths[controller.pattern] || {};
+    const pattern = TEMPLATE_OBJECT.paths[controller.pattern];
     const method = controller.method.toLowerCase();
     pattern[method] = pattern[method] || {};
     pattern[method].summary = controller.summary || "No summary";
@@ -50,15 +52,15 @@ function fillPaths(controllers: Route[]) {
     };
   }
 
-  writeFileSync(join(__dirname, "oapi.json"), JSON.stringify(oapiTemplate, null, 2));
-  console.log(chalk.blue("📄 oapi.json сформирован"));
+  writeFileSync(join(BUILD_OPENAPI_PATH, "openapi.json"), JSON.stringify(TEMPLATE_OBJECT, null, 2));
+  console.log(chalk.blue("📄 openapi.json сформирован"));
 }
 
 async function run() {
   const controllers = await findControllers();
   console.log(chalk.blue(`🔎 Найдено ${controllers.length} обработчиков`));
-  oapiTemplate.info.version = packageJSON.version;
-  oapiTemplate.servers[0].url = new URL(apiConfig.pattern, process.env.DEPLOYER_HOST);
+  TEMPLATE_OBJECT.info.version = PACKAGE_OBJECT.version;
+  TEMPLATE_OBJECT.servers[0].url = new URL(CONFIG_OBJECT.pattern, process.env.DEPLOYER_HOST);
   fillPaths(controllers);
 }
 

@@ -10,7 +10,15 @@ export const INDEX_XML = join(SRC_PATH, "index.xml");
 export const INDEX_TS = join(SRC_PATH, "index.ts");
 export const CONFIG_JSON = join(SRC_PATH, "config.json");
 
+const MISC_PATH = join(PROJECT_PATH, "misc");
+const OPENAPI_PATH = join(MISC_PATH, "openapi");
+export const OPENAPI_JSON = join(OPENAPI_PATH, "openapi.json");
+export const OPENAPI_HTML = join(OPENAPI_PATH, "openapi.html");
+
 export const BUILD_PATH = join(PROJECT_PATH, "build");
+export const OPENAPI_BUILD_PATH = join(BUILD_PATH, "openapi");
+export const BUILD_OPENAPI_JSON_PATH = join(OPENAPI_BUILD_PATH, "openapi.json");
+
 export const PACKAGES_PATH = join(PROJECT_PATH, "packages");
 
 export const WATCHED_TS_TYPES = [

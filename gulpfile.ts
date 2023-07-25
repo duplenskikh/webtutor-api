@@ -9,6 +9,7 @@ import rename from "gulp-rename";
 import change from "gulp-change";
 import header from "gulp-header";
 import zip from "gulp-zip";
+import run from "gulp-run";
 const stripImportExport = require("gulp-strip-import-export");
 
 import del from "del";
@@ -88,8 +89,15 @@ task("dev", (done) => {
   done();
 });
 
+task("openapi:generate", () => {
+  console.log(chalk.blue("Запущена задача openapi:generate по генерации документации openapi"));
+  return run("npm run openapi:generate").exec();
+});
+
 task("build", async(done) => {
   await del("build");
+
+  task("openapi:generate").call(this);
 
   consts.WATCHED_TS_TYPES
     .forEach(x => transformTS(x)
@@ -118,6 +126,9 @@ task("build", async(done) => {
 
   baseSrc([consts.INSTALL_SH, consts.INSTALL_PS1])
     .pipe(dest(consts.BUILD_PATH));
+
+  src([consts.OPENAPI_JSON, consts.OPENAPI_HTML])
+    .pipe(dest(consts.OPENAPI_BUILD_PATH));
 
   done();
 });
@@ -153,6 +164,15 @@ task("delivery", async(done) => {
 
   src(filesPath[0])
     .pipe(deploy(filesPath[0], consts.BUILD_URL));
+
+  done();
+});
+
+task("delivery:openapi", (done) => {
+  src(consts.BUILD_OPENAPI_JSON_PATH, {
+    base: consts.BUILD_PATH,
+  })
+    .pipe(deploy(consts.OPENAPI_JSON, consts.DEPLOY_URL));
 
   done();
 });

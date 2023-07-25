@@ -19,7 +19,7 @@
     ]
   },
   "include": [
-    "misc/*"
+    "misc/**/*"
   ],
   "files": [
     "gulpfile.ts",

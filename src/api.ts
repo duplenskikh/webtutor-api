@@ -10,7 +10,7 @@ export function handle(req: Request, res: Response) {
 
   req.RespContentType = route.GetOptProperty("contentType", "application/json; charset=utf-8");
 
-  const isAnonymous = route.access == "anonymous";
+  const isAnonymous = route.access == "anonymous" || route.access == "dev";
 
   if (!isAnonymous) {
     const auth = dapi.utils.passport.authenticate(req);
@@ -43,6 +43,8 @@ export function handle(req: Request, res: Response) {
     return dapi.utils.response.abort(error);
   }
 }
+
+Request.AddRespHeader("X-DAPI", "true");
 
 try {
   Response.Write(dapi.utils.response.json(handle(Request, Response), Response));
