@@ -16,7 +16,7 @@ const BUILD_OPENAPI_PATH = join(PROJECT_PATH, "build", "openapi");
 const CONTROLLERS_FILES = readdirSync(CONTROLLERS_PATH);
 
 async function findControllers() {
-  const functions = [];
+  const controllers = [];
 
   for (const controllersFile of CONTROLLERS_FILES) {
     const parsedPath = parse(controllersFile);
@@ -24,32 +24,44 @@ async function findControllers() {
     const controller = await import(controllerPath);
 
     if (typeof controller.functions === "function") {
-      functions.push(...controller.functions());
+      controllers.push({
+        name: parsedPath.name,
+        functions: controller.functions().filter(x => x.access !== "dev")
+      });
     }
   }
 
-  return functions;
+  return controllers;
 }
 
-function fillPaths(controllers: Route[]) {
+type Controllers = {
+  name: string;
+  functions: Route[];
+}
+
+function fillPaths(controllers: Controllers[]) {
   for (const controller of controllers) {
-    TEMPLATE_OBJECT.paths[controller.pattern] = TEMPLATE_OBJECT.paths[controller.pattern] || {};
-    const pattern = TEMPLATE_OBJECT.paths[controller.pattern];
-    const method = controller.method.toLowerCase();
-    pattern[method] = pattern[method] || {};
-    pattern[method].summary = controller.summary || "No summary";
-    pattern[method].operationId = controller.callback;
-    pattern[method].responses = {
-      200: {
-        description: "OK",
-        content: {}
-      },
-      401: { $ref: "#/components/responses/UnauthorizedError" },
-      403: { $ref: "#/components/responses/BadRequest" },
-      404: { $ref: "#/components/responses/NotFound" },
-      500: { $ref: "#/components/responses/ServerError" },
-      503: { $ref: "#/components/responses/ServiceUnavailable" }
-    };
+    for (const fn of controller.functions) {
+      TEMPLATE_OBJECT.paths[fn.pattern] = TEMPLATE_OBJECT.paths[fn.pattern] || {};
+      const pattern = TEMPLATE_OBJECT.paths[fn.pattern];
+      const method = fn.method.toLowerCase();
+      pattern[method] = pattern[method] || {};
+      pattern[method].summary = fn.summary || "No summary";
+      pattern[method].operationId = fn.callback;
+      pattern[method].tags = pattern[method].tags || [];
+      pattern[method].tags.push(controller.name);
+      pattern[method].responses = {
+        200: {
+          description: "OK",
+          content: {}
+        },
+        401: { $ref: "#/components/responses/UnauthorizedError" },
+        403: { $ref: "#/components/responses/BadRequest" },
+        404: { $ref: "#/components/responses/NotFound" },
+        500: { $ref: "#/components/responses/ServerError" },
+        503: { $ref: "#/components/responses/ServiceUnavailable" }
+      };
+    }
   }
 
   writeFileSync(join(BUILD_OPENAPI_PATH, "openapi.json"), JSON.stringify(TEMPLATE_OBJECT, null, 2));
@@ -58,7 +70,7 @@ function fillPaths(controllers: Route[]) {
 
 async function run() {
   const controllers = await findControllers();
-  console.log(chalk.blue(`🔎 Найдено ${controllers.length} обработчиков`));
+  console.log(chalk.blue(`🔎 Найдено:\n\t${controllers.length} контроллеров\n\t${controllers.map(x => x.functions).flat().length} обработчиков`));
   TEMPLATE_OBJECT.info.version = PACKAGE_OBJECT.version;
   TEMPLATE_OBJECT.servers[0].url = new URL(CONFIG_OBJECT.pattern, process.env.DEPLOYER_HOST);
   fillPaths(controllers);
