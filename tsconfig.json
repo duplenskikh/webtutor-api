@@ -9,6 +9,7 @@
   },
   "files": [
     "gulpfile.ts",
-    ".eslintrc.js"
+    ".eslintrc.js",
+    "update.ts"
   ]
 }
