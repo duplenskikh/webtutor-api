@@ -18,9 +18,9 @@ type Services = {
   events: typeof import("./services/events");
 }
 
-type RouteParameters = {
+export type RouteParameters = {
   type: "string" | "number" | "date" | "array" | "boolean";
-  defaultValue?: string | number | boolean | null;
+  defaultValue?: string | number | boolean | null | Date;
   optional?: boolean;
   convert?: boolean;
   nullable?: boolean;

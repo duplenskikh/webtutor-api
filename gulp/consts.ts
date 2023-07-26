@@ -18,6 +18,7 @@ export const OPENAPI_HTML = join(OPENAPI_PATH, "openapi.html");
 export const BUILD_PATH = join(PROJECT_PATH, "build");
 export const OPENAPI_BUILD_PATH = join(BUILD_PATH, "openapi");
 export const BUILD_OPENAPI_JSON_PATH = join(OPENAPI_BUILD_PATH, "openapi.json");
+export const BUILD_OPENAPI_HTML_PATH = join(OPENAPI_BUILD_PATH, "openapi.html");
 
 export const PACKAGES_PATH = join(PROJECT_PATH, "packages");
 

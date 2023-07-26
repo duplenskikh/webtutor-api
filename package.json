@@ -7,10 +7,10 @@
     "lint": "eslint src --ext .ts",
     "start": "gulp dev --silent",
     "build": "gulp build --silent",
-    "delivery:build": "npm run zip && gulp delivery --silent",
+    "build:delivery": "npm run zip && gulp delivery --silent",
     "zip": "npm run build && gulp zip --silent",
     "openapi:generate": "ts-node ./misc/openapi/openapi.ts",
-    "delivery:openapi": "gulp openapi:generate && gulp delivery:openapi"
+    "openapi:delivery": "gulp openapi:generate && gulp openapi:delivery"
   },
   "keywords": [],
   "author": "",

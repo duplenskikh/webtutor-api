@@ -33,7 +33,7 @@ function createRouterRule() {
   webRuleDocument.TopElem.redirect_url.Value = `/${dapi.config.basepath}/api.html`;
   webRuleDocument.Save();
 
-  alert(`Правило редиректа ${webRuleDocument.DocID} успешно ${webRuleDocument.NeverSaved ? "создано" : "обновлено"}`);
+  alert(`Правило редиректа ${webRuleDocument.DocID} успешно ${webRuleDocument.NeverSaved ? `${"создано"}` : `${"обновлено"}` }`);
   alert(`Все запросы ${webRuleDocument.TopElem.url.Value} будут перенаправляться на ${webRuleDocument.TopElem.redirect_url.Value}`);
 }
 

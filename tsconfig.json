@@ -19,7 +19,7 @@
     ]
   },
   "include": [
-    "misc/**/*"
+    "misc/openapi/*.ts"
   ],
   "files": [
     "gulpfile.ts",

@@ -24,7 +24,7 @@ export function authenticateUser(req: Request): Authentication | null {
   };
 }
 
-function authenticateApplication(req: Request, xAppId: string): Authentication | null {
+export function authenticateApplication(req: Request, xAppId: string): Authentication | null {
   if (StrCharCount(Trim(String(xAppId))) === 0) {
     dapi.utils.log.error(
       "\"x-app-id\" header is empty",
@@ -54,6 +54,7 @@ function authenticateApplication(req: Request, xAppId: string): Authentication |
     return null;
   }
 
+  const madePassword = tools.make_password(password, false);
   let hasAccess = false;
   const credentials = applicationDocument.TopElem.credentials;
   let credentialDocument;
@@ -71,7 +72,7 @@ function authenticateApplication(req: Request, xAppId: string): Authentication |
 
     if (
       credentialDocument.TopElem.login == login
-      && tools.make_password(credentialDocument.TopElem.password, true) == tools.make_password(password, false)
+      && tools.make_password(credentialDocument.TopElem.password, true) == madePassword
     ) {
       hasAccess = true;
       break;
@@ -80,7 +81,7 @@ function authenticateApplication(req: Request, xAppId: string): Authentication |
 
   if (!hasAccess) {
     dapi.utils.log.error(
-      `Application "${xAppId}" hasn't access due to invalid login or password`,
+      `Некорректный логин или пароля для приложения ${xAppId}`,
       "passport"
     );
 
@@ -107,4 +108,3 @@ export function authenticate(req: Request) {
     return authenticateApplication(req, xAppId);
   }
 }
-

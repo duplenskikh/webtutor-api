@@ -12,7 +12,13 @@ export function functions(): Route[] {
     method: "GET",
     pattern: "/collaborators",
     callback: "getCollaborators",
-    access: "user"
+    access: "user",
+    params: {
+      id: {
+        type: "number",
+        convert: true,
+      }
+    }
   }];
 }
 
