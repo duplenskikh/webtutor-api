@@ -36,6 +36,41 @@ async function findControllers() {
   return controllers;
 }
 
+function fillStringParams(params: { [key: string]: string }) {
+  return Object.keys(params).map(x => ({
+    in: "query",
+    name: x,
+    schema: {
+      type: params[x]
+    },
+    allowReserved: true
+  }));
+}
+
+function fillQueryParams(params: { [key: string]: RouteParameters }) {
+  return Object.keys(params).map(x => ({
+    in: "query",
+    name: x,
+    schema: {
+      type: params[x].type,
+      default: params[x].defaultValue,
+    },
+    required: !params[x].optional,
+    description: params[x].description,
+    allowReserved: params[x].type === "string"
+  }));
+}
+
+function fillBodyParams(params: [string, RouteParameters][]) {
+  return Object.fromEntries(params.map(x => {
+    return [x[0], {
+      type: x[1].type == "date" ? "string" : x[1].type,
+      format: x[1].type == "date" ? "date" : undefined,
+      items: x[1].type == "array" ? { type: x[1].items ?? "string" } : undefined
+    }];
+  }));
+}
+
 type Controllers = {
   name: string;
   functions: Route[];
@@ -72,33 +107,38 @@ function fillPaths(controllers: Controllers[]) {
         });
       }
 
-      const params = fn.params as { [key: string]: RouteParameters | string };
-      const isParamsExist = typeof params === "object" && Object.keys(fn.params).length !== 0;
+      const params = fn.params;
+      const isParamsExist = typeof params === "object" && Object.keys(params).length !== 0;
 
       if (isParamsExist) {
-        for (const key in params) {
-          const param = params[key];
+        const stringParams = Object.fromEntries(Object.entries(params).filter(([x]) => typeof params[x] === "string"));
+        const objectParams = Object.entries(params).filter(([x]) => typeof params[x] === "object");
+        const queryParams = Object.fromEntries(
+          objectParams.filter(([x]) => (params[x] as RouteParameters).in !== "body")
+        );
+        const bodyParams = objectParams.filter(([x]) => (params[x] as RouteParameters).in === "body");
 
-          if (typeof param === "string") {
-            pattern[method].parameters.push({
-              in: "query",
-              name: key,
-              type: "type"
-            });
-            continue;
-          }
+        if (bodyParams.length !== 0) {
+          const requiredBodyParams = bodyParams.filter(([x]) => !(params[x] as RouteParameters).optional);
 
-          pattern[method].parameters.push({
-            in: param.in || "query",
-            name: key,
-            schema: {
-              type: param.type,
-              default: param.defaultValue,
-            },
-            required: !param.optional,
-            description: param.description
-          });
+          pattern[method]["requestBody"] = {
+            required: requiredBodyParams.length !== 0,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: fillBodyParams(bodyParams as [string, RouteParameters][]),
+                  required: requiredBodyParams.map(([x]) => x)
+                }
+              }
+            }
+          };
         }
+
+        pattern[method].parameters.push(
+          ...fillStringParams(stringParams as { [key: string]: string }),
+          ...fillQueryParams(queryParams as { [key: string]: RouteParameters }),
+        );
       }
 
       pattern[method].responses = {
