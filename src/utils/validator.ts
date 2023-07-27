@@ -1,4 +1,4 @@
-import { HandlerParams } from "..";
+import { RouteParameters } from "..";
 import { dapi } from "../dapi";
 
 function getRequestParams(req: Request) {
@@ -20,14 +20,18 @@ function isSupportedParamType(type: string) {
 
 export function parse(
   req: Request,
-  schema: HandlerParams
+  routeParametersScheme: RouteParameters
 ) {
-  if (dapi.utils.type.isUndef(schema)) {
+  if (
+    dapi.utils.type.isUndef(routeParametersScheme)
+    || !dapi.utils.type.isObject(routeParametersScheme)
+    || dapi.utils.object.keys(routeParametersScheme).length === 0
+  ) {
     return {};
   }
 
   const incomeParams = getRequestParams(req);
-  const outcomeParams: HandlerParams = {};
+  const outcomeParams: RouteParameters = {};
 
   const incomeParamsKeys = dapi.utils.object.keys(incomeParams);
 
