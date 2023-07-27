@@ -1,15 +1,6 @@
 import { RouteParameters } from "..";
 import { dapi } from "../dapi";
 
-function getRequestParams(req: Request) {
-  const bodyParams = tools.read_object(req.Body);
-
-  return dapi.utils.object.extend(
-    req.Query,
-    (IsArray(bodyParams) ? {} : bodyParams) as Object[]
-  );
-}
-
 function getSupportedParamTypes() {
   return ["string", "number", "date", "array", "boolean"];
 }
@@ -30,28 +21,23 @@ export function parse(
     return {};
   }
 
-  const incomeParams = getRequestParams(req);
-  const outcomeParams: RouteParameters = {};
-
-  const incomeParamsKeys = dapi.utils.object.keys(incomeParams);
-
-  let incomeParamsKey;
-
-  for (incomeParamsKey in incomeParamsKeys) {
-    outcomeParams.SetProperty(incomeParamsKey, incomeParams[incomeParamsKey]);
-  }
-
-  const schemaKeys = dapi.utils.object.keys(schema);
-  let isStrict = schemaKeys.indexOf("__strict") !== -1;
-
-  const sanitizedSchema = dapi.utils.array.excludeValues(
-    schemaKeys,
-    ["__strict"]
+  const bodyParams = tools.read_object(req.Body);
+  const clientParameters = dapi.utils.object.extend(
+    req.Query,
+    (IsArray(bodyParams) ? {} : bodyParams) as Object[]
   );
 
-  if (isStrict && sanitizedSchema.length !== incomeParamsKeys.length) {
-    throw new Error(`Дополнительные свойства не разрешены\n${sanitizedSchema.join(", ")}`);
+  const clientParametersKeys = dapi.utils.object.keys(clientParameters);
+
+  const parsedParameters: RouteParameters = {};
+
+  let clientParameterKey;
+
+  for (clientParameterKey in clientParametersKeys) {
+    parsedParameters.SetProperty(clientParameterKey, clientParameters[clientParameterKey]);
   }
+
+  const routeParametersSchemeKeys = dapi.utils.object.keys(routeParametersScheme);
 
   let i = 0;
   let propertyKey;
@@ -66,9 +52,9 @@ export function parse(
   let childParamType;
   let stringLength;
 
-  for (i = 0; i < sanitizedSchema.length; i++) {
-    propertyKey = sanitizedSchema[i];
-    propertySchema = dapi.utils.type.isString(schema[propertyKey]) ? { type: schema } : schema[propertyKey];
+  for (i = 0; i < routeParametersSchemeKeys.length; i++) {
+    propertyKey = routeParametersSchemeKeys[i];
+    propertySchema = routeParametersScheme[propertyKey];
 
     type = propertySchema.GetOptProperty("type");
 
@@ -82,11 +68,11 @@ export function parse(
     minValue = OptInt(propertySchema.GetOptProperty("min"));
     maxValue = OptInt(propertySchema.GetOptProperty("max"));
 
-    if (!incomeParams.HasProperty(propertyKey) && !isOptional) {
+    if (!clientParameters.HasProperty(propertyKey) && !isOptional) {
       throw new Error(`Параметр ${propertyKey} должен быть определен`);
     }
 
-    value = incomeParams.GetOptProperty(
+    value = clientParameters.GetOptProperty(
       propertyKey,
       propertySchema.GetOptProperty("defaultValue", null)
     );
@@ -152,8 +138,8 @@ export function parse(
       }
     }
 
-    outcomeParams[propertyKey] = value;
+    parsedParameters[propertyKey] = value;
   }
 
-  return outcomeParams;
+  return parsedParameters;
 }
