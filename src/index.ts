@@ -32,7 +32,7 @@ export type RouteParameter = {
 }
 
 export type RouteParameters = {
-  [key: string]: RouteParameters;
+  [key: string]: RouteParameter;
 }
 
 export type Route = {
