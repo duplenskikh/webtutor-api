@@ -19,7 +19,7 @@ type Services = {
 }
 
 export type RouteParameter = {
-  type: "string" | "number" | "real" | "date" | "array" | "boolean";
+  type: "boolean" | "string" | "number" | "real" | "date" | "array" | "object";
   value?: string | number | boolean | null | Date | Object;
   required?: boolean;
   nullable?: boolean;
