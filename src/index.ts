@@ -18,22 +18,22 @@ type Services = {
   events: typeof import("./services/events");
 }
 
-export type RouteParameters = {
-  type: "string" | "number" | "date" | "array" | "boolean";
-  defaultValue?: string | number | boolean | null | Date | Object;
-  optional?: boolean;
-  convert?: boolean;
+export type RouteParameter = {
+  type: "string" | "number" | "real" | "date" | "array" | "boolean";
+  value?: string | number | boolean | null | Date | Object;
+  required?: boolean;
   nullable?: boolean;
   min?: number;
   max?: number;
   example?: string | number | string[] | number[];
   items?: string;
-  in?: "body" | "query";
+  store?: "body" | "query";
   description?: string;
-  real?: boolean;
 }
 
-export type HandlerParams = { __strict?: boolean } & { [key: string]: RouteParameters | string };
+export type RouteParameters = {
+  [key: string]: RouteParameters;
+}
 
 export type Route = {
   method: "GET" | "POST";
@@ -41,7 +41,7 @@ export type Route = {
   callback: string;
   url?: string;
   access: "user" | "application" | "both" | "anonymous" | "dev";
-  params?: HandlerParams;
+  params?: RouteParameters;
   summary?: string;
 }
 
