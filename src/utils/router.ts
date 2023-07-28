@@ -1,12 +1,12 @@
 import { Route } from "..";
 import { dapi } from "../dapi";
 
-export function getRoute(pattern: string) {
+export function getRoute(pattern: string, method: string) {
   pattern = StrReplaceOne(pattern, dapi.config.pattern, "");
   let i = 0;
 
   for (i = 0; i < dapi.routes.length; i++) {
-    if (dapi.routes[i].pattern == pattern) {
+    if (dapi.routes[i].pattern == pattern && dapi.routes[i].method == method) {
       return dapi.routes[i];
     }
   }

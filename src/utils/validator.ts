@@ -1,145 +1,142 @@
-import { RouteParameters } from "..";
+import { RouteParameter, RouteParameters } from "..";
 import { dapi } from "../dapi";
 
-function getSupportedParamTypes() {
-  return ["string", "number", "date", "array", "boolean"];
+function normalizeScheme(scheme: RouteParameters) {
+  let type;
+  let key;
+  let schemeProperty;
+
+  for (key in scheme) {
+    schemeProperty = scheme[key] as RouteParameter;
+    type = schemeProperty.GetOptProperty("type") as RouteParameter["type"];
+
+    if (dapi.availableParametersTypes.indexOf(type) === -1) {
+      throw new Error(`Некорректно определен тип параметра ${key} - "${type}"\nДоступные параметры: ${dapi.availableParametersTypes.join(", ")}`);
+    }
+
+    schemeProperty.SetProperty("optional", schemeProperty.GetOptProperty("optional", false));
+    schemeProperty.SetProperty("description", schemeProperty.GetOptProperty("description", null));
+    schemeProperty.SetProperty("val", schemeProperty.GetOptProperty("val", null));
+    schemeProperty.SetProperty("nullable", schemeProperty.GetOptProperty("nullable", false));
+    schemeProperty.SetProperty("min", schemeProperty.GetOptProperty("min", null));
+    schemeProperty.SetProperty("max", schemeProperty.GetOptProperty("max", null));
+    schemeProperty.SetProperty("format", schemeProperty.GetOptProperty("format", null));
+    schemeProperty.SetProperty("items", schemeProperty.GetOptProperty("items", null));
+
+    if (type == "array" && dapi.availableParametersTypes.indexOf(schemeProperty.items) === -1) {
+      throw new Error(`Некорректно определен тип элемента массива ${key} - ${schemeProperty.items}\nДоступные типы: ${dapi.availableParametersTypes.join(", ")}`);
+    }
+  }
+
+  return scheme;
 }
 
-function isSupportedParamType(type: string) {
-  return getSupportedParamTypes().indexOf(type) !== -1;
+function convertParameterValue(key: string, value: unknown, scheme: RouteParameter) {
+  const type = scheme.type;
+  const min = scheme.min;
+  const max = scheme.max;
+  const format = scheme.format;
+  let convertedValue;
+
+  if (type == "string" && format != "date") {
+    convertedValue = IsEmptyValue(value) ? value : Trim(tools_web.convert_xss(String(value)));
+    const stringLength = StrCharCount(convertedValue);
+
+    if (min !== null && stringLength < min) {
+      throw new Error(`Параметр ${key} должен быть минимум длины ${min}`);
+    }
+
+    if (max !== null && stringLength > max) {
+      throw new Error(`Параметр ${key} должен быть минимум длины ${max}`);
+    }
+
+    return convertedValue;
+  } else if (type == "number") {
+    convertedValue = scheme.format === "real" ? OptReal(value, null) : OptInt(value, null);
+
+    if (min !== null && convertedValue < min) {
+      throw new Error(`Параметр ${key} должен быть не меньше ${min}`);
+    }
+
+    if (max !== null && convertedValue > max) {
+      throw new Error(`Параметр ${key} должен быть не больше ${max}`);
+    }
+
+    return convertedValue;
+  } else if (type == "date" || type == "string" && format == "date") {
+    convertedValue = OptDate(value, null);
+  } else if (type == "boolean") {
+    return tools_web.is_true(value);
+  } else if (type == "array") {
+    return dapi.utils.type.makeArraySafe(
+      (dapi.utils.type.isString(value) ? tools.read_object(value) : value as unknown[]),
+      scheme.items
+    );
+  } else if (type == "object") {
+    return dapi.utils.type.isString(value) ? tools.read_object(value) : value;
+  } else {
+    throw new Error(`Невозможно определить тип переменной ${key}`);
+  }
 }
 
 export function parse(
   req: Request,
-  routeParametersScheme: RouteParameters
+  scheme: RouteParameters
 ) {
   if (
-    dapi.utils.type.isUndef(routeParametersScheme)
-    || !dapi.utils.type.isObject(routeParametersScheme)
-    || dapi.utils.object.keys(routeParametersScheme).length === 0
+    dapi.utils.type.isUndef(scheme)
+    || !dapi.utils.type.isObject(scheme)
+    || dapi.utils.object.keys(scheme).length === 0
   ) {
     return {};
   }
 
-  const bodyParams = tools.read_object(req.Body);
-  const clientParameters = dapi.utils.object.extend(
-    req.Query,
-    (IsArray(bodyParams) ? {} : bodyParams) as Object[]
-  );
+  scheme = normalizeScheme(scheme);
+  const parameters = dapi.utils.object.extend({}, [tools.read_object(req.Body), req.QueryString]);
 
-  const clientParametersKeys = dapi.utils.object.keys(clientParameters);
+  let key;
+  let parameter;
+  let schemeParameter;
+  let parameterValue;
+  let defaultValue;
+  const result = {};
 
-  const parsedParameters: RouteParameters = {};
+  for (key in scheme) {
+    parameter = parameters.GetOptProperty(key, null);
 
-  let clientParameterKey;
+    schemeParameter = scheme[key] as RouteParameter;
 
-  for (clientParameterKey in clientParametersKeys) {
-    parsedParameters.SetProperty(clientParameterKey, clientParameters[clientParameterKey]);
+    if (parameter === null && !schemeParameter.optional) {
+      throw new Error(`Параметр ${key} обязателен`);
+    }
+
+    parameterValue = convertParameterValue(key, parameter, schemeParameter);
+
+    defaultValue = schemeParameter.GetOptProperty("val", null);
+
+    if (!dapi.utils.type.isNull(defaultValue) && dapi.utils.type.isNull(parameterValue)) {
+      parameterValue = defaultValue;
+    }
+
+    if (
+      !schemeParameter.optional
+      && (
+        schemeParameter.type == "string" && !dapi.utils.type.isString(parameterValue)
+        || schemeParameter.type == "number" && !dapi.utils.type.isNumber(parameterValue)
+        || schemeParameter.type == "boolean" && !dapi.utils.type.isBoolean(parameterValue)
+        || schemeParameter.type == "array" && !dapi.utils.type.isArray(parameterValue)
+        || schemeParameter.type == "object" && !dapi.utils.type.isObject(parameterValue)
+      )
+    ) {
+      throw new Error(`Принимаемый параметр ${key} должен иметь тип ${schemeParameter.type}: ${parameterValue}`);
+    }
+
+    if (parameterValue === null && !schemeParameter.nullable) {
+      throw new Error(`Параметр ${key} не может быть null`);
+    }
+
+    result.SetProperty(key, parameterValue);
   }
 
-  const routeParametersSchemeKeys = dapi.utils.object.keys(routeParametersScheme);
-
-  let i = 0;
-  let propertyKey;
-  let propertySchema;
-  let type;
-  let value;
-  let isConvert;
-  let isOptional;
-  let isNullable;
-  let minValue;
-  let maxValue;
-  let childParamType;
-  let stringLength;
-
-  for (i = 0; i < routeParametersSchemeKeys.length; i++) {
-    propertyKey = routeParametersSchemeKeys[i];
-    propertySchema = routeParametersScheme[propertyKey];
-
-    type = propertySchema.GetOptProperty("type");
-
-    if (!isSupportedParamType(type)) {
-      throw new Error(`Некорректно определен тип параметра ${propertyKey} - "${type}"\nДоступные параметры: ${getSupportedParamTypes().join(", ")}`);
-    }
-
-    isConvert = tools_web.is_true(propertySchema.GetOptProperty("convert"));
-    isOptional = tools_web.is_true(propertySchema.GetOptProperty("optional"));
-    isNullable = tools_web.is_true(propertySchema.GetOptProperty("nullable"));
-    minValue = OptInt(propertySchema.GetOptProperty("min"));
-    maxValue = OptInt(propertySchema.GetOptProperty("max"));
-
-    if (!clientParameters.HasProperty(propertyKey) && !isOptional) {
-      throw new Error(`Параметр ${propertyKey} должен быть определен`);
-    }
-
-    value = clientParameters.GetOptProperty(
-      propertyKey,
-      propertySchema.GetOptProperty("defaultValue", null)
-    );
-
-    if (value === null && (!isNullable && !isOptional)) {
-      throw new Error(`Параметр ${propertyKey} не может быть null`);
-    }
-
-    if (type == "number") {
-      if (isConvert) {
-        value = tools_web.is_true(propertySchema.GetOptProperty("real"))
-          ? OptReal(value, null)
-          : OptInt(value, null);
-      }
-    } else if (type == "date" && isConvert) {
-      value = OptDate(value);
-    } else if (type == "boolean" && isConvert) {
-      value = tools_web.is_true(value);
-    } else if (type == "string") {
-      if (!IsEmptyValue(value)) {
-        value = Trim(tools_web.convert_xss(String(value)));
-      }
-    } else if (type == "array") {
-      childParamType = propertySchema.GetOptProperty("items", "string");
-
-      if (!isSupportedParamType(childParamType)) {
-        throw new Error(`Некорректно определен тип дочерних элементов массива ${propertyKey} - ${childParamType}\nДоступные параметры: ${getSupportedParamTypes().join(", ")}`);
-      }
-
-      if (IsArray(value)) {
-        value = dapi.utils.type.makeArraySafe(value, childParamType);
-      }
-    }
-
-    if (!isOptional && !isNullable) {
-      if (
-        type == "string" && !dapi.utils.type.isString(value)
-        || type == "number" && !dapi.utils.type.isNumber(value)
-        || type == "boolean" && !dapi.utils.type.isBoolean(value)
-        || type == "array" && !IsArray(value)
-      ) {
-        throw new Error(`Принимаемый параметр ${propertyKey} должен иметь тип ${type}`);
-      }
-    }
-
-    if (type == "string" && dapi.utils.type.isString(value)) {
-      stringLength = StrCharCount(value);
-
-      if (minValue !== undefined && stringLength < minValue) {
-        throw new Error(`Параметр ${propertyKey} должен быть минимум длины ${minValue}`);
-      }
-
-      if (maxValue !== undefined && stringLength > maxValue) {
-        throw new Error(`Параметр ${propertyKey} должен быть минимум длины ${maxValue}`);
-      }
-    } else if (dapi.utils.type.isNumber(value)) {
-      if (minValue !== undefined && value < minValue) {
-        throw new Error(`Параметр ${propertyKey} должен быть больше ${minValue}`);
-      }
-
-      if (maxValue !== undefined && value > maxValue) {
-        throw new Error(`Параметр ${propertyKey} должен быть меньше ${maxValue}`);
-      }
-    }
-
-    parsedParameters[propertyKey] = value;
-  }
-
-  return parsedParameters;
+  return result;
 }

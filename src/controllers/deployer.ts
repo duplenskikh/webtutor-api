@@ -3,7 +3,7 @@ import { dapi } from "../dapi";
 
 export function functions(): Route[] {
   return [{
-    method: "GET",
+    method: "POST",
     pattern: "/deploy",
     callback: "deploy",
     access: "dev",
@@ -13,7 +13,7 @@ export function functions(): Route[] {
       }
     }
   }, {
-    method: "GET",
+    method: "POST",
     pattern: "/deploy/build",
     callback: "deployBuild",
     access: "dev",

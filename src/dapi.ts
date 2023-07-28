@@ -1,13 +1,13 @@
-import { Headers, utils, services, Route, Config } from "./index";
+import { utils, services, Route, Config, RouteParameter } from "./index";
 
 interface DAPI {
-  basepath: string | null;
-  Headers: typeof Headers;
-  routes: Route[];
-  utils: typeof utils;
-  services: typeof services;
+  availableParametersTypes: RouteParameter["type"][];
   config: Config;
+  basepath: string | null;
   init(): void;
+  routes: Route[];
+  services: typeof services;
+  utils: typeof utils;
 }
 
 export let dapi: DAPI;

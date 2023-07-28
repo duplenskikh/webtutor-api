@@ -41,3 +41,7 @@ export function forbidden(message: string) {
 export function notFound(message: string) {
   return abort(message, 404);
 }
+
+export function methodNotAllowed(message: string = "Метод не разрешен") {
+  return abort(message, 405);
+}

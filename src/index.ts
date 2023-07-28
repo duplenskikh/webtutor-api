@@ -1,3 +1,5 @@
+"META:NAMESPACE:dapi";
+
 type Utils = {
   array: typeof import("./utils/array");
   config: typeof import("./utils/config");
@@ -19,15 +21,15 @@ type Services = {
 }
 
 export type RouteParameter = {
-  type: "boolean" | "string" | "number" | "real" | "date" | "array" | "object";
-  value?: string | number | boolean | null | Date | Object;
-  required?: boolean;
+  type: "boolean" | "number" | "string" | "date" | "array" | "object";
+  format?: "real" | "date";
+  val?: string | number | boolean | null | Date | Object;
+  optional?: boolean;
   nullable?: boolean;
   min?: number;
   max?: number;
   example?: string | number | string[] | number[];
   items?: string;
-  store?: "body" | "query";
   description?: string;
 }
 
@@ -59,12 +61,14 @@ export type APIResponse<T> = {
   message: null | string;
 }
 
-"META:NAMESPACE:dapi";
-
-export const Headers = {
-  Ok: 200,
-  NotFound: 404
-};
+export const availableParametersTypes = [
+  "boolean",
+  "number",
+  "string",
+  "date",
+  "array",
+  "object"
+];
 
 export const routes: Route[] = [];
 export const config: Config = {} as Config;
