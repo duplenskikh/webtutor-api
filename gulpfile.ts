@@ -117,12 +117,13 @@ task("build", async(done) => {
     .pipe(dest(consts.BUILD_PATH));
 
   baseSrc(consts.CONFIG_JSON)
+    .pipe(change((content) => `<%\n${content}\n%>\n`))
     .pipe(dest(consts.BUILD_PATH));
 
   baseSrc([consts.INSTALL_SH, consts.INSTALL_PS1])
     .pipe(dest(consts.BUILD_PATH));
 
-  src([consts.OPENAPI_JSON, consts.OPENAPI_HTML])
+  src(consts.OPENAPI_HTML)
     .pipe(dest(consts.OPENAPI_BUILD_PATH));
 
   done();

@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "fs";
 import { join, parse } from "path";
 import chalk from "chalk";
 
-import { Route, RouteParameters } from "../../src";
+import { Route } from "../../src";
 
 import { config } from "dotenv";
 config();
@@ -36,41 +36,6 @@ async function findControllers() {
   return controllers;
 }
 
-function fillStringParams(params: { [key: string]: string }) {
-  return Object.keys(params).map(x => ({
-    in: "query",
-    name: x,
-    schema: {
-      type: params[x]
-    },
-    allowReserved: true
-  }));
-}
-
-function fillQueryParams(params: { [key: string]: RouteParameters }) {
-  return Object.keys(params).map(x => ({
-    in: "query",
-    name: x,
-    schema: {
-      type: params[x].type,
-      default: params[x].defaultValue,
-    },
-    required: !params[x].optional,
-    description: params[x].description,
-    allowReserved: params[x].type === "string"
-  }));
-}
-
-function fillBodyParams(params: [string, RouteParameters][]) {
-  return Object.fromEntries(params.map(x => {
-    return [x[0], {
-      type: x[1].type == "date" ? "string" : x[1].type,
-      format: x[1].type == "date" ? "date" : undefined,
-      items: x[1].type == "array" ? { type: x[1].items ?? "string" } : undefined
-    }];
-  }));
-}
-
 type Controllers = {
   name: string;
   functions: Route[];
@@ -83,7 +48,7 @@ function fillPaths(controllers: Controllers[]) {
       const pattern = TEMPLATE_OBJECT.paths[fn.pattern];
       const method = fn.method.toLowerCase();
       pattern[method] = pattern[method] || {};
-      pattern[method].summary = fn.summary || "No summary";
+      pattern[method].summary = fn.summary || "Без описания";
       pattern[method].operationId = fn.callback;
       pattern[method].tags = pattern[method].tags || [];
       pattern[method].tags.push(controller.name);
@@ -107,40 +72,6 @@ function fillPaths(controllers: Controllers[]) {
         });
       }
 
-      const params = fn.params;
-      const isParamsExist = typeof params === "object" && Object.keys(params).length !== 0;
-
-      if (isParamsExist) {
-        const stringParams = Object.fromEntries(Object.entries(params).filter(([x]) => typeof params[x] === "string"));
-        const objectParams = Object.entries(params).filter(([x]) => typeof params[x] === "object");
-        const queryParams = Object.fromEntries(
-          objectParams.filter(([x]) => (params[x] as RouteParameters).in !== "body")
-        );
-        const bodyParams = objectParams.filter(([x]) => (params[x] as RouteParameters).in === "body");
-
-        if (bodyParams.length !== 0) {
-          const requiredBodyParams = bodyParams.filter(([x]) => !(params[x] as RouteParameters).optional);
-
-          pattern[method]["requestBody"] = {
-            required: requiredBodyParams.length !== 0,
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: fillBodyParams(bodyParams as [string, RouteParameters][]),
-                  required: requiredBodyParams.map(([x]) => x)
-                }
-              }
-            }
-          };
-        }
-
-        pattern[method].parameters.push(
-          ...fillStringParams(stringParams as { [key: string]: string }),
-          ...fillQueryParams(queryParams as { [key: string]: RouteParameters }),
-        );
-      }
-
       pattern[method].responses = {
         200: {
           description: "OK",
@@ -150,13 +81,52 @@ function fillPaths(controllers: Controllers[]) {
         503: { $ref: "#/components/responses/ServiceUnavailable" }
       };
 
-      if (fn.access !== "anonymous") {
-        pattern[method].responses[401] = { $ref: "#/components/responses/UnauthorizedError" };
-      }
+      if (typeof fn.params === "object" && Object.keys(fn.params).length !== 0) {
+        if (method !== "get" && method !== "head") {
+          pattern[method].requestBody = {
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {},
+                  // required: requiredBodyParams.map(([x]) => x)
+                }
+              }
+            }
+          };
+        }
 
-      if (isParamsExist) {
+        for (let key in fn.params) {
+          pattern[method].parameters.push({
+            in: "query",
+            name: key,
+            schema: {
+              type: fn.params[key].type,
+              default: fn.params[key].val,
+              format: fn.params[key].format,
+              maximum: fn.params[key].max,
+              minimum: fn.params[key].min
+            },
+            required: !fn.params[key].optional,
+            description: fn.params[key].description,
+            allowReserved: fn.params[key].type === "string"
+          });
+
+          if (method !== "get" && method !== "head") {
+            pattern[method].requestBody.content["application/json"].schema.properties[key] = {
+              type: fn.params[key].type == "date" ? "string" : fn.params[key].type,
+              format: fn.params[key].type == "date" ? "date" : undefined,
+              items: fn.params[key].type == "array" ? { type: fn.params[key].items ?? "string" } : undefined
+            };
+          }
+        }
+
         pattern[method].responses[403] = { $ref: "#/components/responses/BadRequest" };
         pattern[method].responses[404] = { $ref: "#/components/responses/NotFound" };
+      }
+
+      if (fn.access !== "anonymous") {
+        pattern[method].responses[401] = { $ref: "#/components/responses/UnauthorizedError" };
       }
     }
   }
