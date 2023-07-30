@@ -1,18 +1,18 @@
 import { Route } from "..";
 import { dapi } from "../dapi";
 
-export function getRoute(pattern: string) {
+export function getRoute(pattern: string, method: string) {
   pattern = StrReplaceOne(pattern, dapi.config.pattern, "");
   let i = 0;
 
   for (i = 0; i < dapi.routes.length; i++) {
-    if (dapi.routes[i].pattern == pattern) {
+    if (dapi.routes[i].pattern == pattern && dapi.routes[i].method == method) {
       return dapi.routes[i];
     }
   }
 }
 
-function ensureWebRule() {
+function createRouterRule() {
   const webRuleCode = `dapi_${dapi.config.pattern}`;
   const query = ArrayOptFirstElem(tools.xquery(`for $e in web_rules where $e/code = ${SqlLiteral(webRuleCode)} return $e`));
 
@@ -33,12 +33,12 @@ function ensureWebRule() {
   webRuleDocument.TopElem.redirect_url.Value = `/${dapi.config.basepath}/api.html`;
   webRuleDocument.Save();
 
-  alert(`Правило редиректа ${webRuleDocument.DocID} успешно ${webRuleDocument.NeverSaved ? "создано" : "обновлено"}`);
+  alert(`Правило редиректа ${webRuleDocument.DocID} успешно ${webRuleDocument.NeverSaved ? `${"создано"}` : `${"обновлено"}` }`);
   alert(`Все запросы ${webRuleDocument.TopElem.url.Value} будут перенаправляться на ${webRuleDocument.TopElem.redirect_url.Value}`);
 }
 
 export function init() {
-  ensureWebRule();
+  createRouterRule();
   DropFormsCache("./../controllers/*");
   const apis = ReadDirectory("./../controllers");
   let i = 0;
@@ -46,12 +46,18 @@ export function init() {
   let apiFunctions;
   const routes: Route[] = [];
   let obj;
+  let isDevelopmentEnv = dapi.config.env == "development";
 
   for (i = 0; i < apis.length; i++) {
     apiFunctions = OpenCodeLib(apis[i]).functions() as Route[];
 
     for (j = 0; j < apiFunctions.length; j++) {
       obj = apiFunctions[j];
+
+      if (obj.access == "dev" && !isDevelopmentEnv) {
+        continue;
+      }
+
       routes.push({
         method: obj.method,
         pattern: obj.pattern,

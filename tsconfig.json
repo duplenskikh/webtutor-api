@@ -1,12 +1,26 @@
 {
+  "ts-node": {
+    "swc": true,
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "typeRoots" : [
+      "./node_modules/@umbrik/webtutor-types/lib",
+      "./node_modules/@umbrik/webtutor-types/lib/xml"
+    ]
   },
+  "include": [
+    "misc/openapi/*.ts"
+  ],
   "files": [
     "gulpfile.ts",
     ".eslintrc.js"

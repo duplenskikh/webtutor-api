@@ -9,6 +9,7 @@ import rename from "gulp-rename";
 import change from "gulp-change";
 import header from "gulp-header";
 import zip from "gulp-zip";
+import run from "gulp-run";
 const stripImportExport = require("gulp-strip-import-export");
 
 import del from "del";
@@ -91,6 +92,8 @@ task("dev", (done) => {
 task("build", async(done) => {
   await del("build");
 
+  task("openapi:generate").call(this);
+
   consts.WATCHED_TS_TYPES
     .forEach(x => transformTS(x)
       .pipe(header("\ufeff"))
@@ -114,10 +117,14 @@ task("build", async(done) => {
     .pipe(dest(consts.BUILD_PATH));
 
   baseSrc(consts.CONFIG_JSON)
+    .pipe(change((content) => `<%\n${content}\n%>\n`))
     .pipe(dest(consts.BUILD_PATH));
 
   baseSrc([consts.INSTALL_SH, consts.INSTALL_PS1])
     .pipe(dest(consts.BUILD_PATH));
+
+  src(consts.OPENAPI_HTML)
+    .pipe(dest(consts.OPENAPI_BUILD_PATH));
 
   done();
 });
@@ -151,8 +158,19 @@ task("delivery", async(done) => {
   filesPath.sort((f, s) => statSync(f).ctime > statSync(s).ctime ? -1 : 1);
   console.log(chalk.bgGreen(`Найден файл ${filesPath[0]} для поставки`));
 
-  src(filesPath[0])
-    .pipe(deploy(filesPath[0], consts.BUILD_URL));
+  src(filesPath[0]).pipe(deploy(filesPath[0], consts.BUILD_URL));
 
+  done();
+});
+
+task("openapi:generate", () => {
+  console.log(chalk.blue("Запущена задача openapi:generate по генерации документации openapi"));
+  src(consts.OPENAPI_HTML).pipe(dest(consts.OPENAPI_BUILD_PATH));
+  return run("npm run openapi:generate").exec();
+});
+
+task("openapi:delivery", (done) => {
+  src(consts.BUILD_OPENAPI_JSON_PATH, { base: consts.BUILD_PATH }).pipe(deploy(consts.OPENAPI_JSON, consts.DEPLOY_URL));
+  src(consts.BUILD_OPENAPI_HTML_PATH, { base: consts.BUILD_PATH }).pipe(deploy(consts.OPENAPI_HTML, consts.DEPLOY_URL));
   done();
 });
