@@ -13,6 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": false,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "typeRoots" : [
       "./node_modules/@umbrik/webtutor-types/lib",
       "./node_modules/@umbrik/webtutor-types/lib/xml"

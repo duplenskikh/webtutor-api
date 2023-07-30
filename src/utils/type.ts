@@ -10,6 +10,10 @@ export function isArray(value: unknown): value is any[] {
   return DataType(value) == "object" && IsArray(value) && ObjectType(value) == "JsArray";
 }
 
+export function isError(value: unknown): value is Error {
+  return ObjectType(value) == "BmErrorInfo";
+}
+
 export function isNumber(value: unknown): value is number {
   return DataType(value) == "integer";
 }

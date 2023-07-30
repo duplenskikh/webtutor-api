@@ -19,6 +19,8 @@ import { deploy } from "./gulp/plugins";
 import { readdirSync, statSync } from "fs";
 import { join, parse } from "path";
 
+import { version } from "./package.json";
+
 const baseSrc = (path) => src(path, { base: consts.SRC_PATH });
 const removeImportsExports = (content: string) =>
   content.replace(consts.IMPORT_REGEXP, "// $1").replace(consts.EXPORT_REGEXP, "// $1");
@@ -117,7 +119,10 @@ task("build", async(done) => {
     .pipe(dest(consts.BUILD_PATH));
 
   baseSrc(consts.CONFIG_JSON)
-    .pipe(change((content) => `<%\n${content}\n%>\n`))
+    .pipe(change((content) => JSON.stringify({
+      ...JSON.parse(content),
+      version
+    })))
     .pipe(dest(consts.BUILD_PATH));
 
   baseSrc([consts.INSTALL_SH, consts.INSTALL_PS1])

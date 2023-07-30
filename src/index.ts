@@ -59,7 +59,7 @@ export type Config = {
 export type APIResponse<T> = {
   statusCode: number;
   data: T;
-  message: null | string;
+  message: null | string | Error;
 }
 
 export const availableParametersTypes = [

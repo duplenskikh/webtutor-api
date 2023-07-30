@@ -9,8 +9,7 @@ export function functions(): Route[] {
     access: "user",
     params: {
       id: {
-        type: "number",
-        convert: true
+        type: "number"
       }
     }
   }];
