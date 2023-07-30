@@ -1,16 +1,16 @@
 import { dapi } from "./dapi";
 
 export function handle(req: Request, res: Response) {
-  const route = dapi.utils.router.getRoute(req.UrlPath);
+  const route = dapi.utils.router.getRoute(req.UrlPath, req.Method);
 
   if (dapi.utils.type.isUndef(route)) {
     req.RespContentType = "application/json; charset=utf-8";
-    return dapi.utils.response.abort(`В библиотеке отсутствует функция для метода [${req.UrlPath}]: [${req.Method}]`, 404);
+    return dapi.utils.response.abort(`В библиотеке отсутствует обработчик по url ${req.UrlPath} для метод ${req.Method}]`, 404);
   }
 
   req.RespContentType = route.GetOptProperty("contentType", "application/json; charset=utf-8");
 
-  const isAnonymous = route.access == "anonymous";
+  const isAnonymous = route.access == "anonymous" || route.access == "dev";
 
   if (!isAnonymous) {
     const auth = dapi.utils.passport.authenticate(req);
@@ -43,6 +43,8 @@ export function handle(req: Request, res: Response) {
     return dapi.utils.response.abort(error);
   }
 }
+
+Request.AddRespHeader("X-DAPI", "true");
 
 try {
   Response.Write(dapi.utils.response.json(handle(Request, Response), Response));

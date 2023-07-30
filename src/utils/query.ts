@@ -6,7 +6,7 @@ export function exec<T>(command: string) {
 
 export function extract<T>(command: string) {
   const query = exec<T>(command);
-  const result: T[] = [];
+  const result = [];
   let o;
   let field: any;
 
