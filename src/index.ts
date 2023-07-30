@@ -30,6 +30,7 @@ export type RouteParameter = {
   max?: number;
   example?: string | number | string[] | number[];
   items?: string;
+  store?: "query" | "body";
   description?: string;
 }
 

@@ -23,7 +23,9 @@ export function functions(): Route[] {
     params: {
       sort: {
         type: "string",
-        defaultValue: "asc"
+        store: "query",
+        val: "asc",
+        example: "asc"
       }
     }
   }];

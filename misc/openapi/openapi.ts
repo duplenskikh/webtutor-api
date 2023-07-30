@@ -82,21 +82,37 @@ function fillPaths(controllers: Controllers[]) {
       };
 
       if (typeof fn.params === "object" && Object.keys(fn.params).length !== 0) {
-        if (method !== "get" && method !== "head") {
+        const bodyParameters = Object.keys(fn.params).filter(x => fn.params[x].store === "body");
+
+        const queryParameters = Object.keys(fn.params)
+          .filter(x => fn.params[x].store === "query" || typeof fn.params[x].store === "undefined");
+
+        if (bodyParameters.length !== 0) {
+          const requiredBodyParameters = bodyParameters.filter(x => !fn.params[x].optional);
+
           pattern[method].requestBody = {
+            required: requiredBodyParameters.length !== 0,
             content: {
               "application/json": {
                 schema: {
                   type: "object",
                   properties: {},
-                  // required: requiredBodyParams.map(([x]) => x)
+                  required: requiredBodyParameters
                 }
               }
             }
           };
+
+          for (const key of bodyParameters) {
+            pattern[method].requestBody.content["application/json"].schema.properties[key] = {
+              type: fn.params[key].type == "date" ? "string" : fn.params[key].type,
+              format: fn.params[key].type == "date" ? "date" : undefined,
+              items: fn.params[key].type == "array" ? { type: fn.params[key].items ?? "string" } : undefined
+            };
+          }
         }
 
-        for (let key in fn.params) {
+        for (let key of queryParameters) {
           pattern[method].parameters.push({
             in: "query",
             name: key,
@@ -105,20 +121,13 @@ function fillPaths(controllers: Controllers[]) {
               default: fn.params[key].val,
               format: fn.params[key].format,
               maximum: fn.params[key].max,
-              minimum: fn.params[key].min
+              minimum: fn.params[key].min,
+              example: fn.params[key].example
             },
             required: !fn.params[key].optional,
             description: fn.params[key].description,
             allowReserved: fn.params[key].type === "string"
           });
-
-          if (method !== "get" && method !== "head") {
-            pattern[method].requestBody.content["application/json"].schema.properties[key] = {
-              type: fn.params[key].type == "date" ? "string" : fn.params[key].type,
-              format: fn.params[key].type == "date" ? "date" : undefined,
-              items: fn.params[key].type == "array" ? { type: fn.params[key].items ?? "string" } : undefined
-            };
-          }
         }
 
         pattern[method].responses[403] = { $ref: "#/components/responses/BadRequest" };

@@ -14,6 +14,7 @@ function normalizeScheme(scheme: RouteParameters) {
       throw new Error(`Некорректно определен тип параметра ${key} - "${type}"\nДоступные параметры: ${dapi.availableParametersTypes.join(", ")}`);
     }
 
+    schemeProperty.SetProperty("store", schemeProperty.GetOptProperty("store", "query"));
     schemeProperty.SetProperty("optional", schemeProperty.GetOptProperty("optional", false));
     schemeProperty.SetProperty("description", schemeProperty.GetOptProperty("description", null));
     schemeProperty.SetProperty("val", schemeProperty.GetOptProperty("val", null));
@@ -79,6 +80,40 @@ function convertParameterValue(key: string, value: unknown, scheme: RouteParamet
   }
 }
 
+type ParsedParameter = {
+  store: RouteParameter["store"];
+  value: unknown
+};
+
+type ParsedParameters = {
+  [key: string]: ParsedParameter;
+};
+
+function parseParameters(req: Request) {
+  const parameters: ParsedParameters = {};
+  let key;
+
+  const bodyParameters = tools.read_object(req.Body);
+
+  for (key in bodyParameters) {
+    parameters.SetProperty(key, {
+      store: "body",
+      value: bodyParameters[key]
+    });
+  }
+
+  const queryParameters = req.Query;
+
+  for (key in queryParameters) {
+    parameters.SetProperty(key, {
+      store: "query",
+      value: queryParameters[key]
+    });
+  }
+
+  return parameters;
+}
+
 export function parse(
   req: Request,
   scheme: RouteParameters
@@ -92,7 +127,7 @@ export function parse(
   }
 
   scheme = normalizeScheme(scheme);
-  const parameters = dapi.utils.object.extend({}, [tools.read_object(req.Body), req.QueryString]);
+  const parameters = parseParameters(req);
 
   let key;
   let parameter;
@@ -103,14 +138,17 @@ export function parse(
 
   for (key in scheme) {
     parameter = parameters.GetOptProperty(key, null);
-
     schemeParameter = scheme[key] as RouteParameter;
 
     if (parameter === null && !schemeParameter.optional) {
       throw new Error(`Параметр ${key} обязателен`);
     }
 
-    parameterValue = convertParameterValue(key, parameter, schemeParameter);
+    if (parameter.store != schemeParameter.store) {
+      throw new Error(`Параметр ${key} должен быть передан в ${schemeParameter.store}`);
+    }
+
+    parameterValue = convertParameterValue(key, parameter.value, schemeParameter);
 
     defaultValue = schemeParameter.GetOptProperty("val", null);
 
