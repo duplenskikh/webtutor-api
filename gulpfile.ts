@@ -1,3 +1,8 @@
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+
+yargs(hideBin(process.argv));
+
 import { dest, src, task } from "gulp";
 import chalk from "chalk";
 import watch from "gulp-watch";
@@ -121,8 +126,9 @@ task("build", async(done) => {
   baseSrc(consts.CONFIG_JSON)
     .pipe(change((content) => JSON.stringify({
       ...JSON.parse(content),
-      version
-    })))
+      version,
+      env: process.argv.indexOf("--production") !== -1 ? "production" : "development"
+    }, null, 2)))
     .pipe(dest(consts.BUILD_PATH));
 
   baseSrc([consts.INSTALL_SH, consts.INSTALL_PS1])
