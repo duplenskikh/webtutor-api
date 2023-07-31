@@ -3,11 +3,15 @@ export function isString(value: unknown): value is string {
 }
 
 export function isObject(value: unknown): value is object {
-  return DataType(value) == "object";
+  return DataType(value) == "object" && ObjectType(value) == "JsObject";
 }
 
 export function isArray(value: unknown): value is any[] {
-  return DataType(value) == "object" && IsArray(value);
+  return DataType(value) == "object" && IsArray(value) && ObjectType(value) == "JsArray";
+}
+
+export function isError(value: unknown): value is Error {
+  return ObjectType(value) == "BmErrorInfo";
 }
 
 export function isNumber(value: unknown): value is number {
@@ -34,8 +38,14 @@ export type Primitive = number | boolean | string | undefined | null;
 
 export function isPrimitive(value: unknown): value is Primitive {
   const type = DataType(value);
-  // eslint-disable-next-line max-len
-  return type == "integer" || type == "float" || type == "bool" || type == "string" || value === undefined || value === null;
+  return (
+    type == "integer"
+    || type == "float"
+    || type == "bool"
+    || type == "string"
+    || value === undefined
+    || value === null
+  );
 }
 
 /**
@@ -43,12 +53,8 @@ export function isPrimitive(value: unknown): value is Primitive {
  * @param { any } value Проверяемое значение.
  * @returns { boolean }
  */
-export function isNull(value: unknown): value is undefined | null | "" {
-  const valueType = DataType(value);
-
-  return valueType == "object" || valueType == "array"
-    ? false
-    : value == undefined || value == null || value == "";
+export function isNull(v: unknown): v is undefined | null | "" {
+  return isObject(v) || isArray(v) ? false : (v === undefined || v === null || StrCharCount(v as string) === 0);
 }
 
 /**
@@ -84,12 +90,10 @@ export function entityType(entity: unknown, getRValue = false): string {
 
   try {
     (entity as XmlDocument).TopElem;
-
     return "XmDoc";
   } catch (err) {
     try {
       (entity as XmlTopElem).Doc;
-
       return "XmElem";
     } catch (err) {
       if (IsArray(entity)) {
@@ -108,21 +112,18 @@ export function entityType(entity: unknown, getRValue = false): string {
  * @param { any } [defaultValue=null] Значение по-умолчанию, если проверка не пройдена.
  */
 export function makeArraySafe(
-  entityArray: (string | number)[],
+  arr: unknown[],
   targetType?: string,
   defaultValue?: unknown
 ): unknown[] {
-  let _safetyArray = [];
+  let result = [];
+  let i;
 
-  let _entity;
-  let _safetyEntity;
-
-  for (_entity in entityArray) {
-    _safetyEntity = makeSafe(_entity, targetType, defaultValue);
-    _safetyArray.push(_safetyEntity);
+  for (i = 0; i < arr.length; i++) {
+    result.push(makeSafe(arr[i], targetType, defaultValue));
   }
 
-  return _safetyArray;
+  return result;
 }
 
 /**

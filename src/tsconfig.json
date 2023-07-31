@@ -14,7 +14,7 @@
       "../node_modules/@umbrik/webtutor-types/lib/xml"
     ],
     "esModuleInterop": true,
-    "noLib": true,
+    "noLib": true
   },
   "include": [
     "controllers/**/*",

@@ -1,19 +1,23 @@
 {
   "name": "webtutor-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint src --ext .ts",
     "start": "gulp dev --silent",
     "build": "gulp build --silent",
+    "build:delivery": "npm run zip && gulp delivery --silent",
     "zip": "npm run build && gulp zip --silent",
-    "lint": "eslint src --ext .ts",
-    "delivery": "npm run zip && gulp delivery --silent"
+    "openapi:generate": "ts-node ./misc/openapi/openapi.ts",
+    "openapi:delivery": "gulp openapi:generate && gulp openapi:delivery"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@swc/cli": "^0.1.62",
+    "@swc/core": "^1.3.70",
     "@types/gulp": "^4.0.10",
     "@types/gulp-change": "^1.0.0",
     "@types/gulp-rename": "^2.0.1",
@@ -32,6 +36,7 @@
     "gulp-change": "^1.0.2",
     "gulp-header": "^2.0.9",
     "gulp-rename": "^2.0.0",
+    "gulp-run": "^1.7.1",
     "gulp-strip-import-export": "^1.0.0",
     "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-watch": "^5.0.1",

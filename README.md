@@ -1,4 +1,4 @@
-<h1 align="center">DAPI - инструмент для разработчиков WebSoft HCM</h1>
+<h1 align="center">Developers API - инструмент для разработчиков WebSoft HCM</h1>
 
 ## Что это такое и зачем оно мне?
 
@@ -47,8 +47,8 @@ webtutor-api/
 
 Доступ к объявленным функциям можно получить с помощью глобальной переменной `dapi`, в ней хранятся ссылки на все функции из `services` и `utils`.
 ```typescript
-dapi.utils.isDate(someDate);  // Обращение к функции `isDate`, расположенной в каталоге `utils`
-dapi.services.getEvents();    // Обращение к функции `getEvents`, расположенной в каталоге `services`
+dapi.utils.date.isDate(someDate);  // Обращение к функции `isDate`, расположенной в каталоге `utils`
+dapi.services.events.getEvents();    // Обращение к функции `getEvents`, расположенной в каталоге `services`
 ```
 
 Вы можете обращаться к переменной `dapi` из любого объекта системы на сервере, если же вам нужно реализовать поддержку в толстом клиенте администратора, необходимо будет точечно устанавливать данную библиотеку для каждого пользователя, что очень сильно не рекомендуется из-за сопутствующей сложности данного процесса.
@@ -105,7 +105,7 @@ export function getEvents() {
 }
 
 // Данная функция будет доступна к вызову следующим образом
-dapi.services.getEvents();
+dapi.services.events.getEvents();
 ```
 
 #### utils
@@ -121,8 +121,22 @@ export function pop(array: unknown[]): unknown[] {
 }
 
 // Данная функция будет доступна к вызову следующим образом
-dapi.utils.pop(["foo", "bar"]);
+dapi.utils.array.pop(["foo", "bar"]);
 ```
+
+### Переменные окружения
+
+В репозитории, в файле `.env.example`, хранится пример с доступными в проекте переменными окружения, вы можете скопировать данный файл и назвать `.env`, после чего заполнить его в соответствии с вашими настройками системы.
+
+```
+DEPLOYER_LOGIN=deployer               # Логин внешнего приложения
+DEPLOYER_PASSWORD=deployer            # Пароль внешнего приложения
+DEPLOYER_HOST=http://localhost:8080   # Хост для подключения
+DEPLOYER_APP_ID=deployer              # Идентификатор для подстановки в `x-app-id`
+API_WEBTUTOR_BASE_PATH=/dapi          # Базовый путь `dapi`
+```
+
+Под внешним приложением понимается объект `remote_application` системы WebSoft HCM, расположенный в разделе `Безопасность >> API >> Внешние приложения API`.
 
 ### Сборка проекта
 
@@ -181,7 +195,7 @@ dapi successfully registered
 External API Lib: x-local://wt/web/dapi/index.xml. Loaded.
 ```
 
-Если все библиотеки зарегистрировались успешно, вы можете проверить доступ к API по адресу `https://<server_address>/api/v1/check`.
+Если все библиотеки зарегистрировались успешно, вы можете проверить доступ к API по адресу `https://<server_address>/api/v1/ping`.
 
 ## Ограничения и условности
 

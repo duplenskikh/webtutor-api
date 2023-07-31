@@ -26,11 +26,11 @@ export function ok<T>(data: T, statusCode = 200): APIResponse<T> {
   };
 }
 
-export function abort<T>(message: string, statusCode: number = 500, data: T = null): APIResponse<T> {
+export function abort<T>(message: Error | string, statusCode: number = 500, data: T = null): APIResponse<T> {
   return {
     statusCode,
     data,
-    message: RValue(message)
+    message: dapi.utils.type.isError(message) && dapi.config.env != "development" ? message.message : message
   };
 }
 
@@ -40,4 +40,8 @@ export function forbidden(message: string) {
 
 export function notFound(message: string) {
   return abort(message, 404);
+}
+
+export function methodNotAllowed(message: string = "Метод не разрешен") {
+  return abort(message, 405);
 }

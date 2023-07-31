@@ -54,10 +54,10 @@ export const deploy = (file: string, url) => {
       })
       .catch(({ response }) => {
         console.log(chalk.bgRed("Произошла ошибка при деплое файла"));
-        console.log(chalk.red(`Статус запроса ${response.status}`));
+        console.log(chalk.red(`Статус запроса ${response?.status}`));
 
-        if (response.data?.message) {
-          console.log(`Сообщение об ошибке: ${response.data.message}`);
+        if (response?.data?.message) {
+          console.log(`Сообщение об ошибке: ${response?.data?.message}`);
         }
       });
 
