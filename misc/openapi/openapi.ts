@@ -148,7 +148,7 @@ async function run() {
   const controllers = await findControllers();
   console.log(chalk.blue(`🔎 Найдено:\n\t${controllers.length} контроллеров\n\t${controllers.map(x => x.functions).flat().length} обработчиков`));
   TEMPLATE_OBJECT.info.version = PACKAGE_OBJECT.version;
-  TEMPLATE_OBJECT.servers[0].url = new URL(CONFIG_OBJECT.pattern, process.env.DEPLOYER_HOST);
+  TEMPLATE_OBJECT.servers[0].url = new URL(CONFIG_OBJECT.pattern, process.env.DEPLOYER_HOST || "http://localhost:80");
   fillPaths(controllers);
 }
 
