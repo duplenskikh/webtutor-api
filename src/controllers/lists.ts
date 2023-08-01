@@ -24,6 +24,7 @@ export function functions(): Route[] {
       sort: {
         type: "string",
         store: "query",
+        optional: true,
         val: "asc",
         example: "asc"
       }

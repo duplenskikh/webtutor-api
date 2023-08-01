@@ -14,16 +14,23 @@
     "strict": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "baseUrl": ".",
     "typeRoots" : [
       "./node_modules/@umbrik/webtutor-types/lib",
       "./node_modules/@umbrik/webtutor-types/lib/xml"
-    ]
+    ],
+    "paths": {
+      "@src/*": ["./src/*"]
+    },
   },
   "include": [
-    "misc/openapi/*.ts"
+    "misc/openapi/*.ts",
+    "cypress/**/*"
   ],
   "files": [
     "gulpfile.ts",
-    ".eslintrc.js"
+    ".eslintrc.js",
+    "cypress.config.ts",
+    "cypress/cypress.d.ts"
   ]
 }
