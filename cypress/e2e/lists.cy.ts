@@ -1,4 +1,4 @@
-describe("Events spec", () => {
+describe("Lists spec", () => {
   beforeEach(() => {
     cy.loginByForm();
   });
