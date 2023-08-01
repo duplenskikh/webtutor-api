@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint src --ext .ts",
+    "e2e": "cypress run",
+    "lint": "eslint src -c src/.eslintrc.json --ext .ts",
     "start": "gulp dev --silent",
     "build": "gulp build --silent",
     "build:delivery": "npm run zip && gulp delivery --silent",
