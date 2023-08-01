@@ -1,4 +1,4 @@
-describe("Collaborator spec", () => {
+describe("Collaborators spec", () => {
   beforeEach(() => {
     cy.loginByForm();
   });
