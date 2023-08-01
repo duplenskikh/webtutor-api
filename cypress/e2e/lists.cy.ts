@@ -3,22 +3,22 @@ describe("Events spec", () => {
     cy.loginByForm();
   });
 
-  it("/events", () => {
-    cy.request("/events")
+  it("/lists", () => {
+    cy.request("/lists")
       .then(({ status, duration, body }) => {
         expect(status).to.be.eq(200);
         expect(duration).to.be.lte(1500);
-        expect(body.data.items.length).to.be.gte(10);
-        Cypress.env("eventId", body.data.items[0].id);
+        expect(body.data.length).to.be.gte(10);
+        Cypress.env("listName", body.data[0]);
       });
   });
 
-  it("/event", () => {
-    cy.request(`/event?id=${Cypress.env("eventId")}`)
+  it("/list", () => {
+    cy.request(`/list?name=${Cypress.env("listName")}`)
       .then(({ status, duration, body }) => {
         expect(status).to.be.eq(200);
         expect(duration).to.be.lte(500);
-        expect(body.data).to.have.any.keys("id");
+        expect(body.data.length).to.be.gte(0);
       });
   });
 });
