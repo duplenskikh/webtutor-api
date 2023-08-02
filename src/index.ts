@@ -58,12 +58,6 @@ export type Config = {
   stderr: boolean;
 }
 
-export type APIResponse<T> = {
-  statusCode?: number;
-  data: T;
-  message?: null | string | Error;
-}
-
 export const availableParametersTypes = [
   "boolean",
   "number",
