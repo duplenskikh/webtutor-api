@@ -40,16 +40,16 @@ export function getFile(req: Request, res: Response, params: Object) {
 export function uploadFile(req: Request, res: Response) {
   const fileData = req.Query.GetOptProperty("file");
   const fileName = UrlFileName(fileData.FileName);
-  // const fileSize = StrLen(fileData);
-  // const fileExt = StrLowerCase(UrlPathSuffix(fileName)?.slice(1));
+  const fileSize = StrLen(fileData);
+  const fileExt = StrLowerCase(UrlPathSuffix(fileName)?.slice(1));
 
-  // if (dapi.supportedFilesExts.indexOf(fileExt) === -1) {
-  //   return dapi.utils.response.forbidden(res, "Данный тип файла не поддерживается");
-  // }
+  if (dapi.supportedFilesExts.indexOf(fileExt) === -1) {
+    return dapi.utils.response.forbidden(res, "Данный тип файла не поддерживается");
+  }
 
-  // if (fileSize > dapi.maxFileSize) {
-  //   return dapi.utils.response.forbidden(res, "Размер файла превышает максимально загружаемый размер");
-  // }
+  if (fileSize > dapi.maxFileSize) {
+    return dapi.utils.response.forbidden(res, "Размер файла превышает максимально загружаемый размер");
+  }
 
   const checksum = Md5Hex(fileData);
   const resourceQuery = ArrayOptFirstElem(tools.xquery(`for $e in resources where $e/checksum = ${XQueryLiteral(checksum)} return $e`));

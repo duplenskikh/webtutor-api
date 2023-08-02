@@ -72,6 +72,9 @@ export const routes: Route[] = [];
 export const config: Config = {} as Config;
 export const basepath: string | null = null;
 
+export const maxFileSize = 5 * 1024 * 1024;
+export const supportedFilesExts = [".docx", ".doc", ".xlsx", ".xls", ".txt", ".zip"];
+
 export const utils: Utils = {
   array: undefined,
   assert: undefined,
