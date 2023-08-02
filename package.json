@@ -8,7 +8,9 @@
     "lint": "eslint src -c src/.eslintrc.json --ext .ts",
     "start": "gulp dev --silent",
     "build": "gulp build --silent",
-    "build:delivery": "npm run zip && gulp delivery --silent",
+    "build:delivery:dev": "npm run zip:dev && gulp delivery --silent",
+    "build:delivery:production": "npm run zip:production && gulp delivery --silent",
+    "zip:dev": "npm run build && gulp zip --silent",
     "zip:production": "npm run build -- --production && gulp zip --silent",
     "openapi:generate": "ts-node ./misc/openapi/openapi.ts",
     "openapi:delivery": "gulp openapi:generate && gulp openapi:delivery"

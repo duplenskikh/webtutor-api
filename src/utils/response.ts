@@ -15,18 +15,6 @@ function json<T>(
   res.Write((dapi.utils.type.isPrimitive(payload) ? payload : tools.object_to_text(payload, "json")) as string);
 }
 
-export function ok<T>(res: Response, data: T, status = 200) {
-  json(
-    res,
-    data,
-    status
-  );
-}
-
-export function notModified(res: Response) {
-  ok(res, null, 304);
-}
-
 export function abort(res: Response, message: Error | string, status: number = 500) {
   message = (
     dapi.utils.type.isError(message) && dapi.config.env != "development"
@@ -42,7 +30,27 @@ export function abort(res: Response, message: Error | string, status: number = 5
   );
 }
 
-export function forbidden(res: Response, message: string) {
+export function ok<T>(res: Response, data: T, status = 200) {
+  json(
+    res,
+    data,
+    status
+  );
+}
+
+export function notModified(res: Response) {
+  ok(res, null, 304);
+}
+
+export function badRequest(res: Response, message: string) {
+  abort(res, message, 400);
+}
+
+export function unauthorized(res: Response, message = "Необходима авторизация") {
+  abort(res, message, 401);
+}
+
+export function forbidden(res: Response, message = "Доступ запрещён") {
   abort(res, message, 403);
 }
 
@@ -52,6 +60,10 @@ export function notFound(res: Response, message: string) {
 
 export function methodNotAllowed(res: Response, message: string = "Метод не разрешен") {
   abort(res, message, 405);
+}
+
+export function unprocessableContent(res: Response, message: string) {
+  abort(res, message, 422);
 }
 
 export function binary(res: Response, file: ResourceDocument) {

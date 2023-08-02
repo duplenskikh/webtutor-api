@@ -31,7 +31,7 @@ export function deploy(req: Request, res: Response, params: Object) {
 
   if (StrLen(newContent) === 0) {
     dapi.utils.log.warning(`Невозможно обновить. Файл ${url} не содержит контента`, "deployer");
-    return dapi.utils.response.abort(res, "Empty file content", 400);
+    return dapi.utils.response.badRequest(res, "Пустой файл");
   }
 
   if (FilePathExists(UrlToFilePath(url)) && !IsDirectory(url) && Md5Hex(LoadUrlData(url)) == Md5Hex(newContent)) {

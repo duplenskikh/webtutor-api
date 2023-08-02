@@ -4,7 +4,7 @@ export function handle(req: Request, res: Response) {
   const route = dapi.utils.router.getRoute(req.UrlPath, req.Method);
 
   if (dapi.utils.type.isUndef(route)) {
-    dapi.utils.response.abort(res, `В библиотеке отсутствует обработчик по url ${req.UrlPath} для метод ${req.Method}]`, 404);
+    dapi.utils.response.notFound(res, `В библиотеке отсутствует обработчик по url ${req.UrlPath} для метод ${req.Method}]`);
     return;
   }
 
@@ -15,12 +15,12 @@ export function handle(req: Request, res: Response) {
 
     if (auth === null) {
       req.Session.SetProperty("url_prev_auth", dapi.utils.request.getHeader(req.Header, "referer"));
-      dapi.utils.response.abort(res, "Необходима авторизация", 401);
+      dapi.utils.response.unauthorized(res);
       return;
     }
 
     if (auth.type != route.access && route.access != "both") {
-      dapi.utils.response.abort(res, "Доступ запрещён", 403);
+      dapi.utils.response.forbidden(res);
       return;
     }
   }
@@ -34,7 +34,7 @@ export function handle(req: Request, res: Response) {
       params = dapi.utils.validator.parse(req, route.params);
     }
   } catch (error) {
-    dapi.utils.response.abort(res, error, 422);
+    dapi.utils.response.unprocessableContent(res, error);
     return;
   }
 
