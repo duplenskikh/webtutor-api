@@ -32,7 +32,7 @@ export function functions(): Route[] {
   }];
 }
 
-export function getList(params: Object) {
+export function getList(req: Request, res: Response, params: Object) {
   let list;
 
   if (common.PathExists(params.name)) {
@@ -40,14 +40,15 @@ export function getList(params: Object) {
   } else if (lists.PathExists(params.name)) {
     list = lists.EvalPath(params.name);
   } else {
-    return dapi.utils.response.notFound("Список не найден");
+    return dapi.utils.response.notFound(res, "Список не найден");
   }
 
-  return dapi.utils.response.ok(ArrayExtract(list, "({ id: id.Value, name: name.Value })"));
+  return dapi.utils.response.ok(res, ArrayExtract(list, "({ id: id.Value, name: name.Value })"));
 }
 
-export function getAllLists(params: Object) {
+export function getAllLists(req: Request, res: Response, params: Object) {
   return dapi.utils.response.ok(
+    res,
     ArraySort(
       ArrayUnion(
         ArrayExtract(lists, "This.Name"),

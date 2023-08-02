@@ -4,11 +4,9 @@ export function handle(req: Request, res: Response) {
   const route = dapi.utils.router.getRoute(req.UrlPath, req.Method);
 
   if (dapi.utils.type.isUndef(route)) {
-    req.RespContentType = "application/json; charset=utf-8";
-    return dapi.utils.response.abort(`В библиотеке отсутствует обработчик по url ${req.UrlPath} для метод ${req.Method}]`, 404);
+    dapi.utils.response.abort(res, `В библиотеке отсутствует обработчик по url ${req.UrlPath} для метод ${req.Method}]`, 404);
+    return;
   }
-
-  req.RespContentType = route.GetOptProperty("contentType", "application/json; charset=utf-8");
 
   const isAnonymous = route.access == "anonymous" || route.access == "dev";
 
@@ -17,37 +15,36 @@ export function handle(req: Request, res: Response) {
 
     if (auth === null) {
       req.Session.SetProperty("url_prev_auth", dapi.utils.request.getHeader(req.Header, "referer"));
-      return dapi.utils.response.abort("Необходима авторизация", 401);
+      dapi.utils.response.abort(res, "Необходима авторизация", 401);
+      return;
     }
 
     if (auth.type != route.access && route.access != "both") {
-      return dapi.utils.response.abort("Доступ запрещён", 403);
+      dapi.utils.response.abort(res, "Доступ запрещён", 403);
+      return;
     }
   }
+
+  const handler = OpenCodeLib(route.GetOptProperty("url"));
+
+  let params;
 
   try {
-    const handler = OpenCodeLib(route.GetOptProperty("url"));
-
-    let params;
-
-    try {
-      if (!dapi.utils.type.isUndef(route.params)) {
-        params = dapi.utils.validator.parse(req, route.params);
-      }
-    } catch (error) {
-      return dapi.utils.response.abort(error, 422);
+    if (!dapi.utils.type.isUndef(route.params)) {
+      params = dapi.utils.validator.parse(req, route.params);
     }
-
-    return CallObjectMethod(handler, route.callback, [params, req, res]);
   } catch (error) {
-    return dapi.utils.response.abort(error);
+    dapi.utils.response.abort(res, error, 422);
+    return;
   }
+
+  CallObjectMethod(handler, route.callback, [req, res, params]);
 }
 
 Request.AddRespHeader("X-DAPI", "true");
 
 try {
-  Response.Write(dapi.utils.response.json(handle(Request, Response), Response));
+  handle(Request, Response);
 } catch (error) {
-  Response.Write(dapi.utils.response.json(dapi.utils.response.abort(error), Response));
+  dapi.utils.response.abort(Response, error);
 }

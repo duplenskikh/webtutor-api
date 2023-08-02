@@ -50,7 +50,7 @@ export const deploy = (file: string, url) => {
       }
     })
       .then(({ data }) => {
-        console.log(chalk.green(`${new Date().toLocaleString("ru-RU")}. Файл ${basename(file)} был успешно сохранен по пути ${data.data}`));
+        console.log(chalk.green(`${new Date().toLocaleString("ru-RU")}. Файл ${basename(file)} был успешно сохранен по пути ${data}`));
       })
       .catch(({ response }) => {
         console.log(chalk.bgRed("Произошла ошибка при деплое файла"));
