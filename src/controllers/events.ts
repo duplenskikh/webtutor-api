@@ -12,9 +12,6 @@ export function functions(): Route[] {
         type: "number",
         store: "query",
         description: "Id мероприятия"
-      },
-      name: {
-        type: "string"
       }
     }
   }, {
