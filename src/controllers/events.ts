@@ -6,17 +6,43 @@ export function functions(): Route[] {
     method: "GET",
     pattern: "/event",
     callback: "getEvent",
-    access: "user"
+    access: "user",
+    params: {
+      id: {
+        type: "number",
+        store: "query",
+        description: "Id мероприятия"
+      }
+    }
   }, {
     method: "GET",
     pattern: "/events",
     callback: "getEvents",
-    access: "user"
+    access: "user",
+    params: {
+      page: {
+        type: "number",
+        val: 1,
+        optional: true
+      },
+      per_page: {
+        type: "number",
+        val: 100,
+        optional: true
+      }
+    }
   }];
 }
 
-export function getEvent() {
-  return dapi.utils.response.ok(`curUserID is ${Request.Session.Env.curUserID}`);
+export function getEvent(params: Object) {
+  try {
+    const result = dapi.services.events.getDetails(params.id);
+    return dapi.utils.response.ok(result);
+  } catch (error) {
+    return error.message == "Не удалось открыть документ мероприятия"
+      ? dapi.utils.response.notFound(error.message)
+      : dapi.utils.response.abort(error.message);
+  }
 }
 
 export function getEvents(_params: Object, req: Request) {

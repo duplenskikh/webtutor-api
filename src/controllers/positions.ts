@@ -12,6 +12,23 @@ export function functions(): Route[] {
         type: "number"
       }
     }
+  }, {
+    method: "GET",
+    pattern: "/positions",
+    callback: "getPositions",
+    access: "user",
+    params: {
+      page: {
+        type: "number",
+        val: 1,
+        optional: true
+      },
+      per_page: {
+        type: "number",
+        val: 100,
+        optional: true
+      }
+    }
   }];
 }
 
@@ -50,4 +67,14 @@ export function getPosition(params: Object, req: Request) {
     position_family_id: positionDocument.TopElem.position_family_id.Value,
     position_family_name: (positionDocument.TopElem.position_family_id.OptForeignElem?.name.Value)
   });
+}
+
+
+export function getPositions(params: Object) {
+  return dapi.utils.response.ok(
+    dapi.utils.paginator.gather(
+      dapi.utils.query.extract("for $e in positions return $e"),
+      params
+    )
+  );
 }

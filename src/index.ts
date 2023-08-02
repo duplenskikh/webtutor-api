@@ -2,6 +2,7 @@
 
 type Utils = {
   array: typeof import("./utils/array");
+  assert: typeof import("./utils/assert");
   config: typeof import("./utils/config");
   fs: typeof import("./utils/fs");
   log: typeof import("./utils/log");
@@ -13,6 +14,7 @@ type Utils = {
   response: typeof import("./utils/response");
   router: typeof import("./utils/router");
   type: typeof import("./utils/type");
+  url: typeof import("./utils/url");
   validator: typeof import("./utils/validator");
 }
 
@@ -77,6 +79,7 @@ export const basepath: string | null = null;
 
 export const utils: Utils = {
   array: undefined,
+  assert: undefined,
   config: undefined,
   fs: undefined,
   log: undefined,
@@ -88,6 +91,7 @@ export const utils: Utils = {
   response: undefined,
   router: undefined,
   type: undefined,
+  url: undefined,
   validator: undefined
 };
 

@@ -9,10 +9,22 @@ export function functions(): Route[] {
     access: "user",
     summary: "Получение данных по авторизованному пользователю"
   }, {
-    method: "POST",
+    method: "GET",
     pattern: "/collaborators",
     callback: "getCollaborators",
-    access: "user"
+    access: "user",
+    params: {
+      page: {
+        type: "number",
+        val: 1,
+        optional: true
+      },
+      per_page: {
+        type: "number",
+        val: 100,
+        optional: true
+      }
+    }
   }];
 }
 

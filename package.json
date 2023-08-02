@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint src --ext .ts",
+    "e2e": "cypress run",
+    "lint": "eslint src -c src/.eslintrc.json --ext .ts",
     "start": "gulp dev --silent",
     "build": "gulp build --silent",
     "build:delivery": "npm run zip && gulp delivery --silent",
@@ -28,6 +29,7 @@
     "@umbrik/webtutor-types": "^7.51.3",
     "axios": "^1.4.0",
     "chalk": "4.1.2",
+    "cypress": "^12.17.2",
     "date-format": "^4.0.14",
     "del": "^6.1.1",
     "dotenv": "^16.0.3",
@@ -43,6 +45,7 @@
     "gulp-watch": "^5.0.1",
     "gulp-zip": "^5.1.0",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "4.4.4",
     "yargs": "^17.7.2"
   }

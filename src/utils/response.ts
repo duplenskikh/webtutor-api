@@ -30,7 +30,7 @@ export function abort<T>(message: Error | string, statusCode: number = 500, data
   return {
     statusCode,
     data,
-    message: dapi.utils.type.isError(message) && dapi.config.env != "development" ? message.message : message
+    message: dapi.utils.type.isError(message) && dapi.config.env != "development" ? message.message : RValue(message)
   };
 }
 

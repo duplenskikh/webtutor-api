@@ -32,7 +32,12 @@ function normalizeScheme(scheme: RouteParameters) {
   return scheme;
 }
 
-function convertParameterValue(key: string, value: unknown, scheme: RouteParameter) {
+function convertParameterValue(key: string, parameter: ParsedParameters, scheme: RouteParameter) {
+  if (parameter === null) {
+    return null;
+  }
+
+  const value = parameter.value;
   const type = scheme.type;
   const min = scheme.min;
   const max = scheme.max;
@@ -144,11 +149,11 @@ export function parse(
       throw new Error(`Параметр ${key} обязателен`);
     }
 
-    if (parameter.store != schemeParameter.store) {
+    if (parameter !== null && parameter.store != schemeParameter.store) {
       throw new Error(`Параметр ${key} должен быть передан в ${schemeParameter.store}`);
     }
 
-    parameterValue = convertParameterValue(key, parameter.value, schemeParameter);
+    parameterValue = convertParameterValue(key, parameter, schemeParameter);
 
     defaultValue = schemeParameter.GetOptProperty("val", null);
 
