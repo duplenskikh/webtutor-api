@@ -20,6 +20,7 @@ type Utils = {
 
 type Services = {
   events: typeof import("./services/events");
+  file: typeof import("./services/file");
 }
 
 export type RouteParameter = {
@@ -90,7 +91,8 @@ export const utils: Utils = {
 };
 
 export const services: Services = {
-  events: undefined
+  events: undefined,
+  file: undefined
 };
 
 function loadInternals(container: Utils | Services, url: string) {
