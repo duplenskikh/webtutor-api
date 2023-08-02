@@ -75,7 +75,7 @@ function convertParameterValue(key: string, parameter: ParsedParameters, scheme:
     return tools_web.is_true(value);
   } else if (type == "array") {
     return dapi.utils.type.makeArraySafe(
-      (dapi.utils.type.isString(value) ? tools.read_object(value) : value as unknown[]),
+      (dapi.utils.type.isString(value) ? tools.read_object(value) : value) as unknown[],
       scheme.items
     );
   } else if (type == "object") {

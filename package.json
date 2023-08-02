@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "e2e": "cypress run",
+    "build:check": "tsc -p src/tsconfig.json --noEmit",
     "lint": "eslint src -c src/.eslintrc.json --ext .ts",
     "start": "gulp dev --silent",
     "build": "gulp build --silent",
