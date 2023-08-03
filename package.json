@@ -13,8 +13,8 @@
     "build:delivery:production": "npm run zip:production && gulp delivery --silent",
     "zip:dev": "npm run build && gulp zip --silent",
     "zip:production": "npm run build -- --production && gulp zip --silent",
-    "openapi:generate": "ts-node ./misc/openapi/openapi.ts",
-    "openapi:delivery": "gulp openapi:generate && gulp openapi:delivery"
+    "openapi:generate": "gulp openapi:generate",
+    "openapi:delivery": "npm run openapi:generate && gulp openapi:delivery"
   },
   "keywords": [],
   "author": "",
@@ -42,7 +42,6 @@
     "gulp-change": "^1.0.2",
     "gulp-header": "^2.0.9",
     "gulp-rename": "^2.0.0",
-    "gulp-run": "^1.7.1",
     "gulp-strip-import-export": "^1.0.0",
     "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-watch": "^5.0.1",
