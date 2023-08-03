@@ -23,8 +23,9 @@ describe("File spec", () => {
 
   it("/file", () => {
     cy.request(`/file?id=${Cypress.env("fileId")}`)
-      .then(({ status }) => {
+      .then(({ status, body }) => {
         expect(status).to.be.eq(200);
+        expect(body.length).to.be.gt(0);
       });
   });
 });
