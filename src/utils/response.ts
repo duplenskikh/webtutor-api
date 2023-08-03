@@ -79,5 +79,6 @@ export function binary(res: Response, file: ResourceDocument) {
   );
   binary.LoadFromUrl(url);
   res.ContentType = tools_web.url_std_content_type(url);
-  res.AddHeader("Content-Disposition", `filename=${UrlEncode(file.TopElem.name.Value)}`);
+  res.AddHeader("Content-Disposition", `attachment; filename=${UrlEncode(file.TopElem.name.Value)}`);
+  res.Stream.WriteBinary(binary);
 }

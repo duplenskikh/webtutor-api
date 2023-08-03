@@ -79,6 +79,7 @@ export function uploadFile(req: Request, res: Response, params: Object) {
   return dapi.utils.response.ok(
     res,
     {
+      id: resourceDocument.DocID,
       name,
       extension,
       sha: checksum,
