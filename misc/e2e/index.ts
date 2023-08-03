@@ -10,6 +10,9 @@ export async function dirtyCheckCoverage() {
   const controllers = (await findControllers()).filter(x => x.functions.filter(y => y.access !== "dev").length > 0);
   const tests = readdirSync(e2eTestsPath);
 
+  console.log(chalk.greenBright(`Собрано ${controllers} контроллеров`));
+  console.log(chalk.greenBright(`Собрано ${controllers} тестов`));
+
   const uncovered = controllers.filter(x => tests.indexOf(`${x.name}.cy.ts`) === -1).map(x => x.name);
 
   if (tests.length < controllers.length) {
