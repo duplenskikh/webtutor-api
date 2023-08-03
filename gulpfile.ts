@@ -25,6 +25,7 @@ import { join, parse } from "path";
 
 import { version } from "./package.json";
 import { generateOAPI } from "@misc/openapi/openapi";
+import { dirtyCheckCoverage } from "@misc/e2e";
 
 const baseSrc = (path) => src(path, { base: consts.SRC_PATH });
 const removeImportsExports = (content: string) =>
@@ -183,5 +184,10 @@ task("openapi:generate", () => {
 task("openapi:delivery", (done) => {
   src(consts.BUILD_OPENAPI_JSON_PATH, { base: consts.BUILD_PATH }).pipe(deploy(consts.OPENAPI_JSON, consts.DEPLOY_URL));
   src(consts.BUILD_OPENAPI_HTML_PATH, { base: consts.BUILD_PATH }).pipe(deploy(consts.OPENAPI_HTML, consts.DEPLOY_URL));
+  done();
+});
+
+task("e2e:check:dirty", (done) => {
+  dirtyCheckCoverage();
   done();
 });

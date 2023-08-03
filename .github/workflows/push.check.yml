@@ -16,4 +16,5 @@ jobs:
     - run: npm ci
     - run: npm run lint
     - run: npm run build:check
+    - run: npm run e2e:check:dirty
     # - run: npm run e2e

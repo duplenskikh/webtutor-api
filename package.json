@@ -14,6 +14,7 @@
     "zip:dev": "npm run build && gulp zip --silent",
     "zip:production": "npm run build -- --production && gulp zip --silent",
     "openapi:generate": "gulp openapi:generate",
+    "e2e:check:dirty": "gulp e2e:check:dirty",
     "openapi:delivery": "npm run openapi:generate && gulp openapi:delivery"
   },
   "keywords": [],

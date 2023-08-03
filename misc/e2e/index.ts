@@ -6,7 +6,7 @@ import { findControllers } from "@misc/utils";
 const PROJECT_PATH = join(__dirname, "..", "..");
 const e2eTestsPath = join(PROJECT_PATH, "cypress", "e2e");
 
-async function main() {
+export async function dirtyCheckCoverage() {
   const controllers = (await findControllers()).filter(x => x.functions.filter(y => y.access !== "dev").length > 0);
   const tests = readdirSync(e2eTestsPath);
 
@@ -18,5 +18,3 @@ async function main() {
     process.exit(1);
   }
 }
-
-main();
