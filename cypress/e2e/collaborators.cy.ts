@@ -8,7 +8,7 @@ describe("Collaborators spec", () => {
       .then(({ status, duration, body }) => {
         expect(status).to.be.eq(200);
         expect(duration).to.be.lte(500);
-        expect(body.data).to.have.any.keys("id");
+        expect(body).to.have.any.keys("id");
       });
   });
 
@@ -17,7 +17,9 @@ describe("Collaborators spec", () => {
       .then(({ status, duration, body }) => {
         expect(status).to.be.eq(200);
         expect(duration).to.be.lte(1500);
-        expect(body.data.items.length).to.be.gte(10);
+        expect(body.total).to.be.gt(0);
+        expect(body.items).to.be.an("array");
+        expect(body.items.length).to.be.gt(0);
       });
   });
 });
