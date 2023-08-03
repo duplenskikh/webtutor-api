@@ -103,12 +103,13 @@ function fillPaths(controllers: Controllers[]) {
           });
         }
 
-        pattern[method].responses[403] = { $ref: "#/components/responses/BadRequest" };
+        pattern[method].responses[400] = { $ref: "#/components/responses/BadRequest" };
         pattern[method].responses[404] = { $ref: "#/components/responses/NotFound" };
       }
 
       if (fn.access !== "anonymous") {
         pattern[method].responses[401] = { $ref: "#/components/responses/UnauthorizedError" };
+        pattern[method].responses[403] = { $ref: "#/components/responses/Forbidden" };
       }
     }
   }

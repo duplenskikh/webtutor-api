@@ -13,6 +13,24 @@ export function functions(): Route[] {
         type: "number"
       }
     }
+  }, {
+    method: "PUT",
+    pattern: "/file",
+    callback: "uploadFile",
+    access: "user",
+    summary: "Загрузка файлов",
+    params: {
+      name: {
+        type: "string",
+        store: "body",
+        description: "Название загружаемого файла"
+      },
+      content: {
+        type: "string",
+        store: "body",
+        description: "Контент загружаемого файла"
+      }
+    }
   }];
 }
 
@@ -37,30 +55,38 @@ export function getFile(req: Request, res: Response, params: Object) {
   return dapi.utils.response.binary(res, resourceDocument);
 }
 
-export function uploadFile(req: Request, res: Response) {
-  const fileData = req.Query.GetOptProperty("file");
-  const fileName = UrlFileName(fileData.FileName);
-  const fileSize = StrLen(fileData);
-  const fileExt = StrLowerCase(UrlPathSuffix(fileName)?.slice(1));
+export function uploadFile(req: Request, res: Response, params: Object) {
+  const name = params.name;
+  const content = Base64Decode(params.content);
+  const extension = UrlPathSuffix(name);
+  const size = StrLen(content);
 
-  if (dapi.supportedFilesExts.indexOf(fileExt) === -1) {
-    return dapi.utils.response.forbidden(res, "Данный тип файла не поддерживается");
+  if (dapi.supportedFilesExts.indexOf(extension) === -1) {
+    return dapi.utils.response.unsupportedMediaType(res);
   }
 
-  if (fileSize > dapi.maxFileSize) {
+  if (size > dapi.maxFileSize) {
     return dapi.utils.response.forbidden(res, "Размер файла превышает максимально загружаемый размер");
   }
 
-  const checksum = Md5Hex(fileData);
-  const resourceQuery = ArrayOptFirstElem(tools.xquery(`for $e in resources where $e/checksum = ${XQueryLiteral(checksum)} return $e`));
+  const checksum = Md5Hex(content);
+  let resourceDocument = tools.get_doc_by_key<ResourceDocument>("resource", "checksum", checksum);
 
-  if (resourceQuery === undefined) {
-    return dapi.utils.response.badRequest(res, "Данный файл уже был загружен ранее");
+  if (resourceDocument === null) {
+    resourceDocument = dapi.services.file.create(req.Session.Env.curUserID, content, name);
   }
 
   return dapi.utils.response.ok(
     res,
-    dapi.services.file.create(req.Session.Env.curUserID, fileData, fileName),
+    {
+      name,
+      extension,
+      sha: checksum,
+      size,
+      download_url: dapi.utils.url.getDownloadFileUrl(resourceDocument.DocID),
+      created: resourceDocument.TopElem.doc_info.creation.date.Value,
+      modified: resourceDocument.TopElem.doc_info.modification.date.Value
+    },
     201
   );
 }

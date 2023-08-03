@@ -62,6 +62,10 @@ export function methodNotAllowed(res: Response, message: string = "Метод н
   abort(res, message, 405);
 }
 
+export function unsupportedMediaType(res: Response, message: string = "Данный тип файла не поддерживается") {
+  abort(res, message, 415);
+}
+
 export function unprocessableContent(res: Response, message: string) {
   abort(res, message, 422);
 }

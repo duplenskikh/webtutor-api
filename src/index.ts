@@ -42,7 +42,7 @@ export type RouteParameters = {
 }
 
 export type Route = {
-  method: "GET" | "POST";
+  method: "GET" | "POST" | "PUT";
   pattern: string;
   callback: string;
   url?: string;
