@@ -1,6 +1,6 @@
 export function readDirSync(directoryPath: string, isRecursive = false): string[] {
   const directoryElements = ReadDirectory(directoryPath);
-  let files = [];
+  let files: string[] = [];
   let i = 0;
 
   for (i = 0; i < directoryElements.length; i++) {
