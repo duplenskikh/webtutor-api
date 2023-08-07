@@ -5,8 +5,10 @@ interface DAPI {
   config: Config;
   basepath: string | null;
   init(): void;
+  maxFileSize: number;
   routes: Route[];
   services: typeof services;
+  supportedFilesExts: string[];
   utils: typeof utils;
 }
 

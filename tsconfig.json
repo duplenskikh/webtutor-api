@@ -1,5 +1,6 @@
 {
   "ts-node": {
+    "require": ["tsconfig-paths/register"],
     "swc": true,
     "compilerOptions": {
       "module": "commonjs"
@@ -20,11 +21,12 @@
       "./node_modules/@umbrik/webtutor-types/lib/xml"
     ],
     "paths": {
-      "@src/*": ["./src/*"]
+      "@src/*": ["./src/*"],
+      "@misc/*": ["./misc/*"]
     },
   },
   "include": [
-    "misc/openapi/*.ts",
+    "misc/**/*.ts",
     "cypress/**/*"
   ],
   "files": [

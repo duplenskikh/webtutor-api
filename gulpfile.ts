@@ -14,7 +14,6 @@ import rename from "gulp-rename";
 import change from "gulp-change";
 import header from "gulp-header";
 import zip from "gulp-zip";
-import run from "gulp-run";
 const stripImportExport = require("gulp-strip-import-export");
 
 import del from "del";
@@ -25,6 +24,8 @@ import { readdirSync, statSync } from "fs";
 import { join, parse } from "path";
 
 import { version } from "./package.json";
+import { generateOAPI } from "@misc/openapi/openapi";
+import { dirtyCheckCoverage } from "@misc/e2e";
 
 const baseSrc = (path) => src(path, { base: consts.SRC_PATH });
 const removeImportsExports = (content: string) =>
@@ -177,11 +178,16 @@ task("delivery", async(done) => {
 task("openapi:generate", () => {
   console.log(chalk.blue("Запущена задача openapi:generate по генерации документации openapi"));
   src(consts.OPENAPI_HTML).pipe(dest(consts.OPENAPI_BUILD_PATH));
-  return run("npm run openapi:generate").exec();
+  return generateOAPI();
 });
 
 task("openapi:delivery", (done) => {
   src(consts.BUILD_OPENAPI_JSON_PATH, { base: consts.BUILD_PATH }).pipe(deploy(consts.OPENAPI_JSON, consts.DEPLOY_URL));
   src(consts.BUILD_OPENAPI_HTML_PATH, { base: consts.BUILD_PATH }).pipe(deploy(consts.OPENAPI_HTML, consts.DEPLOY_URL));
+  done();
+});
+
+task("e2e:check:dirty", (done) => {
+  dirtyCheckCoverage();
   done();
 });

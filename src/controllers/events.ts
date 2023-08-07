@@ -34,17 +34,16 @@ export function functions(): Route[] {
   }];
 }
 
-export function getEvent(params: Object) {
-  try {
-    const result = dapi.services.events.getDetails(params.id);
-    return dapi.utils.response.ok(result);
-  } catch (error) {
-    return error.message == "Не удалось открыть документ мероприятия"
-      ? dapi.utils.response.notFound(error.message)
-      : dapi.utils.response.abort(error.message);
+export function getEvent(req: Request, res: Response, params: Object) {
+  const eventDocument = tools.open_doc<EventDocument>(params.id);
+
+  if (eventDocument === undefined) {
+    return dapi.utils.response.notFound(res, "Мероприятие не найдено");
   }
+
+  return dapi.utils.response.ok(res, dapi.services.events.getDetails(params.id));
 }
 
-export function getEvents(_params: Object, req: Request) {
-  return dapi.utils.response.ok(dapi.utils.paginator.gather(dapi.services.events.getEvents(), req.Query));
+export function getEvents(req: Request, res: Response) {
+  return dapi.utils.response.ok(res, dapi.utils.paginator.gather(dapi.services.events.getEvents(), req.Query));
 }

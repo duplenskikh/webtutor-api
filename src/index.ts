@@ -20,6 +20,7 @@ type Utils = {
 
 type Services = {
   events: typeof import("./services/events");
+  file: typeof import("./services/file");
 }
 
 export type RouteParameter = {
@@ -41,7 +42,7 @@ export type RouteParameters = {
 }
 
 export type Route = {
-  method: "GET" | "POST";
+  method: "GET" | "POST" | "PUT";
   pattern: string;
   callback: string;
   url?: string;
@@ -58,12 +59,6 @@ export type Config = {
   stderr: boolean;
 }
 
-export type APIResponse<T> = {
-  statusCode: number;
-  data: T;
-  message: null | string | Error;
-}
-
 export const availableParametersTypes = [
   "boolean",
   "number",
@@ -76,6 +71,9 @@ export const availableParametersTypes = [
 export const routes: Route[] = [];
 export const config: Config = {} as Config;
 export const basepath: string | null = null;
+
+export const maxFileSize = 5 * 1024 * 1024;
+export const supportedFilesExts = [".docx", ".doc", ".xlsx", ".xls", ".txt", ".zip"];
 
 export const utils: Utils = {
   array: undefined,
@@ -96,7 +94,8 @@ export const utils: Utils = {
 };
 
 export const services: Services = {
-  events: undefined
+  events: undefined,
+  file: undefined
 };
 
 function loadInternals(container: Utils | Services, url: string) {

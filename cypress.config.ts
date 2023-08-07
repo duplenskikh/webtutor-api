@@ -15,11 +15,12 @@ export default defineConfig({
     baseUrl: (new URL(pattern, DEPLOYER_HOST)).toString(),
     retries: {
       runMode: 2
-    }
+    },
+    experimentalRunAllSpecs: true
   },
   env: {
     user_login: CYPRESS_USER_LOGIN || "user1",
     user_password: CYPRESS_USER_PASSWORD || "user1"
   },
-  video: false
+  video: false,
 });

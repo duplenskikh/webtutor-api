@@ -1,3 +1,5 @@
+import { dapi } from "../dapi";
+
 export function getDownloadFileUrl(objectId: number | undefined) {
-  return IsEmptyValue(objectId) ? null : `/download_file.html?file_id=${objectId}`;
+  return dapi.utils.type.isUndef(objectId) ? null : `/download_file.html?file_id=${objectId}`;
 }

@@ -28,12 +28,13 @@ export function functions(): Route[] {
   }];
 }
 
-export function getCurrentUser(_params: Object, req: Request) {
-  return dapi.utils.response.ok(req.Session.Env.curUser);
+export function getCurrentUser(req: Request, res: Response) {
+  return dapi.utils.response.ok(res, req.Session.Env.curUser);
 }
 
-export function getCollaborators(params: Object) {
+export function getCollaborators(_req: Request, res: Response, params: Object) {
   return dapi.utils.response.ok(
+    res,
     dapi.utils.paginator.gather(
       dapi.utils.query.extract("for $e in collaborators return $e"),
       params

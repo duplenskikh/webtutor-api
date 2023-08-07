@@ -23,15 +23,15 @@ export function functions(): Route[] {
   }];
 }
 
-export function pong() {
-  return dapi.utils.response.ok("pong");
+export function pong(req: Request, res: Response) {
+  return dapi.utils.response.ok(res, "pong");
 }
 
-export function getRoutes() {
-  return dapi.utils.response.ok(dapi.routes);
+export function getRoutes(req: Request, res: Response) {
+  return dapi.utils.response.ok(res, dapi.routes);
 }
 
-export function checkAppAuth(_params: Object, req: Request) {
+export function checkAppAuth(req: Request, res: Response) {
   const xAppId = dapi.utils.request.getHeader(req.Header, "x-app-id");
-  return dapi.utils.response.ok(dapi.utils.passport.authenticateApplication(req, xAppId));
+  return dapi.utils.response.ok(res, dapi.utils.passport.authenticateApplication(req, xAppId));
 }

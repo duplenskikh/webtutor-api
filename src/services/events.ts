@@ -3,8 +3,6 @@ import { dapi } from "../dapi";
 export function getDetails(eventId: number) {
   const eventDocument = tools.open_doc<EventDocument>(eventId);
 
-  dapi.utils.assert.assert(eventDocument !== undefined, "Не удалось открыть документ мероприятия");
-
   return {
     id: eventDocument.DocID,
     name: eventDocument.TopElem.name.Value,

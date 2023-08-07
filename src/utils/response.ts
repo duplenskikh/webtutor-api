@@ -1,47 +1,84 @@
-import { APIResponse } from "..";
 import { dapi } from "../dapi";
 
-export function json(response: string | APIResponse<unknown>, res: Response) {
-  if (dapi.utils.type.isPrimitive(response)) {
-    return tools.object_to_text({ data: response }, "json");
+function json<T>(
+  res: Response,
+  payload: T,
+  status = 200,
+  message: string = null
+) {
+  res.ContentType = "application/json; charset=utf-8;";
+
+  if (status !== 200) {
+    res.SetRespStatus(status, message);
   }
 
-  const statusCode = response.GetOptProperty("statusCode", 200);
-
-  if (statusCode !== 200) {
-    res.SetRespStatus(statusCode, response.GetOptProperty("message"));
-  }
-
-  return tools.object_to_text({
-    data: response.data,
-    message: response.message
-  }, "json");
+  res.Write((dapi.utils.type.isPrimitive(payload) ? payload : tools.object_to_text(payload, "json")) as string);
 }
 
-export function ok<T>(data: T, statusCode = 200): APIResponse<T> {
-  return {
-    statusCode,
+export function abort(res: Response, message: Error | string, status: number = 500) {
+  message = (
+    dapi.utils.type.isError(message) && dapi.config.env != "development"
+      ? message.message
+      : RValue(message)
+  ) as string;
+
+  json(
+    res,
+    { error: message },
+    status,
+    message
+  );
+}
+
+export function ok<T>(res: Response, data: T, status = 200) {
+  json(
+    res,
     data,
-    message: null
-  };
+    status
+  );
 }
 
-export function abort<T>(message: Error | string, statusCode: number = 500, data: T = null): APIResponse<T> {
-  return {
-    statusCode,
-    data,
-    message: dapi.utils.type.isError(message) && dapi.config.env != "development" ? message.message : RValue(message)
-  };
+export function notModified(res: Response) {
+  ok(res, null, 304);
 }
 
-export function forbidden(message: string) {
-  return abort(message, 403);
+export function badRequest(res: Response, message: string) {
+  abort(res, message, 400);
 }
 
-export function notFound(message: string) {
-  return abort(message, 404);
+export function unauthorized(res: Response, message = "Необходима авторизация") {
+  abort(res, message, 401);
 }
 
-export function methodNotAllowed(message: string = "Метод не разрешен") {
-  return abort(message, 405);
+export function forbidden(res: Response, message = "Доступ запрещён") {
+  abort(res, message, 403);
+}
+
+export function notFound(res: Response, message: string) {
+  abort(res, message, 404);
+}
+
+export function methodNotAllowed(res: Response, message: string = "Метод не разрешен") {
+  abort(res, message, 405);
+}
+
+export function unsupportedMediaType(res: Response, message: string = "Данный тип файла не поддерживается") {
+  abort(res, message, 415);
+}
+
+export function unprocessableContent(res: Response, message: string) {
+  abort(res, message, 422);
+}
+
+export function binary(res: Response, file: ResourceDocument) {
+  const binary = new Binary();
+  const url = tools.file_source_get_file_to_save_url(
+    file.TopElem.file_source.Value,
+    file.DocID,
+    file.TopElem.file_url.Value
+  );
+  binary.LoadFromUrl(url);
+  res.ContentType = tools_web.url_std_content_type(url);
+  res.AddHeader("Content-Disposition", `attachment; filename=${UrlEncode(file.TopElem.name.Value)}`);
+  res.Stream.WriteBinary(binary);
 }
