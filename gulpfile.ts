@@ -98,8 +98,6 @@ task("dev", (done) => {
 });
 
 task("build:sources", async(done) => {
-  await del("build");
-
   consts.WATCHED_TS_TYPES
     .forEach(x => transformTS(x)
       .pipe(header("\ufeff"))
@@ -135,6 +133,8 @@ task("build:sources", async(done) => {
 
   src(consts.OPENAPI_HTML)
     .pipe(dest(consts.OPENAPI_BUILD_PATH));
+
+  console.log(chalk.greenBright("Собраны все исходные файлы"));
 
   done();
 });
@@ -190,7 +190,13 @@ task("e2e:check:dirty", (done) => {
   done();
 });
 
+task("del", async(done) => {
+  // await del("build");
+  done();
+});
+
 task("build", series(
+  "del",
   "build:sources",
   "openapi:generate"
 ));
