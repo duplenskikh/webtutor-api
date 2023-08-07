@@ -3,7 +3,7 @@ import { hideBin } from "yargs/helpers";
 
 yargs(hideBin(process.argv));
 
-import { dest, src, task } from "gulp";
+import { dest, series, src, task } from "gulp";
 import chalk from "chalk";
 import watch from "gulp-watch";
 
@@ -97,10 +97,8 @@ task("dev", (done) => {
   done();
 });
 
-task("build", async(done) => {
+task("build:sources", async(done) => {
   await del("build");
-
-  task("openapi:generate").call(this);
 
   consts.WATCHED_TS_TYPES
     .forEach(x => transformTS(x)
@@ -191,3 +189,8 @@ task("e2e:check:dirty", (done) => {
   dirtyCheckCoverage();
   done();
 });
+
+task("build", series(
+  "build:sources",
+  "openapi:generate"
+));
