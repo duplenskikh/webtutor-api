@@ -21,6 +21,7 @@
     "controllers/**/*",
     "services/**/*",
     "utils/**/*",
+    "migrations/**/*",
     "*.ts"
   ]
 }
