@@ -23,21 +23,30 @@ export function init() {
     PutUrlData(dapi.config.migrations.url, "[]");
   }
 
-  const previousMigrations = tools.read_object(LoadFileData(dapi.config.migrations.url));
+  const previousMigrations = tools.read_object<string[]>(LoadFileData(dapi.config.migrations.url));
   const migrations = getMigrations(previousMigrations);
-  make(migrations, "up");
+  const appliedMigrations = make(migrations, "up");
+
+  PutUrlData(
+    dapi.config.migrations.url,
+    tools.object_to_text(ArrayUnion(previousMigrations, appliedMigrations), "json")
+  );
 }
 
 function make(migrations: string[], action: "up" | "down") {
   let migration;
+  const appliedMigrations = [];
 
   for (let i = 0; i < migrations.length; i++) {
     migration = OpenCodeLib(migrations[i]);
 
     try {
       CallObjectMethod(migration, action);
+      appliedMigrations.push(migrations[i]);
     } catch (error) {
       dapi.utils.log.error(`Произошла ошибка при применении "${action}" миграции "${migration}": ${error}`, "migrator");
     }
   }
+
+  return appliedMigrations;
 }
