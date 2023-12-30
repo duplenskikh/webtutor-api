@@ -6,6 +6,7 @@ type Utils = {
   config: typeof import("./utils/config");
   fs: typeof import("./utils/fs");
   log: typeof import("./utils/log");
+  migrator: typeof import("./utils/migrator");
   object: typeof import("./utils/object");
   paginator: typeof import("./utils/paginator");
   passport: typeof import("./utils/passport");
@@ -51,12 +52,17 @@ export type Route = {
   summary?: string;
 }
 
+export type ConfigMigrations = {
+  url: string;
+}
+
 export type Config = {
   env: "production" | "development";
   basepath: string;
   version: string;
   pattern: string;
   stderr: boolean;
+  migrations: ConfigMigrations;
 }
 
 export const availableParametersTypes = [
@@ -81,6 +87,7 @@ export const utils: Utils = {
   config: undefined,
   fs: undefined,
   log: undefined,
+  migrator: undefined,
   object: undefined,
   paginator: undefined,
   passport: undefined,
@@ -120,5 +127,6 @@ export function init() {
   loadInternals(services, "./services");
   utils.config.init();
   utils.router.init();
+  utils.migrator.init();
   alert(`API is ready: ${config.pattern}`);
 }

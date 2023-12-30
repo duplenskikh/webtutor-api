@@ -2,5 +2,8 @@
   "env": "development",
   "version": "9.9.9",
   "pattern": "/api/v1",
-  "stderr": true
+  "stderr": true,
+  "migrations": {
+    "url": "./migrations"
+  }
 }

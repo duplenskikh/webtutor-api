@@ -1,7 +1,7 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
-yargs(hideBin(process.argv));
+const { argv } = yargs(hideBin(process.argv));
 
 import { dest, series, src, task } from "gulp";
 import chalk from "chalk";
@@ -20,7 +20,7 @@ import del from "del";
 
 import * as consts from "./gulp/consts";
 import { deploy } from "./gulp/plugins";
-import { readdirSync, statSync } from "fs";
+import { readFileSync, readdirSync, statSync, writeFileSync } from "fs";
 import { join, parse } from "path";
 
 import { version } from "./package.json";
@@ -134,6 +134,10 @@ task("build:sources", async(done) => {
   src(consts.OPENAPI_HTML)
     .pipe(dest(consts.OPENAPI_BUILD_PATH));
 
+  transformTS(join(consts.MIGRATIONS_PATH, "*.ts"))
+    .pipe(header("\ufeff"))
+    .pipe(dest(consts.BUILD_PATH));
+
   console.log(chalk.greenBright("Собраны все исходные файлы"));
 
   done();
@@ -192,6 +196,11 @@ task("e2e:check:dirty", (done) => {
 
 task("del", async(done) => {
   // await del("build");
+  done();
+});
+
+task("migrate:create", (done) => {
+  writeFileSync(join(consts.MIGRATIONS_PATH, `${Date.now()}_${argv["name"]}.ts`), readFileSync(consts.MIGRATION_TEMPLATE_PATH));
   done();
 });
 
