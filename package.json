@@ -38,7 +38,6 @@
     "del": "^6.1.1",
     "dotenv": "^16.0.3",
     "eslint": "^8.45.0",
-    "eslint-plugin-no-for-of-loops": "^1.0.1",
     "gulp": "^4.0.2",
     "gulp-change": "^1.0.2",
     "gulp-header": "^2.0.9",
@@ -50,6 +49,7 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "4.4.4",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "@umbrik/eslint-config-hcm-wt": "^1.1.0"
   }
 }
