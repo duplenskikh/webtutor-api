@@ -8,13 +8,13 @@ export function extract<T>(command: string) {
   const query = exec<T>(command);
   const result = [];
   let o;
-  let field: any;
+  let field: unknown;
 
   for (let i = 0; i < query.length; i++) {
     o = {};
 
     for (field in query[i]) {
-      o.SetProperty(field.Name, extractQueryValue(field.Value));
+      o.SetProperty((field as XmlElem<unknown>).Name, extractQueryValue((field as XmlElem<unknown>).Value));
     }
 
     result.push(o);
@@ -23,7 +23,7 @@ export function extract<T>(command: string) {
   return result;
 }
 
-function extractQueryValue(value: any) {
+function extractQueryValue(value: unknown) {
   if (dapi.utils.type.isDate(value)) {
     return StrMimeDate(value);
   }

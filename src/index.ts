@@ -1,6 +1,7 @@
 "META:NAMESPACE:dapi";
 
 type Utils = {
+  agent: typeof import("./utils/agent");
   array: typeof import("./utils/array");
   assert: typeof import("./utils/assert");
   config: typeof import("./utils/config");
@@ -16,12 +17,12 @@ type Utils = {
   type: typeof import("./utils/type");
   url: typeof import("./utils/url");
   validator: typeof import("./utils/validator");
-}
+};
 
 type Services = {
   events: typeof import("./services/events");
   file: typeof import("./services/file");
-}
+};
 
 export type RouteParameter = {
   type: "boolean" | "number" | "string" | "date" | "array" | "object";
@@ -35,11 +36,11 @@ export type RouteParameter = {
   items?: string;
   store?: "query" | "body";
   description?: string;
-}
+};
 
 export type RouteParameters = {
   [key: string]: RouteParameter;
-}
+};
 
 export type Route = {
   method: "GET" | "POST" | "PUT";
@@ -49,7 +50,7 @@ export type Route = {
   access: "user" | "application" | "both" | "anonymous" | "dev";
   params?: RouteParameters;
   summary?: string;
-}
+};
 
 export type Config = {
   env: "production" | "development";
@@ -57,7 +58,7 @@ export type Config = {
   version: string;
   pattern: string;
   stderr: boolean;
-}
+};
 
 export const availableParametersTypes = [
   "boolean",
@@ -76,6 +77,7 @@ export const maxFileSize = 5 * 1024 * 1024;
 export const supportedFilesExts = [".docx", ".doc", ".xlsx", ".xls", ".txt", ".zip"];
 
 export const utils: Utils = {
+  agent: undefined,
   array: undefined,
   assert: undefined,
   config: undefined,

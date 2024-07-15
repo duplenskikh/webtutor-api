@@ -30,7 +30,8 @@
     "@types/yargs": "^17.0.24",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
-    "@umbrik/webtutor-types": "^7.51.3",
+    "@umbrik/eslint-config-hcm-wt": "^1.3.0",
+    "@umbrik/webtutor-types": "^9.6.0",
     "axios": "^1.4.0",
     "chalk": "4.1.2",
     "cypress": "^12.17.2",
@@ -38,6 +39,7 @@
     "del": "^6.1.1",
     "dotenv": "^16.0.3",
     "eslint": "^8.45.0",
+    "eslint-plugin-no-for-of-loops": "^1.0.1",
     "gulp": "^4.0.2",
     "gulp-change": "^1.0.2",
     "gulp-header": "^2.0.9",
@@ -49,7 +51,6 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "4.4.4",
-    "yargs": "^17.7.2",
-    "@umbrik/eslint-config-hcm-wt": "^1.1.0"
+    "yargs": "^17.7.2"
   }
 }

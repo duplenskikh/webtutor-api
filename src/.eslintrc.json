@@ -8,6 +8,10 @@
     "tsconfigRootDir": "src"
   },
   "extends": [
+    "eslint:recommended",
     "@umbrik/eslint-config-hcm-wt"
-  ]
+  ],
+  "rules": {
+    "no-magic-numbers": "off"
+  }
 }
