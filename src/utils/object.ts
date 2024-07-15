@@ -44,7 +44,7 @@ export function extend(target: Object, sources: Object[] | Object): Object {
 
   sources = ArrayUnion(sources, [target]);
   const o = {};
-  let source: any;
+  let source;
   let prop;
 
   for (source in sources) {
@@ -52,11 +52,11 @@ export function extend(target: Object, sources: Object[] | Object): Object {
       continue;
     }
 
-    if (dapi.utils.type.entityType(source) != "JsObject") {
+    if (!dapi.utils.type.isObject(source)) {
       throw new Error("Source element is not an object");
     }
 
-    for (prop in source) {
+    for (prop in source as Object) {
       o.SetProperty(prop, source[prop]);
     }
   }

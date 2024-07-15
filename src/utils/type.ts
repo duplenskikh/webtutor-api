@@ -1,4 +1,4 @@
-export function isArray(value: unknown): value is any[] {
+export function isArray(value: unknown): value is unknown[] {
   return DataType(value) == "object" && IsArray(value) && ObjectType(value) == "JsArray";
 }
 
@@ -53,6 +53,10 @@ export function isReal(value: number) {
 
 export function isString(value: unknown): value is string {
   return DataType(value) == "string";
+}
+
+export function isEmptyString(value: unknown): value is "" {
+  return isString(value) && StrCharCount(value) === 0;
 }
 
 export function isUndef(value: unknown): value is null | undefined {
@@ -128,42 +132,50 @@ export function makeArraySafe(
   return result;
 }
 
+// enum MakeSafeTargetType {
+//   integer = "integer",
+//   number = "number",
+//   int = "int",
+//   real = "real",
+//   xquery = "xquery",
+//   sql = "sql",
+//   boolean = "boolean",
+//   date = "date",
+//   string = "string"
+// }
+
 /**
  * Выполняет коробочные функции "обезвреживания" данных над входным значением.
  * @param { any } entity Входное значение.
  * @param { string } [targetType=string] Целевой тип значния.
  * @param { any } [defaultValue=null] Значение по-умолчанию, если проверка не пройдена.
  * */
-export function makeSafe(entity: any, targetType?: string, defaultValue?: unknown): unknown {
-  targetType = targetType != undefined ? StrLowerCase(targetType) : "string";
-  defaultValue = defaultValue != undefined ? defaultValue : null;
-
-  let _safetyEntity: any = tools_web.convert_xss(entity);
+export function makeSafe<T>(
+  unsafeValue: T,
+  targetType: string,
+  // targetType: MakeSafeTargetType = MakeSafeTargetType.string,
+  defaultValue: unknown = null
+) {
+  targetType = targetType !== undefined ? StrLowerCase(targetType) : "string";
 
   switch (targetType) {
     case "integer":
     case "number":
     case "int":
-      _safetyEntity = OptInt(_safetyEntity, defaultValue as number);
-      break;
+      return OptInt(unsafeValue, defaultValue);
     case "real":
-      _safetyEntity = OptReal(_safetyEntity, defaultValue as number);
-      break;
+      return OptReal(unsafeValue, defaultValue);
     case "xquery":
-      _safetyEntity = XQueryLiteral(_safetyEntity);
-      break;
+      return XQueryLiteral(unsafeValue);
     case "sql":
-      _safetyEntity = SqlLiteral(_safetyEntity);
-      break;
+      return SqlLiteral(unsafeValue);
     case "boolean":
-      _safetyEntity = tools_web.is_true(_safetyEntity);
-      break;
+      return tools_web.is_true(unsafeValue);
     case "date":
-      _safetyEntity = OptDate(_safetyEntity, defaultValue);
-      break;
+      return OptDate(unsafeValue, defaultValue);
+    default:
+      return tools_web.convert_xss(unsafeValue as string);
   }
-
-  return _safetyEntity;
 }
 
 export function getValue(value: unknown) {

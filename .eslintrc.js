@@ -18,6 +18,7 @@ module.exports = {
     "@typescript-eslint"
   ],
   rules: {
+    "no-magic-numbers": "off",
     "@typescript-eslint/no-loss-of-precision": ["off"],
     "@typescript-eslint/no-array-constructor": ["off"],
     "@typescript-eslint/ban-types": "off",
