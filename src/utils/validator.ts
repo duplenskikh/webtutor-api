@@ -70,7 +70,7 @@ function convertParameterValue(key: string, parameter: ParsedParameters, scheme:
 
     return convertedValue;
   } else if (type == "date" || type == "string" && format == "date") {
-    convertedValue = OptDate(value, null);
+    return OptDate(value, null);
   } else if (type == "boolean") {
     return tools_web.is_true(value);
   } else if (type == "array") {
