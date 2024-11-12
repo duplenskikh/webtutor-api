@@ -1,11 +1,10 @@
-import { Route } from "..";
-import { dapi } from "../dapi";
+import { wshcmx, Route } from "index";
 
 export function functions(): Route[] {
   return [{
     method: "POST",
     pattern: "/deploy",
-    callback: "deploy",
+    callback: deploy,
     access: "dev",
     params: {
       file: {
@@ -15,7 +14,7 @@ export function functions(): Route[] {
   }, {
     method: "POST",
     pattern: "/deploy/build",
-    callback: "deployBuild",
+    callback: deployBuild,
     access: "dev",
     params: {
       file: {
@@ -26,31 +25,35 @@ export function functions(): Route[] {
 }
 
 export function deploy(req: Request, res: Response, params: Object) {
-  const url = `x-local://wt/web/${dapi.config.basepath}/${params.file}`;
+  const url = `x-local://wt/web/${wshcmx.config.basepath}/${params.file}`;
   const newContent = req.Body;
 
   if (StrLen(newContent) === 0) {
-    dapi.utils.log.warning(`Невозможно обновить. Файл ${url} не содержит контента`, "deployer");
-    return dapi.utils.response.badRequest(res, "Пустой файл");
+    wshcmx.utils.log.warning(`Невозможно обновить. Файл ${url} не содержит контента`, "deployer");
+    return wshcmx.utils.response.badRequest(res, "Пустой файл");
   }
 
   if (FilePathExists(UrlToFilePath(url)) && !IsDirectory(url) && Md5Hex(LoadUrlData(url)) == Md5Hex(newContent)) {
-    dapi.utils.log.warning(`Хэши старой и новой версии файла ${url} сопадают`, "deployer");
-    return dapi.utils.response.notModified(res);
+    wshcmx.utils.log.warning(`Хэши старой и новой версии файла ${url} сопадают`, "deployer");
+    return wshcmx.utils.response.notModified(res);
   }
 
   ObtainDirectory(ParentDirectory(UrlToFilePath(url)), true);
   PutFileData(UrlToFilePath(url), newContent);
   DropFormsCache(url);
-  dapi.utils.log.info(`Файл ${url} обновлен и сброшен кэш`, "deployer");
-  dapi.init();
+  wshcmx.utils.log.info(`Файл ${url} обновлен и сброшен кэш`, "deployer");
+  wshcmx.init();
 
-  return dapi.utils.response.ok(res, url);
+  return wshcmx.utils.response.ok(res, url);
 }
 
-export function deployBuild(req: Request, res: Response, params: Object) {
+type DeployBuildParams = {
+  file: string;
+}
+
+export function deployBuild(req: Request, _res: Response, params: DeployBuildParams) {
   req.RespContentType = "application/json";
-  const packagesPath = `x-local://wt/web/${dapi.config.basepath}/packages`;
+  const packagesPath = `x-local://wt/web/${wshcmx.config.basepath}/packages`;
   const filePath = UrlAppendPath(packagesPath, params.file);
   const fileData = req.Body;
 
@@ -59,7 +62,7 @@ export function deployBuild(req: Request, res: Response, params: Object) {
   PutUrlData(filePath, fileData);
   ZipExtract(filePath, destinationZipPath);
 
-  const files = dapi.utils.fs.readDirSync(destinationZipPath, true);
+  const files = wshcmx.utils.fs.readDirSync(destinationZipPath, true);
 
   let i = 0;
   let splittedFileUrl;
@@ -80,7 +83,7 @@ export function deployBuild(req: Request, res: Response, params: Object) {
   DeleteDirectory(destinationZipPath);
   DeleteFile(filePath);
 
-  DropFormsCache(`x-local://wt/web/${dapi.config.basepath}/*`);
-  dapi.init();
+  DropFormsCache(`x-local://wt/web/${wshcmx.config.basepath}/*`);
+  wshcmx.init();
 }
 

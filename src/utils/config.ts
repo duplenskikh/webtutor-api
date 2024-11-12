@@ -1,16 +1,18 @@
-import { dapi } from "../dapi";
+import { wshcmx } from "index";
 
 export function init() {
   const configUrl = "./../config.json";
 
   if (!FilePathExists(UrlToFilePath(configUrl))) {
     const error = `Config doesn't exist by path ${configUrl}`;
+    // eslint-disable-next-line no-alert
     alert(error);
     throw new Error(error);
   }
 
-  dapi.config = tools.read_object(LoadUrlData(configUrl));
-  dapi.config.basepath = UrlToFilePath("./..").replace("\\", "/").split("/wt/web/")[1];
+  wshcmx.config = tools.read_object(LoadUrlData(configUrl));
+  wshcmx.config.basepath = UrlToFilePath("./..").replace("\\", "/").split("/wt/web/")[1];
 
-  alert(`Config loaded:\n${tools.object_to_text(dapi.config, "json")}`);
+  // eslint-disable-next-line no-alert
+  alert(`Config loaded:\n${tools.object_to_text(wshcmx.config, "json")}`);
 }

@@ -1,17 +1,16 @@
-import { Route } from "..";
-import { dapi } from "../dapi";
+import { wshcmx, Route } from "index";
 
 export function functions(): Route[] {
   return [{
     method: "GET",
     pattern: "/collaborator/current",
-    callback: "getCurrentUser",
+    callback: getCurrentUser,
     access: "user",
     summary: "Получение данных по авторизованному пользователю"
   }, {
     method: "GET",
     pattern: "/collaborators",
-    callback: "getCollaborators",
+    callback: getCollaborators,
     access: "user",
     params: {
       page: {
@@ -29,14 +28,14 @@ export function functions(): Route[] {
 }
 
 export function getCurrentUser(req: Request, res: Response) {
-  return dapi.utils.response.ok(res, req.Session.Env.curUser);
+  return wshcmx.utils.response.ok(res, req.Session.Env.curUser);
 }
 
 export function getCollaborators(_req: Request, res: Response, params: Object) {
-  return dapi.utils.response.ok(
+  return wshcmx.utils.response.ok(
     res,
-    dapi.utils.paginator.gather(
-      dapi.utils.query.extract("for $e in collaborators return $e"),
+    wshcmx.utils.paginator.gather(
+      wshcmx.utils.query.extract("for $e in collaborators return $e"),
       params
     )
   );

@@ -1,11 +1,9 @@
-import { dapi } from "../dapi";
-
 /**
 * Выполнение функции для каждого элемента массива
 * @param array Массив элементов
 * @param func Функция
 */
-export function forEach(array: unknown[], func: Function): void {
+export function forEach(array: unknown[], func: CallableFunction): void {
   array = ArrayDirect(array);
   let i;
 
@@ -19,7 +17,7 @@ export function forEach(array: unknown[], func: Function): void {
  * @param array Массив
  * @param func Функция
  */
-export function map(array: unknown[], func: Function): unknown[] {
+export function map(array: unknown[], func: CallableFunction): unknown[] {
   array = ArrayDirect(array);
   let i;
   const results = [];
@@ -53,25 +51,6 @@ export function keys(array: unknown[]): number[] {
  */
 export function pop(array: unknown[]): unknown[] {
   return ArrayRange(array, 0, ArrayCount(array) - 1);
-}
-
-/**
- * Определяет, содержит ли массив определённый элемент по условию
- * @param array Массив
- * @param condition Условие
- */
-export function includes(array: Object, condition: string): boolean {
-  if (
-    (
-      dapi.utils.type.entityType(array) === "XmElem"
-      && (ArrayCount(array.FormElem) == 1 && ArrayFirstElem(array.FormElem).IsMultiple)
-    )
-    || IsArray(array)
-  ) {
-    return !dapi.utils.type.isNull(ArrayOptFind(array, condition));
-  } else {
-    return false;
-  }
 }
 
 /**

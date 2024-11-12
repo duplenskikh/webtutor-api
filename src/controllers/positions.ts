@@ -1,11 +1,10 @@
-import { Route } from "..";
-import { dapi } from "../dapi";
+import { wshcmx, Route } from "index";
 
 export function functions(): Route[] {
   return [{
     method: "GET",
     pattern: "/position",
-    callback: "getPosition",
+    callback: getPosition,
     access: "user",
     params: {
       id: {
@@ -15,7 +14,7 @@ export function functions(): Route[] {
   }, {
     method: "GET",
     pattern: "/positions",
-    callback: "getPositions",
+    callback: getPositions,
     access: "user",
     params: {
       page: {
@@ -32,11 +31,15 @@ export function functions(): Route[] {
   }];
 }
 
-export function getPosition(req: Request, res: Response, params: Object) {
+type GetPositionParams = {
+  id: number;
+}
+
+export function getPosition(req: Request, res: Response, params: GetPositionParams) {
   const positionDocument = tools.open_doc<PositionDocument>(params.id);
 
   if (positionDocument === undefined) {
-    return dapi.utils.response.notFound(res, `Должности по id ${params.id} не существует`);
+    return wshcmx.utils.response.notFound(res, `Должности по id ${params.id} не существует`);
   }
 
   const hasAccess = tools_web.check_access(
@@ -47,10 +50,10 @@ export function getPosition(req: Request, res: Response, params: Object) {
   );
 
   if (!hasAccess) {
-    return dapi.utils.response.forbidden(res, `У вас нет доступа к должности ${positionDocument.DocID}`);
+    return wshcmx.utils.response.forbidden(res, `У вас нет доступа к должности ${positionDocument.DocID}`);
   }
 
-  return dapi.utils.response.ok(
+  return wshcmx.utils.response.ok(
     res,
     {
       id: positionDocument.DocID,
@@ -73,11 +76,11 @@ export function getPosition(req: Request, res: Response, params: Object) {
 }
 
 
-export function getPositions(req: Request, res: Response, params: Object) {
-  return dapi.utils.response.ok(
+export function getPositions(_req: Request, res: Response, params: Object) {
+  return wshcmx.utils.response.ok(
     res,
-    dapi.utils.paginator.gather(
-      dapi.utils.query.extract("for $e in positions return $e"),
+    wshcmx.utils.paginator.gather(
+      wshcmx.utils.query.extract("for $e in positions return $e"),
       params
     )
   );

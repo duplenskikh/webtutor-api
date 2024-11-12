@@ -1,38 +1,29 @@
 {
-  "ts-node": {
-    "require": ["tsconfig-paths/register"],
-    "swc": true,
-    "compilerOptions": {
-      "module": "commonjs"
-    }
-  },
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "noImplicitAny": true,
+    "target": "ES5",
+    "module": "ES6",
+    "allowJs": true,
+    "outDir": "build",
+    "isolatedModules": true,
     "moduleResolution": "node",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
     "strict": false,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
-    "typeRoots" : [
-      "./node_modules/@umbrik/webtutor-types/lib",
-      "./node_modules/@umbrik/webtutor-types/lib/xml"
+    "baseUrl": "src",
+    "noEmit": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "rootDir": "src",
+    "typeRoots": [
+      "node_modules/@wshcmx/types/lib",
+      "node_modules/@wshcmx/types/lib/xml"
     ],
-    "paths": {
-      "@src/*": ["./src/*"],
-      "@misc/*": ["./misc/*"]
-    },
+    "esModuleInterop": true,
+    "noLib": true
   },
   "include": [
-    "misc/**/*.ts",
-    "cypress/**/*"
-  ],
-  "files": [
-    "gulpfile.ts",
-    ".eslintrc.js",
-    "cypress.config.ts",
-    "cypress/cypress.d.ts"
+    "src/controllers/**/*",
+    "src/services/**/*",
+    "src/utils/**/*",
+    "src/**/*"
   ]
 }

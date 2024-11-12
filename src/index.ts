@@ -1,4 +1,4 @@
-"META:NAMESPACE:dapi";
+/// @template namespace
 
 type Utils = {
   array: typeof import("./utils/array");
@@ -16,12 +16,12 @@ type Utils = {
   type: typeof import("./utils/type");
   url: typeof import("./utils/url");
   validator: typeof import("./utils/validator");
-}
+};
 
 type Services = {
   events: typeof import("./services/events");
   file: typeof import("./services/file");
-}
+};
 
 export type RouteParameter = {
   type: "boolean" | "number" | "string" | "date" | "array" | "object";
@@ -35,21 +35,21 @@ export type RouteParameter = {
   items?: string;
   store?: "query" | "body";
   description?: string;
-}
+};
 
 export type RouteParameters = {
   [key: string]: RouteParameter;
-}
+};
 
 export type Route = {
   method: "GET" | "POST" | "PUT";
   pattern: string;
-  callback: string;
+  callback: CallableFunction;
   url?: string;
   access: "user" | "application" | "both" | "anonymous" | "dev";
   params?: RouteParameters;
   summary?: string;
-}
+};
 
 export type Config = {
   env: "production" | "development";
@@ -57,68 +57,72 @@ export type Config = {
   version: string;
   pattern: string;
   stderr: boolean;
-}
-
-export const availableParametersTypes = [
-  "boolean",
-  "number",
-  "string",
-  "date",
-  "array",
-  "object"
-];
-
-export const routes: Route[] = [];
-export const config: Config = {} as Config;
-export const basepath: string | null = null;
-
-export const maxFileSize = 5 * 1024 * 1024;
-export const supportedFilesExts = [".docx", ".doc", ".xlsx", ".xls", ".txt", ".zip"];
-
-export const utils: Utils = {
-  array: undefined,
-  assert: undefined,
-  config: undefined,
-  fs: undefined,
-  log: undefined,
-  object: undefined,
-  paginator: undefined,
-  passport: undefined,
-  query: undefined,
-  request: undefined,
-  response: undefined,
-  router: undefined,
-  type: undefined,
-  url: undefined,
-  validator: undefined
 };
 
-export const services: Services = {
-  events: undefined,
-  file: undefined
-};
+export namespace wshcmx {
+  export const availableParametersTypes = [
+    "boolean",
+    "number",
+    "string",
+    "date",
+    "array",
+    "object"
+  ];
 
-function loadInternals(container: Utils | Services, url: string) {
-  const type = FileName(url);
-  const files = ReadDirectory(url);
-  let fileName;
+  export let routes: Route[] = [];
+  export let config: Config = {} as Config;
+  export const basepath: string | null = null;
 
-  for (let i = 0; i < files.length; i++) {
-    fileName = FileName(UrlToFilePath(files[i])).split(".")[0];
+  export const maxFileSize = 5 * 1024 * 1024;
+  export const supportedFilesExts = [".docx", ".doc", ".xlsx", ".xls", ".txt", ".zip"];
 
-    container.SetProperty(
-      fileName,
-      OpenCodeLib(files[i])
-    );
+  export const utils: Utils = {
+    array: undefined,
+    assert: undefined,
+    config: undefined,
+    fs: undefined,
+    log: undefined,
+    object: undefined,
+    paginator: undefined,
+    passport: undefined,
+    query: undefined,
+    request: undefined,
+    response: undefined,
+    router: undefined,
+    type: undefined,
+    url: undefined,
+    validator: undefined
+  };
 
-    alert(`${fileName} was successfully loaded as part of ${type}, hash is ${Md5Hex(LoadUrlData(files[i]))}`);
+  export const services: Services = {
+    events: undefined,
+    file: undefined
+  };
+
+  export function loadInternals(container: Utils | Services, url: string) {
+    const type = FileName(url);
+    const files = ReadDirectory(url);
+    let fileName;
+
+    for (let i = 0; i < files.length; i++) {
+      fileName = FileName(UrlToFilePath(files[i])).split(".")[0];
+
+      container.SetProperty(
+        fileName,
+        OpenCodeLib(files[i])
+      );
+
+      // eslint-disable-next-line no-alert
+      alert(`${fileName} was successfully loaded as part of ${type}, hash is ${Md5Hex(LoadUrlData(files[i]))}`);
+    }
   }
-}
 
-export function init() {
-  loadInternals(utils, "./utils");
-  loadInternals(services, "./services");
-  utils.config.init();
-  utils.router.init();
-  alert(`API is ready: ${config.pattern}`);
+  export function init() {
+    loadInternals(utils, "./utils");
+    loadInternals(services, "./services");
+    utils.config.init();
+    utils.router.init();
+    // eslint-disable-next-line no-alert
+    alert(`API is ready: ${config.pattern}`);
+  }
 }

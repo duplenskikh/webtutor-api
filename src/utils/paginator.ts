@@ -1,4 +1,4 @@
-import { dapi } from "../dapi";
+import { wshcmx } from "index";
 
 interface PaginatorItems<T> {
   total: number;
@@ -14,7 +14,7 @@ export function gather<T>(
   items: T[],
   params: PaginatorParams = {}
 ): PaginatorItems<T> {
-  if (!dapi.utils.type.isArray(items)) {
+  if (!wshcmx.utils.type.isArray(items)) {
     return items;
   }
 

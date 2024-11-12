@@ -1,5 +1,4 @@
-import { RouteParameter, RouteParameters } from "..";
-import { dapi } from "../dapi";
+import { wshcmx, RouteParameter, RouteParameters } from "..";
 
 function normalizeScheme(scheme: RouteParameters) {
   let type;
@@ -10,8 +9,8 @@ function normalizeScheme(scheme: RouteParameters) {
     schemeProperty = scheme[key] as RouteParameter;
     type = schemeProperty.GetOptProperty("type") as RouteParameter["type"];
 
-    if (dapi.availableParametersTypes.indexOf(type) === -1) {
-      throw new Error(`Некорректно определен тип параметра ${key} - "${type}"\nДоступные параметры: ${dapi.availableParametersTypes.join(", ")}`);
+    if (wshcmx.availableParametersTypes.indexOf(type) === -1) {
+      throw new Error(`Некорректно определен тип параметра ${key} - "${type}"\nДоступные параметры: ${wshcmx.availableParametersTypes.join(", ")}`);
     }
 
     schemeProperty.SetProperty("store", schemeProperty.GetOptProperty("store", "query"));
@@ -24,15 +23,15 @@ function normalizeScheme(scheme: RouteParameters) {
     schemeProperty.SetProperty("format", schemeProperty.GetOptProperty("format", null));
     schemeProperty.SetProperty("items", schemeProperty.GetOptProperty("items", null));
 
-    if (type == "array" && dapi.availableParametersTypes.indexOf(schemeProperty.items) === -1) {
-      throw new Error(`Некорректно определен тип элемента массива ${key} - ${schemeProperty.items}\nДоступные типы: ${dapi.availableParametersTypes.join(", ")}`);
+    if (type == "array" && wshcmx.availableParametersTypes.indexOf(schemeProperty.items) === -1) {
+      throw new Error(`Некорректно определен тип элемента массива ${key} - ${schemeProperty.items}\nДоступные типы: ${wshcmx.availableParametersTypes.join(", ")}`);
     }
   }
 
   return scheme;
 }
 
-function convertParameterValue(key: string, parameter: ParsedParameters, scheme: RouteParameter) {
+function convertParameterValue(key: string, parameter: ParsedParameter, scheme: RouteParameter) {
   if (parameter === null) {
     return null;
   }
@@ -46,7 +45,7 @@ function convertParameterValue(key: string, parameter: ParsedParameters, scheme:
 
   if (type == "string" && format != "date") {
     convertedValue = IsEmptyValue(value) ? value : Trim(tools_web.convert_xss(String(value)));
-    const stringLength = StrCharCount(convertedValue);
+    const stringLength = StrCharCount(String(convertedValue));
 
     if (min !== null && stringLength < min) {
       throw new Error(`Параметр ${key} должен быть минимум длины ${min}`);
@@ -74,12 +73,12 @@ function convertParameterValue(key: string, parameter: ParsedParameters, scheme:
   } else if (type == "boolean") {
     return tools_web.is_true(value);
   } else if (type == "array") {
-    return dapi.utils.type.makeArraySafe(
-      (dapi.utils.type.isString(value) ? tools.read_object(value) : value) as unknown[],
+    return wshcmx.utils.type.makeArraySafe(
+      (wshcmx.utils.type.isString(value) ? tools.read_object(value) : value) as unknown[],
       scheme.items
     );
   } else if (type == "object") {
-    return dapi.utils.type.isString(value) ? tools.read_object(value) : value;
+    return wshcmx.utils.type.isString(value) ? tools.read_object(value) : value;
   } else {
     throw new Error(`Невозможно определить тип переменной ${key}`);
   }
@@ -98,7 +97,7 @@ function parseParameters(req: Request) {
   const parameters: ParsedParameters = {};
   let key;
 
-  const bodyParameters = tools.read_object(req.Body);
+  const bodyParameters = tools.read_object<Object>(req.Body);
 
   for (key in bodyParameters) {
     parameters.SetProperty(key, {
@@ -124,9 +123,9 @@ export function parse(
   scheme: RouteParameters
 ) {
   if (
-    dapi.utils.type.isUndef(scheme)
-    || !dapi.utils.type.isObject(scheme)
-    || dapi.utils.object.keys(scheme).length === 0
+    wshcmx.utils.type.isUndef(scheme)
+    || !wshcmx.utils.type.isObject(scheme)
+    || wshcmx.utils.object.keys(scheme).length === 0
   ) {
     return {};
   }
@@ -157,18 +156,18 @@ export function parse(
 
     defaultValue = schemeParameter.GetOptProperty("val", null);
 
-    if (!dapi.utils.type.isNull(defaultValue) && dapi.utils.type.isNull(parameterValue)) {
+    if (!wshcmx.utils.type.isNull(defaultValue) && wshcmx.utils.type.isNull(parameterValue)) {
       parameterValue = defaultValue;
     }
 
     if (
       !schemeParameter.optional
       && (
-        schemeParameter.type == "string" && !dapi.utils.type.isString(parameterValue)
-        || schemeParameter.type == "number" && !dapi.utils.type.isNumber(parameterValue)
-        || schemeParameter.type == "boolean" && !dapi.utils.type.isBoolean(parameterValue)
-        || schemeParameter.type == "array" && !dapi.utils.type.isArray(parameterValue)
-        || schemeParameter.type == "object" && !dapi.utils.type.isObject(parameterValue)
+        schemeParameter.type == "string" && !wshcmx.utils.type.isString(parameterValue)
+        || schemeParameter.type == "number" && !wshcmx.utils.type.isNumber(parameterValue)
+        || schemeParameter.type == "boolean" && !wshcmx.utils.type.isBoolean(parameterValue)
+        || schemeParameter.type == "array" && !wshcmx.utils.type.isArray(parameterValue)
+        || schemeParameter.type == "object" && !wshcmx.utils.type.isObject(parameterValue)
       )
     ) {
       throw new Error(`Принимаемый параметр ${key} должен иметь тип ${schemeParameter.type}: ${parameterValue}`);

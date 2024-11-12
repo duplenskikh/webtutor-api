@@ -1,4 +1,4 @@
-import { dapi } from "../dapi";
+import { wshcmx } from "index";
 
 /**
  * Метод возвращает массив из перечисляемых свойств переданного объекта,
@@ -6,7 +6,7 @@ import { dapi } from "../dapi";
  * @returns { string[] } Ключи объекта
  */
 export function keys(obj: Object): string[] {
-  if (dapi.utils.type.isUndef(obj) || DataType(obj) != "object") {
+  if (wshcmx.utils.type.isUndef(obj) || DataType(obj) != "object") {
     return [];
   }
 
@@ -35,35 +35,6 @@ export function excludeKeys(source: Object, keys: string[]) {
   return o;
 }
 
-export function extend(target: Object, sources: Object[] | Object): Object {
-  if (dapi.utils.type.isUndef(target)) {
-    throw new Error("Target object is undefined");
-  }
-
-  sources = (IsArray(sources) ? sources : [sources]) as Object[];
-
-  sources = ArrayUnion(sources, [target]);
-  const o = {};
-  let source: any;
-  let prop;
-
-  for (source in sources) {
-    if (dapi.utils.type.isUndef(source)) {
-      continue;
-    }
-
-    if (dapi.utils.type.entityType(source) != "JsObject") {
-      throw new Error("Source element is not an object");
-    }
-
-    for (prop in source) {
-      o.SetProperty(prop, source[prop]);
-    }
-  }
-
-  return o;
-}
-
 export function merge(o1: Object, o2: Object) {
   let key;
 
@@ -74,7 +45,7 @@ export function merge(o1: Object, o2: Object) {
       } else {
         o1[key] = o2[key];
       }
-    } catch (e) {
+    } catch {
       o1[key] = o2[key];
     }
   }

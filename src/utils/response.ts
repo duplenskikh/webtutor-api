@@ -1,4 +1,4 @@
-import { dapi } from "../dapi";
+import { wshcmx } from "index";
 
 function json<T>(
   res: Response,
@@ -12,12 +12,12 @@ function json<T>(
     res.SetRespStatus(status, message);
   }
 
-  res.Write((dapi.utils.type.isPrimitive(payload) ? payload : tools.object_to_text(payload, "json")) as string);
+  res.Write((wshcmx.utils.type.isPrimitive(payload) ? payload : tools.object_to_text(payload, "json")) as string);
 }
 
 export function abort(res: Response, message: Error | string, status: number = 500) {
   message = (
-    dapi.utils.type.isError(message) && dapi.config.env != "development"
+    wshcmx.utils.type.isError(message) && wshcmx.config.env != "development"
       ? message.message
       : RValue(message)
   ) as string;
