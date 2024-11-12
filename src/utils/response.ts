@@ -1,4 +1,4 @@
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 function json<T>(
   res: Response,

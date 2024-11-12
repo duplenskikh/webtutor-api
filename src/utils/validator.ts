@@ -1,5 +1,4 @@
-import { RouteParameter, RouteParameters } from "..";
-import { dapi } from "../dapi";
+import { dapi, RouteParameter, RouteParameters } from "..";
 
 function normalizeScheme(scheme: RouteParameters) {
   let type;
@@ -32,7 +31,7 @@ function normalizeScheme(scheme: RouteParameters) {
   return scheme;
 }
 
-function convertParameterValue(key: string, parameter: ParsedParameters, scheme: RouteParameter) {
+function convertParameterValue(key: string, parameter: ParsedParameter, scheme: RouteParameter) {
   if (parameter === null) {
     return null;
   }
@@ -46,7 +45,7 @@ function convertParameterValue(key: string, parameter: ParsedParameters, scheme:
 
   if (type == "string" && format != "date") {
     convertedValue = IsEmptyValue(value) ? value : Trim(tools_web.convert_xss(String(value)));
-    const stringLength = StrCharCount(convertedValue);
+    const stringLength = StrCharCount(String(convertedValue));
 
     if (min !== null && stringLength < min) {
       throw new Error(`Параметр ${key} должен быть минимум длины ${min}`);
@@ -98,7 +97,7 @@ function parseParameters(req: Request) {
   const parameters: ParsedParameters = {};
   let key;
 
-  const bodyParameters = tools.read_object(req.Body);
+  const bodyParameters = tools.read_object<Object>(req.Body);
 
   for (key in bodyParameters) {
     parameters.SetProperty(key, {

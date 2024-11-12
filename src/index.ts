@@ -1,5 +1,3 @@
-"META:NAMESPACE:dapi";
-
 type Utils = {
   array: typeof import("./utils/array");
   assert: typeof import("./utils/assert");
@@ -59,66 +57,80 @@ export type Config = {
   stderr: boolean;
 }
 
-export const availableParametersTypes = [
-  "boolean",
-  "number",
-  "string",
-  "date",
-  "array",
-  "object"
-];
+// availableParametersTypes: RouteParameter["type"][];
+// config: Config;
+// basepath: string | null;
+// init(): void;
+// maxFileSize: number;
+// routes: Route[];
+// services: typeof services;
+// supportedFilesExts: string[];
+// utils: typeof utils;
 
-export const routes: Route[] = [];
-export const config: Config = {} as Config;
-export const basepath: string | null = null;
+export namespace dapi {
+  export const availableParametersTypes = [
+    "boolean",
+    "number",
+    "string",
+    "date",
+    "array",
+    "object"
+  ];
 
-export const maxFileSize = 5 * 1024 * 1024;
-export const supportedFilesExts = [".docx", ".doc", ".xlsx", ".xls", ".txt", ".zip"];
+  export let routes: Route[] = [];
+  export let config: Config = {} as Config;
+  export const basepath: string | null = null;
 
-export const utils: Utils = {
-  array: undefined,
-  assert: undefined,
-  config: undefined,
-  fs: undefined,
-  log: undefined,
-  object: undefined,
-  paginator: undefined,
-  passport: undefined,
-  query: undefined,
-  request: undefined,
-  response: undefined,
-  router: undefined,
-  type: undefined,
-  url: undefined,
-  validator: undefined
-};
+  export const maxFileSize = 5 * 1024 * 1024;
+  export const supportedFilesExts = [".docx", ".doc", ".xlsx", ".xls", ".txt", ".zip"];
 
-export const services: Services = {
-  events: undefined,
-  file: undefined
-};
+  export const utils: Utils = {
+    array: undefined,
+    assert: undefined,
+    config: undefined,
+    fs: undefined,
+    log: undefined,
+    object: undefined,
+    paginator: undefined,
+    passport: undefined,
+    query: undefined,
+    request: undefined,
+    response: undefined,
+    router: undefined,
+    type: undefined,
+    url: undefined,
+    validator: undefined
+  };
 
-function loadInternals(container: Utils | Services, url: string) {
-  const type = FileName(url);
-  const files = ReadDirectory(url);
-  let fileName;
+  export const services: Services = {
+    events: undefined,
+    file: undefined
+  };
 
-  for (let i = 0; i < files.length; i++) {
-    fileName = FileName(UrlToFilePath(files[i])).split(".")[0];
+  export function loadInternals(container: Utils | Services, url: string) {
+    const type = FileName(url);
+    const files = ReadDirectory(url);
+    let fileName;
 
-    container.SetProperty(
-      fileName,
-      OpenCodeLib(files[i])
-    );
+    for (let i = 0; i < files.length; i++) {
+      fileName = FileName(UrlToFilePath(files[i])).split(".")[0];
 
-    alert(`${fileName} was successfully loaded as part of ${type}, hash is ${Md5Hex(LoadUrlData(files[i]))}`);
+      container.SetProperty(
+        fileName,
+        OpenCodeLib(files[i])
+      );
+
+      // eslint-disable-next-line no-alert
+      alert(`${fileName} was successfully loaded as part of ${type}, hash is ${Md5Hex(LoadUrlData(files[i]))}`);
+    }
   }
-}
 
-export function init() {
-  loadInternals(utils, "./utils");
-  loadInternals(services, "./services");
-  utils.config.init();
-  utils.router.init();
-  alert(`API is ready: ${config.pattern}`);
+  export function init() {
+    loadInternals(utils, "./utils");
+    loadInternals(services, "./services");
+    utils.config.init();
+    utils.router.init();
+    // eslint-disable-next-line no-alert
+    alert(`API is ready: ${config.pattern}`);
+  }
 }

@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -32,7 +32,11 @@ export function functions(): Route[] {
   }];
 }
 
-export function getPosition(req: Request, res: Response, params: Object) {
+type GetPositionParams = {
+  id: number;
+}
+
+export function getPosition(req: Request, res: Response, params: GetPositionParams) {
   const positionDocument = tools.open_doc<PositionDocument>(params.id);
 
   if (positionDocument === undefined) {
@@ -73,7 +77,7 @@ export function getPosition(req: Request, res: Response, params: Object) {
 }
 
 
-export function getPositions(req: Request, res: Response, params: Object) {
+export function getPositions(_req: Request, res: Response, params: Object) {
   return dapi.utils.response.ok(
     res,
     dapi.utils.paginator.gather(

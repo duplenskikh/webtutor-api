@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -32,13 +32,17 @@ export function functions(): Route[] {
   }];
 }
 
-export function getList(req: Request, res: Response, params: Object) {
+type GetListParams = {
+  name: string;
+};
+
+export function getList(_req: Request, res: Response, params: GetListParams) {
   let list;
 
   if (common.PathExists(params.name)) {
-    list = common.EvalPath(params.name);
+    list = common.EvalPath<XmlMultiElem<unknown>>(params.name);
   } else if (lists.PathExists(params.name)) {
-    list = lists.EvalPath(params.name);
+    list = lists.EvalPath<XmlMultiElem<unknown>>(params.name);
   } else {
     return dapi.utils.response.notFound(res, "Список не найден");
   }
@@ -46,13 +50,17 @@ export function getList(req: Request, res: Response, params: Object) {
   return dapi.utils.response.ok(res, ArrayExtract(list, "({ id: id.Value, name: name.Value })"));
 }
 
-export function getAllLists(req: Request, res: Response, params: Object) {
+type GetAllListsParams = {
+  sort: string;
+};
+
+export function getAllLists(_req: Request, res: Response, params: GetAllListsParams) {
   return dapi.utils.response.ok(
     res,
     ArraySort(
       ArrayUnion(
-        ArrayExtract(lists, "This.Name"),
-        ArrayExtract(common, "This.Name")
+        ArrayExtract(lists as unknown as XmlMultiElem<unknown>, "This.Name"),
+        ArrayExtract(common as unknown as XmlMultiElem<unknown>, "This.Name")
       ),
       "This",
       StrLowerCase(params.sort) === "desc" ? "-" : "+"

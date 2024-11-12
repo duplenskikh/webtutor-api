@@ -1,4 +1,4 @@
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function getDetails(eventId: number) {
   const eventDocument = tools.open_doc<EventDocument>(eventId);
@@ -17,5 +17,5 @@ export function getDetails(eventId: number) {
 }
 
 export function getEvents() {
-  return dapi.utils.query.extract<EventCatalogDocument>("for $e in events return $e");
+  return dapi.utils.query.extract<EventCatalogDocumentTopElem>("for $e in events return $e");
 }

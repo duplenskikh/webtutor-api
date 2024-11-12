@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 type Authentication = {
   id: number;

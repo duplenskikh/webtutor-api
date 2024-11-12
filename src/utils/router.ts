@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function getRoute(pattern: string, method: string) {
   pattern = StrReplaceOne(pattern, dapi.config.pattern, "");
@@ -14,7 +14,7 @@ export function getRoute(pattern: string, method: string) {
 
 function createRouterRule() {
   const webRuleCode = `dapi_${dapi.config.pattern}`;
-  const query = ArrayOptFirstElem(tools.xquery(`for $e in web_rules where $e/code = ${SqlLiteral(webRuleCode)} return $e`));
+  const query = ArrayOptFirstElem(tools.xquery<{ id: XmlElem<number> }>(`for $e in web_rules where $e/code = ${SqlLiteral(webRuleCode)} return $e`));
 
   let webRuleDocument;
 
@@ -33,9 +33,15 @@ function createRouterRule() {
   webRuleDocument.TopElem.redirect_url.Value = `/${dapi.config.basepath}/api.html`;
   webRuleDocument.Save();
 
+  // eslint-disable-next-line no-alert
   alert(`Правило редиректа ${webRuleDocument.DocID} успешно ${webRuleDocument.NeverSaved ? `${"создано"}` : `${"обновлено"}` }`);
+  // eslint-disable-next-line no-alert
   alert(`Все запросы ${webRuleDocument.TopElem.url.Value} будут перенаправляться на ${webRuleDocument.TopElem.redirect_url.Value}`);
 }
+
+type ControllerLibrary = {
+  functions(): Route[];
+};
 
 export function init() {
   createRouterRule();
@@ -49,7 +55,7 @@ export function init() {
   let isDevelopmentEnv = dapi.config.env == "development";
 
   for (i = 0; i < apis.length; i++) {
-    apiFunctions = OpenCodeLib(apis[i]).functions() as Route[];
+    apiFunctions = OpenCodeLib<ControllerLibrary>(apis[i]).functions();
 
     for (j = 0; j < apiFunctions.length; j++) {
       obj = apiFunctions[j];

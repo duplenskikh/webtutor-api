@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -23,11 +23,11 @@ export function functions(): Route[] {
   }];
 }
 
-export function pong(req: Request, res: Response) {
+export function pong(_req: Request, res: Response) {
   return dapi.utils.response.ok(res, "pong");
 }
 
-export function getRoutes(req: Request, res: Response) {
+export function getRoutes(_req: Request, res: Response) {
   return dapi.utils.response.ok(res, dapi.routes);
 }
 

@@ -1,7 +1,6 @@
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
-export function write(message: unknown, type = "INFO", logCode = "common_log"
-) {
+export function write(message: unknown, type = "INFO", logCode = "common_log") {
   if (IsEmptyValue(message)) {
     write("Log message is empty", "WARNING");
     return false;
@@ -13,6 +12,7 @@ export function write(message: unknown, type = "INFO", logCode = "common_log"
   LogEvent(logCode, payload);
 
   if (dapi.config.stderr) {
+    // eslint-disable-next-line no-alert
     alert(payload);
   }
 }

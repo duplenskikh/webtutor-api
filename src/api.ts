@@ -1,4 +1,4 @@
-import { dapi } from "./dapi";
+import { dapi } from "./index";
 
 export function handle(req: Request, res: Response) {
   const route = dapi.utils.router.getRoute(req.UrlPath, req.Method);

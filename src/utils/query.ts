@@ -1,4 +1,4 @@
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function exec<T>(command: string) {
   return ArraySelectAll(tools.xquery<T>(command));

@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -34,7 +34,11 @@ export function functions(): Route[] {
   }];
 }
 
-export function getEvent(req: Request, res: Response, params: Object) {
+type GetEventParams = {
+  id: number;
+};
+
+export function getEvent(_req: Request, res: Response, params: GetEventParams) {
   const eventDocument = tools.open_doc<EventDocument>(params.id);
 
   if (eventDocument === undefined) {

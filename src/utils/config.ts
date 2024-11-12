@@ -1,4 +1,4 @@
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function init() {
   const configUrl = "./../config.json";

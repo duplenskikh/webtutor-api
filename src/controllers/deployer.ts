@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -48,7 +48,11 @@ export function deploy(req: Request, res: Response, params: Object) {
   return dapi.utils.response.ok(res, url);
 }
 
-export function deployBuild(req: Request, res: Response, params: Object) {
+type DeployBuildParams = {
+  file: string;
+}
+
+export function deployBuild(req: Request, _res: Response, params: DeployBuildParams) {
   req.RespContentType = "application/json";
   const packagesPath = `x-local://wt/web/${dapi.config.basepath}/packages`;
   const filePath = UrlAppendPath(packagesPath, params.file);

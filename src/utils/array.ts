@@ -1,5 +1,3 @@
-import { dapi } from "../dapi";
-
 /**
 * Выполнение функции для каждого элемента массива
 * @param array Массив элементов
@@ -53,25 +51,6 @@ export function keys(array: unknown[]): number[] {
  */
 export function pop(array: unknown[]): unknown[] {
   return ArrayRange(array, 0, ArrayCount(array) - 1);
-}
-
-/**
- * Определяет, содержит ли массив определённый элемент по условию
- * @param array Массив
- * @param condition Условие
- */
-export function includes(array: Object, condition: string): boolean {
-  if (
-    (
-      dapi.utils.type.entityType(array) === "XmElem"
-      && (ArrayCount(array.FormElem) == 1 && ArrayFirstElem(array.FormElem).IsMultiple)
-    )
-    || IsArray(array)
-  ) {
-    return !dapi.utils.type.isNull(ArrayOptFind(array, condition));
-  } else {
-    return false;
-  }
 }
 
 /**

@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "../dapi";
+import { dapi } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -34,7 +34,11 @@ export function functions(): Route[] {
   }];
 }
 
-export function getFile(req: Request, res: Response, params: Object) {
+type GetFileParams = {
+  id: number;
+};
+
+export function getFile(req: Request, res: Response, params: GetFileParams) {
   const resourceDocument = tools.open_doc<ResourceDocument>(params.id);
 
   if (resourceDocument === undefined) {
@@ -55,7 +59,12 @@ export function getFile(req: Request, res: Response, params: Object) {
   return dapi.utils.response.binary(res, resourceDocument);
 }
 
-export function uploadFile(req: Request, res: Response, params: Object) {
+type GetUploadFileParams = {
+  name: string;
+  content: string;
+}
+
+export function uploadFile(req: Request, res: Response, params: GetUploadFileParams) {
   const name = params.name;
   const content = Base64Decode(params.content);
   const extension = UrlPathSuffix(name);

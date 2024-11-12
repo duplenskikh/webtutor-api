@@ -23,6 +23,7 @@ module.exports = {
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/array-type": "error",
     "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-namespace": "off",
     "multiline-ternary": ["error", "always-multiline"],
     "no-unneeded-ternary": "error",
     "no-nested-ternary": "error",
