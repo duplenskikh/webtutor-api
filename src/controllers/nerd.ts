@@ -4,7 +4,7 @@ import { wshcmx } from "index";
 export function functions(): Route[] {
   return [{
     method: "GET",
-    pattern: "ping",
+    pattern: "/ping",
     callback: pong,
     access: "anonymous",
     summary: "Проверка API"
