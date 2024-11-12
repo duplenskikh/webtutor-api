@@ -1,5 +1,4 @@
-import { Route } from "..";
-import { wshcmx } from "index";
+import { wshcmx, Route } from "index";
 
 export function functions(): Route[] {
   return [{
