@@ -3,7 +3,7 @@
 * @param array Массив элементов
 * @param func Функция
 */
-export function forEach(array: unknown[], func: Function): void {
+export function forEach(array: unknown[], func: CallableFunction): void {
   array = ArrayDirect(array);
   let i;
 
@@ -17,7 +17,7 @@ export function forEach(array: unknown[], func: Function): void {
  * @param array Массив
  * @param func Функция
  */
-export function map(array: unknown[], func: Function): unknown[] {
+export function map(array: unknown[], func: CallableFunction): unknown[] {
   array = ArrayDirect(array);
   let i;
   const results = [];

@@ -35,37 +35,6 @@ export function excludeKeys(source: Object, keys: string[]) {
   return o;
 }
 
-export function extend(target: Object, sources: Object[] | Object): Object {
-  if (wshcmx.utils.type.isUndef(target)) {
-    throw new Error("Target object is undefined");
-  }
-
-  sources = (IsArray(sources) ? sources : [sources]) as Object[];
-
-  sources = ArrayUnion(sources, [target]);
-  const o = {};
-  let source;
-  let prop;
-
-  for (source in sources) {
-    if (wshcmx.utils.type.isUndef(source)) {
-      continue;
-    }
-
-    if (wshcmx.utils.type.entityType(source) != "JsObject") {
-      throw new Error("Source element is not an object");
-    }
-
-    source = source as unknown as Object;
-
-    for (prop in source) {
-      o.SetProperty(prop, source[prop]);
-    }
-  }
-
-  return o;
-}
-
 export function merge(o1: Object, o2: Object) {
   let key;
 
@@ -76,7 +45,7 @@ export function merge(o1: Object, o2: Object) {
       } else {
         o1[key] = o2[key];
       }
-    } catch (e) {
+    } catch {
       o1[key] = o2[key];
     }
   }
