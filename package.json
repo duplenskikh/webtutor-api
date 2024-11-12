@@ -5,8 +5,8 @@
   "type": "module",
   "main": "build/index.js",
   "scripts": {
-    "start": "@wshcmx/cli watch",
-    "build": "@wshcmx/cli build",
+    "start": "cli watch",
+    "build": "cli build",
     "lint": "eslint src"
   },
   "keywords": [],
