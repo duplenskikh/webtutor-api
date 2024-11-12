@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "index";
+import { wshcmx } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -29,14 +29,14 @@ export function functions(): Route[] {
 }
 
 export function getCurrentUser(req: Request, res: Response) {
-  return dapi.utils.response.ok(res, req.Session.Env.curUser);
+  return wshcmx.utils.response.ok(res, req.Session.Env.curUser);
 }
 
 export function getCollaborators(_req: Request, res: Response, params: Object) {
-  return dapi.utils.response.ok(
+  return wshcmx.utils.response.ok(
     res,
-    dapi.utils.paginator.gather(
-      dapi.utils.query.extract("for $e in collaborators return $e"),
+    wshcmx.utils.paginator.gather(
+      wshcmx.utils.query.extract("for $e in collaborators return $e"),
       params
     )
   );

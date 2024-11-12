@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "index";
+import { wshcmx } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -24,14 +24,14 @@ export function functions(): Route[] {
 }
 
 export function pong(_req: Request, res: Response) {
-  return dapi.utils.response.ok(res, "pong");
+  return wshcmx.utils.response.ok(res, "pong");
 }
 
 export function getRoutes(_req: Request, res: Response) {
-  return dapi.utils.response.ok(res, dapi.routes);
+  return wshcmx.utils.response.ok(res, wshcmx.routes);
 }
 
 export function checkAppAuth(req: Request, res: Response) {
-  const xAppId = dapi.utils.request.getHeader(req.Header, "x-app-id");
-  return dapi.utils.response.ok(res, dapi.utils.passport.authenticateApplication(req, xAppId));
+  const xAppId = wshcmx.utils.request.getHeader(req.Header, "x-app-id");
+  return wshcmx.utils.response.ok(res, wshcmx.utils.passport.authenticateApplication(req, xAppId));
 }

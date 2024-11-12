@@ -1,19 +1,18 @@
-import { Route } from "..";
-import { dapi } from "index";
+import { Route, wshcmx } from "index";
 
 export function getRoute(pattern: string, method: string) {
-  pattern = StrReplaceOne(pattern, dapi.config.pattern, "");
+  pattern = StrReplaceOne(pattern, wshcmx.config.pattern, "");
   let i = 0;
 
-  for (i = 0; i < dapi.routes.length; i++) {
-    if (dapi.routes[i].pattern == pattern && dapi.routes[i].method == method) {
-      return dapi.routes[i];
+  for (i = 0; i < wshcmx.routes.length; i++) {
+    if (wshcmx.routes[i].pattern == pattern && wshcmx.routes[i].method == method) {
+      return wshcmx.routes[i];
     }
   }
 }
 
 function createRouterRule() {
-  const webRuleCode = `dapi_${dapi.config.pattern}`;
+  const webRuleCode = `wshcmx_${wshcmx.config.pattern}`;
   const query = ArrayOptFirstElem(tools.xquery<{ id: XmlElem<number> }>(`for $e in web_rules where $e/code = ${SqlLiteral(webRuleCode)} return $e`));
 
   let webRuleDocument;
@@ -27,10 +26,10 @@ function createRouterRule() {
 
   webRuleDocument.TopElem.code.Value = webRuleCode;
   webRuleDocument.TopElem.name.Value = "Правило для api";
-  webRuleDocument.TopElem.url.Value = `${dapi.config.pattern}/*`;
+  webRuleDocument.TopElem.url.Value = `${wshcmx.config.pattern}/*`;
   webRuleDocument.TopElem.is_enabled.Value = true;
   webRuleDocument.TopElem.redirect_type.Value = 0;
-  webRuleDocument.TopElem.redirect_url.Value = `/${dapi.config.basepath}/api.html`;
+  webRuleDocument.TopElem.redirect_url.Value = `/${wshcmx.config.basepath}/api.html`;
   webRuleDocument.Save();
 
   // eslint-disable-next-line no-alert
@@ -52,7 +51,7 @@ export function init() {
   let apiFunctions;
   const routes: Route[] = [];
   let obj;
-  let isDevelopmentEnv = dapi.config.env == "development";
+  let isDevelopmentEnv = wshcmx.config.env == "development";
 
   for (i = 0; i < apis.length; i++) {
     apiFunctions = OpenCodeLib<ControllerLibrary>(apis[i]).functions();
@@ -75,5 +74,5 @@ export function init() {
     }
   }
 
-  dapi.routes = routes;
+  wshcmx.routes = routes;
 }

@@ -1,5 +1,5 @@
-import { dapi } from "index";
+import { wshcmx } from "index";
 
 export function getDownloadFileUrl(objectId: number | undefined) {
-  return dapi.utils.type.isUndef(objectId) ? null : `/download_file.html?file_id=${objectId}`;
+  return wshcmx.utils.type.isUndef(objectId) ? null : `/download_file.html?file_id=${objectId}`;
 }

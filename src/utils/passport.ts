@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "index";
+import { wshcmx } from "index";
 
 type Authentication = {
   id: number;
@@ -10,13 +10,13 @@ export function authenticateUser(req: Request): Authentication | null {
   const userInit = tools_web.user_init(req, req.Query);
 
   if (!userInit.access) {
-    dapi.utils.log.info(`Session ${dapi.utils.request.getHeader(req.Header, "SessionID")} is unauthorized due to ${userInit.error_text}`, "passport");
+    wshcmx.utils.log.info(`Session ${wshcmx.utils.request.getHeader(req.Header, "SessionID")} is unauthorized due to ${userInit.error_text}`, "passport");
     return null;
   }
 
   const id = req.Session.Env.curUserID;
 
-  dapi.utils.log.info(`User "${id}" was authorized`, "passport");
+  wshcmx.utils.log.info(`User "${id}" was authorized`, "passport");
 
   return {
     id,
@@ -26,7 +26,7 @@ export function authenticateUser(req: Request): Authentication | null {
 
 export function authenticateApplication(req: Request, xAppId: string): Authentication | null {
   if (StrCharCount(Trim(String(xAppId))) === 0) {
-    dapi.utils.log.error(
+    wshcmx.utils.log.error(
       "\"x-app-id\" header is empty",
       "passport"
     );
@@ -36,8 +36,8 @@ export function authenticateApplication(req: Request, xAppId: string): Authentic
   const login = req.AuthLogin;
   const password = req.AuthPassword;
 
-  if (dapi.utils.type.isUndef(login) || dapi.utils.type.isUndef(password)) {
-    dapi.utils.log.error(
+  if (wshcmx.utils.type.isUndef(login) || wshcmx.utils.type.isUndef(password)) {
+    wshcmx.utils.log.error(
       `Application "${xAppId}" hasn't access due to empty login or password`,
       "passport"
     );
@@ -47,7 +47,7 @@ export function authenticateApplication(req: Request, xAppId: string): Authentic
   const applicationDocument = tools.get_doc_by_key<RemoteApplicationDocument>("remote_application", "app_id", xAppId);
 
   if (applicationDocument === null) {
-    dapi.utils.log.error(
+    wshcmx.utils.log.error(
       `Application [${xAppId}] hasn't access due to application xml document not found`,
       "passport"
     );
@@ -63,7 +63,7 @@ export function authenticateApplication(req: Request, xAppId: string): Authentic
     credentialDocument = tools.open_doc<CredentialDocument>(credentials[i].id);
 
     if (credentialDocument === undefined) {
-      dapi.utils.log.error(
+      wshcmx.utils.log.error(
         `Credential xml document not found by id "${credentials[i].id}"`,
         "passport"
       );
@@ -80,7 +80,7 @@ export function authenticateApplication(req: Request, xAppId: string): Authentic
   }
 
   if (!hasAccess) {
-    dapi.utils.log.error(
+    wshcmx.utils.log.error(
       `Некорректный логин или пароля для приложения ${xAppId}`,
       "passport"
     );
@@ -100,9 +100,9 @@ export function authenticateApplication(req: Request, xAppId: string): Authentic
  * @returns { any }
  */
 export function authenticate(req: Request) {
-  const xAppId = dapi.utils.request.getHeader(req.Header, "x-app-id");
+  const xAppId = wshcmx.utils.request.getHeader(req.Header, "x-app-id");
 
-  if (dapi.utils.type.isUndef(xAppId)) {
+  if (wshcmx.utils.type.isUndef(xAppId)) {
     return authenticateUser(req);
   } else {
     return authenticateApplication(req, xAppId);

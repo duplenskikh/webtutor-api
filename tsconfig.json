@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "noImplicitAny": true,
-    "target": "es5",
-    "module": "es6",
+    "target": "ES5",
+    "module": "ES6",
     "allowJs": true,
     "outDir": "build",
     "isolatedModules": true,

@@ -43,13 +43,13 @@ webtutor-api/
 
 Важно помнить, что в **программном коде библиотек можно объявлять только функции**, в противном случае - будет выведена ошибка из-за ограничений платформы.
 
-Доступ к объявленным функциям можно получить с помощью глобальной переменной `dapi`, в ней хранятся ссылки на все функции из `services` и `utils`.
+Доступ к объявленным функциям можно получить с помощью глобальной переменной `wshcmx`, в ней хранятся ссылки на все функции из `services` и `utils`.
 ```typescript
-dapi.utils.date.isDate(someDate);   // Обращение к функции `isDate`, расположенной в каталоге `utils`
-dapi.services.events.getEvents();   // Обращение к функции `getEvents`, расположенной в каталоге `services`
+wshcmx.utils.date.isDate(someDate);   // Обращение к функции `isDate`, расположенной в каталоге `utils`
+wshcmx.services.events.getEvents();   // Обращение к функции `getEvents`, расположенной в каталоге `services`
 ```
 
-Вы можете обращаться к переменной `dapi` из любого объекта системы на сервере, если же вам нужно реализовать поддержку в толстом клиенте администратора, необходимо будет точечно устанавливать данную библиотеку для каждого пользователя, что очень сильно не рекомендуется из-за сопутствующей сложности данного процесса.
+Вы можете обращаться к переменной `wshcmx` из любого объекта системы на сервере, если же вам нужно реализовать поддержку в толстом клиенте администратора, необходимо будет точечно устанавливать данную библиотеку для каждого пользователя, что очень сильно не рекомендуется из-за сопутствующей сложности данного процесса.
 
 #### controllers
 
@@ -70,7 +70,7 @@ export function functions(): Route[] {
 
 // Объявляем функцию для вывода идентификатора текущего пользователя
 export function getCollaborator(params: HandlerParams, Request: Request) {
-  return dapi.utils.response.ok(`curUserID is ${Request.Session.Env.curUserID}`); // Возвращаем ответ, обернув в специальную функцию `ok`
+  return wshcmx.utils.response.ok(`curUserID is ${Request.Session.Env.curUserID}`); // Возвращаем ответ, обернув в специальную функцию `ok`
 }
 ```
 
@@ -81,12 +81,12 @@ export function getCollaborator(params: HandlerParams, Request: Request) {
 ```typescript
 // Пример формирования ответа с удачным исходом
 export function getOk() {
-  return dapi.utils.response.ok(`I'm okay!`, 200);  
+  return wshcmx.utils.response.ok(`I'm okay!`, 200);  
 }
 
 // Пример формирования ответа с неудачным исходом
 export function getFail() {
-  return dapi.utils.reponse.abort(`I'm not okay!`, 418);
+  return wshcmx.utils.reponse.abort(`I'm not okay!`, 418);
 }
 ```
 
@@ -119,23 +119,23 @@ export function functions(): Route[] {
 
 Директория для размещения программного кода для работы с конкретными объектами и выборками.
 
-Фактически, является набором библиотек программного кода, функции которых размещаются в глобальной переменной `dapi.services`.
+Фактически, является набором библиотек программного кода, функции которых размещаются в глобальной переменной `wshcmx.services`.
 
 ```typescript
 // Пример реализации простого сервиса по выборке мероприятий 
 export function getEvents() {
-  return dapi.utils.query.extract<EventCatalogDocument>(`for $e in events return $e`);
+  return wshcmx.utils.query.extract<EventCatalogDocument>(`for $e in events return $e`);
 }
 
 // Данная функция будет доступна к вызову следующим образом
-dapi.services.events.getEvents();
+wshcmx.services.events.getEvents();
 ```
 
 #### utils
 
 Директория для размещения программного кода общего назначения, например - конвертация дат, приведением объектов к определённому формату и прочее.
 
-Фактически, является набором библиотек программного кода, функции которых размещаются в глобальной переменной `dapi.utils`.
+Фактически, является набором библиотек программного кода, функции которых размещаются в глобальной переменной `wshcmx.utils`.
 
 ```typescript
 // Пример реализации аналога `Array.pop()`
@@ -144,7 +144,7 @@ export function pop(array: unknown[]): unknown[] {
 }
 
 // Данная функция будет доступна к вызову следующим образом
-dapi.utils.array.pop(["foo", "bar"]);
+wshcmx.utils.array.pop(["foo", "bar"]);
 ```
 
 ### Переменные окружения
@@ -156,7 +156,7 @@ DEPLOYER_LOGIN=deployer               # Логин внешнего прилож
 DEPLOYER_PASSWORD=deployer            # Пароль внешнего приложения
 DEPLOYER_HOST=http://localhost:8080   # Хост для подключения
 DEPLOYER_APP_ID=deployer              # Идентификатор для подстановки в `x-app-id`
-API_WEBTUTOR_BASE_PATH=/dapi          # Базовый путь `dapi`
+API_WEBTUTOR_BASE_PATH=/wshcmx          # Базовый путь `wshcmx`
 ```
 
 Под внешним приложением понимается объект `remote_application` системы WebSoft HCM, расположенный в разделе `Безопасность >> API >> Внешние приложения API`.
@@ -196,31 +196,31 @@ npm run openapi:delivery  # Собирает openapi.json и выполняет 
 ```
 
 Найти собранный `openapi.json` вы можете в директории `build/openapi`, на сервере же данный файл будет доступ в директории 
-`x-local://wt/web/dapi/openapi`.
+`x-local://wt/web/wshcmx/openapi`.
 
 Для реализации web-интерфейса используется библиотека `RapiDoc`, которая доступна из коробки `WebSoft HCM`,
-перейти к данному интерфейсу можно по ссылке `https://<server_address>/dapi/openapi/openapi.html`.
+перейти к данному интерфейсу можно по ссылке `https://<server_address>/wshcmx/openapi/openapi.html`.
 
 ### Поставка на сервер
 
-Контент директории `build` необходимо перенести на сервер в `x-local://wt/web/dapi`, если вы делаете это первый раз, после переноса, необходимо запустить скрипт установки библиотеки.
+Контент директории `build` необходимо перенести на сервер в `x-local://wt/web/wshcmx`, если вы делаете это первый раз, после переноса, необходимо запустить скрипт установки библиотеки.
 
 **Если вы используете Windows и PowerShell**, необходимо запустить скрипт `install.ps1`.
 
 **Если вы используете Linux и Bash**, необходимо запустить скрипт `install.sh`.
 
-В результате выполнения данных скриптов будет произведено добавление библиотеки `DAPI` в коробочный файл `api_ext.xml`, используемый для регистрации сторонних библиотек, в консоли же, в случае успешного выполнения, вы увидите информацию о регистрации библиотеки следующего вида:
+В результате выполнения данных скриптов будет произведено добавление библиотеки `wshcmx` в коробочный файл `api_ext.xml`, используемый для регистрации сторонних библиотек, в консоли же, в случае успешного выполнения, вы увидите информацию о регистрации библиотеки следующего вида:
 
 ```bash
-DAPI node successfully added to api_ext.xml file
+wshcmx node successfully added to api_ext.xml file
 ```
 
 Для того чтобы изменения вступили в силу, вам необходимо произвести перезагрузку сервера.
 
-После перезагрузки, вы увидите в журнале `xhttp` информацию о регистрации и загрузке, объявленных в `DAPI`, библиотек следующего вида:
+После перезагрузки, вы увидите в журнале `xhttp` информацию о регистрации и загрузке, объявленных в `wshcmx`, библиотек следующего вида:
 
 ```bash
-Registering dapi
+Registering wshcmx
 array was successfully loaded as part of utils, hash is F29DE32E5B053DD42E71C52E80595F32
 object was successfully loaded as part of utils, hash is A7DB89C01498303C8254B8A1593A653E
 validator was successfully loaded as part of utils, hash is 7F670B7683DC0E1BFBC30B001CA1361C
@@ -235,11 +235,11 @@ log was successfully loaded as part of utils, hash is C0A85788A3832253EEEBE74D6A
 request was successfully loaded as part of utils, hash is CF0AD736861E2CB51F8CAD2330E18607
 type was successfully loaded as part of utils, hash is 45508C2BFC6C5B14B7D409B089356D0E
 events was successfully loaded as part of services, hash is BC355042ED2BBDAA234AFEABED752DA1
-Config loaded: {"env":"development","version":"9.9.9","api":{"pattern":"/api/v1","basepath":"x-local://wt/web/dapi"},"stderr":true}
+Config loaded: {"env":"development","version":"9.9.9","api":{"pattern":"/api/v1","basepath":"x-local://wt/web/wshcmx"},"stderr":true}
 Web rule successfully updated 7257866394331456688
 API is ready: /api/v1
-dapi successfully registered
-External API Lib: x-local://wt/web/dapi/index.xml. Loaded.
+wshcmx successfully registered
+External API Lib: x-local://wt/web/wshcmx/index.xml. Loaded.
 ```
 
 Если все библиотеки зарегистрировались успешно, вы можете проверить доступ к API по адресу `https://<server_address>/api/v1/ping`.

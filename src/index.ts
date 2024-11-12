@@ -16,12 +16,12 @@ type Utils = {
   type: typeof import("./utils/type");
   url: typeof import("./utils/url");
   validator: typeof import("./utils/validator");
-}
+};
 
 type Services = {
   events: typeof import("./services/events");
   file: typeof import("./services/file");
-}
+};
 
 export type RouteParameter = {
   type: "boolean" | "number" | "string" | "date" | "array" | "object";
@@ -35,11 +35,11 @@ export type RouteParameter = {
   items?: string;
   store?: "query" | "body";
   description?: string;
-}
+};
 
 export type RouteParameters = {
   [key: string]: RouteParameter;
-}
+};
 
 export type Route = {
   method: "GET" | "POST" | "PUT";
@@ -49,7 +49,7 @@ export type Route = {
   access: "user" | "application" | "both" | "anonymous" | "dev";
   params?: RouteParameters;
   summary?: string;
-}
+};
 
 export type Config = {
   env: "production" | "development";
@@ -57,19 +57,9 @@ export type Config = {
   version: string;
   pattern: string;
   stderr: boolean;
-}
+};
 
-// availableParametersTypes: RouteParameter["type"][];
-// config: Config;
-// basepath: string | null;
-// init(): void;
-// maxFileSize: number;
-// routes: Route[];
-// services: typeof services;
-// supportedFilesExts: string[];
-// utils: typeof utils;
-
-export namespace dapi {
+export namespace wshcmx {
   export const availableParametersTypes = [
     "boolean",
     "number",

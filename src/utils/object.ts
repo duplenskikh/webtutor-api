@@ -1,4 +1,4 @@
-import { dapi } from "index";
+import { wshcmx } from "index";
 
 /**
  * Метод возвращает массив из перечисляемых свойств переданного объекта,
@@ -6,7 +6,7 @@ import { dapi } from "index";
  * @returns { string[] } Ключи объекта
  */
 export function keys(obj: Object): string[] {
-  if (dapi.utils.type.isUndef(obj) || DataType(obj) != "object") {
+  if (wshcmx.utils.type.isUndef(obj) || DataType(obj) != "object") {
     return [];
   }
 
@@ -36,7 +36,7 @@ export function excludeKeys(source: Object, keys: string[]) {
 }
 
 export function extend(target: Object, sources: Object[] | Object): Object {
-  if (dapi.utils.type.isUndef(target)) {
+  if (wshcmx.utils.type.isUndef(target)) {
     throw new Error("Target object is undefined");
   }
 
@@ -44,17 +44,19 @@ export function extend(target: Object, sources: Object[] | Object): Object {
 
   sources = ArrayUnion(sources, [target]);
   const o = {};
-  let source: any;
+  let source;
   let prop;
 
   for (source in sources) {
-    if (dapi.utils.type.isUndef(source)) {
+    if (wshcmx.utils.type.isUndef(source)) {
       continue;
     }
 
-    if (dapi.utils.type.entityType(source) != "JsObject") {
+    if (wshcmx.utils.type.entityType(source) != "JsObject") {
       throw new Error("Source element is not an object");
     }
+
+    source = source as unknown as Object;
 
     for (prop in source) {
       o.SetProperty(prop, source[prop]);

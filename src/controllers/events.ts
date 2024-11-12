@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "index";
+import { wshcmx } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -42,12 +42,12 @@ export function getEvent(_req: Request, res: Response, params: GetEventParams) {
   const eventDocument = tools.open_doc<EventDocument>(params.id);
 
   if (eventDocument === undefined) {
-    return dapi.utils.response.notFound(res, "Мероприятие не найдено");
+    return wshcmx.utils.response.notFound(res, "Мероприятие не найдено");
   }
 
-  return dapi.utils.response.ok(res, dapi.services.events.getDetails(params.id));
+  return wshcmx.utils.response.ok(res, wshcmx.services.events.getDetails(params.id));
 }
 
 export function getEvents(req: Request, res: Response) {
-  return dapi.utils.response.ok(res, dapi.utils.paginator.gather(dapi.services.events.getEvents(), req.Query));
+  return wshcmx.utils.response.ok(res, wshcmx.utils.paginator.gather(wshcmx.services.events.getEvents(), req.Query));
 }

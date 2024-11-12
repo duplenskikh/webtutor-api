@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "index";
+import { wshcmx } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -44,10 +44,10 @@ export function getList(_req: Request, res: Response, params: GetListParams) {
   } else if (lists.PathExists(params.name)) {
     list = lists.EvalPath<XmlMultiElem<unknown>>(params.name);
   } else {
-    return dapi.utils.response.notFound(res, "Список не найден");
+    return wshcmx.utils.response.notFound(res, "Список не найден");
   }
 
-  return dapi.utils.response.ok(res, ArrayExtract(list, "({ id: id.Value, name: name.Value })"));
+  return wshcmx.utils.response.ok(res, ArrayExtract(list, "({ id: id.Value, name: name.Value })"));
 }
 
 type GetAllListsParams = {
@@ -55,7 +55,7 @@ type GetAllListsParams = {
 };
 
 export function getAllLists(_req: Request, res: Response, params: GetAllListsParams) {
-  return dapi.utils.response.ok(
+  return wshcmx.utils.response.ok(
     res,
     ArraySort(
       ArrayUnion(

@@ -1,5 +1,5 @@
 import { Route } from "..";
-import { dapi } from "index";
+import { wshcmx } from "index";
 
 export function functions(): Route[] {
   return [{
@@ -40,7 +40,7 @@ export function getPosition(req: Request, res: Response, params: GetPositionPara
   const positionDocument = tools.open_doc<PositionDocument>(params.id);
 
   if (positionDocument === undefined) {
-    return dapi.utils.response.notFound(res, `Должности по id ${params.id} не существует`);
+    return wshcmx.utils.response.notFound(res, `Должности по id ${params.id} не существует`);
   }
 
   const hasAccess = tools_web.check_access(
@@ -51,10 +51,10 @@ export function getPosition(req: Request, res: Response, params: GetPositionPara
   );
 
   if (!hasAccess) {
-    return dapi.utils.response.forbidden(res, `У вас нет доступа к должности ${positionDocument.DocID}`);
+    return wshcmx.utils.response.forbidden(res, `У вас нет доступа к должности ${positionDocument.DocID}`);
   }
 
-  return dapi.utils.response.ok(
+  return wshcmx.utils.response.ok(
     res,
     {
       id: positionDocument.DocID,
@@ -78,10 +78,10 @@ export function getPosition(req: Request, res: Response, params: GetPositionPara
 
 
 export function getPositions(_req: Request, res: Response, params: Object) {
-  return dapi.utils.response.ok(
+  return wshcmx.utils.response.ok(
     res,
-    dapi.utils.paginator.gather(
-      dapi.utils.query.extract("for $e in positions return $e"),
+    wshcmx.utils.paginator.gather(
+      wshcmx.utils.query.extract("for $e in positions return $e"),
       params
     )
   );
