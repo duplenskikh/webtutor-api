@@ -1,3 +1,5 @@
+/// @template namespace
+
 type Utils = {
   array: typeof import("./utils/array");
   assert: typeof import("./utils/assert");
