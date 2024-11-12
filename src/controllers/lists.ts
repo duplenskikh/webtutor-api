@@ -5,7 +5,7 @@ export function functions(): Route[] {
   return [{
     method: "GET",
     pattern: "/list",
-    callback: "getList",
+    callback: getList,
     access: "both",
     summary: "Получения стандартного списка по параметрам",
     params: {
@@ -17,7 +17,7 @@ export function functions(): Route[] {
   }, {
     method: "GET",
     pattern: "/lists",
-    callback: "getAllLists",
+    callback: getAllLists,
     access: "both",
     summary: "Получение стандартных списков по параметрам",
     params: {

@@ -5,7 +5,7 @@ export function functions(): Route[] {
   return [{
     method: "GET",
     pattern: "/event",
-    callback: "getEvent",
+    callback: getEvent,
     access: "user",
     params: {
       id: {
@@ -17,7 +17,7 @@ export function functions(): Route[] {
   }, {
     method: "GET",
     pattern: "/events",
-    callback: "getEvents",
+    callback: getEvents,
     access: "user",
     params: {
       page: {

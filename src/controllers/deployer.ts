@@ -5,7 +5,7 @@ export function functions(): Route[] {
   return [{
     method: "POST",
     pattern: "/deploy",
-    callback: "deploy",
+    callback: deploy,
     access: "dev",
     params: {
       file: {
@@ -15,7 +15,7 @@ export function functions(): Route[] {
   }, {
     method: "POST",
     pattern: "/deploy/build",
-    callback: "deployBuild",
+    callback: deployBuild,
     access: "dev",
     params: {
       file: {

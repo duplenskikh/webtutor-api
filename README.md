@@ -63,7 +63,7 @@ export function functions(): Route[] {
   return [{
     method: "GET",                  // HTTP метод
     pattern: "/collaborator",       // Адрес
-    callback: "getCollaborator",    // Название вызываемой функции, расположенной в этом же файле
+    callback: getCollaborator    // Название вызываемой функции, расположенной в этом же файле
     access: "user"                  // Доступ к функции для пользователя или внешего приложения
   }];
 }
@@ -100,7 +100,7 @@ export function functions(): Route[] {
   return [{
     method: "GET",
     pattern: "/samples",
-    callback: "getSamples",
+    callback: getSamples
     access: "user",
     summary: "Запрашивает какой-то объект",                   // Описание метода
     params: {                                                 // Набор параметров, принимаемых методом

@@ -44,7 +44,7 @@ export type RouteParameters = {
 export type Route = {
   method: "GET" | "POST" | "PUT";
   pattern: string;
-  callback: string;
+  callback: Function;
   url?: string;
   access: "user" | "application" | "both" | "anonymous" | "dev";
   params?: RouteParameters;

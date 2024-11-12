@@ -38,7 +38,7 @@ export function handle(req: Request, res: Response) {
     return;
   }
 
-  CallObjectMethod(handler, route.callback, [req, res, params]);
+  CallObjectMethod(handler, String(route.callback), [req, res, params]);
 }
 
 Request.AddRespHeader("X-wshcmx", "true");
