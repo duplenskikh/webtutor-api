@@ -1,28 +1,28 @@
-import { wshcmx, Route } from "index";
+import { wshcmx, Route } from "../index";
 
 export function functions(): Route[] {
   return [{
     method: "GET",
     pattern: "/ping",
-    callback: pong,
+    callback: "pong",
     access: "anonymous",
     summary: "Проверка API"
   }, {
     method: "GET",
     pattern: "/nerd/routes",
-    callback: getRoutes,
+    callback: "getRoutes",
     access: "dev",
     summary: "Получение списка всех роутов приложения"
   }, {
     method: "GET",
     pattern: "/nerd/check/app/auth",
-    callback: checkAppAuth,
+    callback: "checkAppAuth",
     access: "application",
     summary: "Проверка авторизации приложения"
   }];
 }
 
-function pong(_req: Request, res: Response) {
+export function pong(_req: Request, res: Response) {
   return wshcmx.utils.response.ok(res, "pon1g");
 }
 

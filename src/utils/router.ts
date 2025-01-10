@@ -1,4 +1,4 @@
-import { Route, wshcmx } from "index";
+import { Route, wshcmx } from "../index";
 
 export function getRoute(pattern: string, method: string) {
   pattern = StrReplaceOne(pattern, wshcmx.config.pattern, "");

@@ -1,4 +1,4 @@
-import { wshcmx } from "index";
+import { wshcmx } from "../index";
 
 export function getDetails(eventId: number) {
   const eventDocument = tools.open_doc<EventDocument>(eventId);

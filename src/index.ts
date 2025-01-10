@@ -1,5 +1,3 @@
-/// @template namespace
-
 type Utils = {
   array: typeof import("./utils/array");
   assert: typeof import("./utils/assert");
@@ -44,7 +42,7 @@ export type RouteParameters = {
 export type Route = {
   method: "GET" | "POST" | "PUT";
   pattern: string;
-  callback: CallableFunction;
+  callback: string;
   url?: string;
   access: "user" | "application" | "both" | "anonymous" | "dev";
   params?: RouteParameters;
