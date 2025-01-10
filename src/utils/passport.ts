@@ -1,4 +1,4 @@
-import { wshcmx, Route } from "index";
+import { wshcmx, Route } from "../index";
 
 type Authentication = {
   id: number;

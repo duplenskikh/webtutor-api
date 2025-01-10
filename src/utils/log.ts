@@ -1,4 +1,4 @@
-import { wshcmx } from "index";
+import { wshcmx } from "../index";
 
 export function write(message: unknown, type = "INFO", logCode = "common_log") {
   if (IsEmptyValue(message)) {

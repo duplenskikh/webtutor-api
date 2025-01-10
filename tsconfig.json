@@ -1,29 +1,25 @@
 {
   "compilerOptions": {
-    "noImplicitAny": true,
     "target": "ES5",
-    "module": "ES6",
+    "module": "Preserve",
+    "noLib": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": false,
+    "typeRoots": [
+      "node_modules/@wshcmx/types/lib",
+      "node_modules/@wshcmx/types/lib/xml"
+    ],
+    "noImplicitAny": true,
     "allowJs": true,
     "outDir": "build",
     "isolatedModules": true,
     "moduleResolution": "node",
     "strict": false,
-    "baseUrl": "src",
-    "noEmit": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
-    "rootDir": "src",
-    "typeRoots": [
-      "node_modules/@wshcmx/types/lib",
-      "node_modules/@wshcmx/types/lib/xml"
-    ],
-    "esModuleInterop": true,
-    "noLib": true
+    "emitBOM": true
   },
   "include": [
-    "src/controllers/**/*",
-    "src/services/**/*",
-    "src/utils/**/*",
     "src/**/*"
   ]
 }

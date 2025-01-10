@@ -1,4 +1,4 @@
-import { wshcmx } from "index";
+import { wshcmx } from "../index";
 
 export function init() {
   const configUrl = "./../config.json";
